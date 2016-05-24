@@ -6,6 +6,14 @@ stopListenLogStopped = False
 # extracted info out of video
 lBlinks = []
 rBlinks = []
+tCors   = []
+
+def generateTCSV():
+    tsdict = {}
+    for d in tCors:
+        tsdict[d["ts"]] = {"lcor" : d["lcor"], "rcor" : d["rcor"], "l1sd" : d["l1sd"], "l2sd" : d["l2sd"], "r1sd" : d["r1sd"], "r2sd" : d["r2sd"]}
+    tsl = sorted(tsdict.items(), key=lambda x:x[0])
+    return tsdict, tsl
 
 def generateCSV():
     #file(pref+"lBlinks.csv","wb").write("\n".join("%s\t%.2f" % (x["start"].strftime("%d/%m/%y %H:%M:%S"), x["duration"]) for x in lBlinks))
@@ -23,6 +31,19 @@ def generateCSV():
                     tsdict[e[k]] = {t:1}
     tsl = sorted(tsdict.items(), key=lambda x:x[0])
     return tsdict, tsl
+
+def writeTCSV(tsl):
+    pref = "/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/test_runner/outputs/"
+    f = file(pref+"out.csv","wb")
+    for e in tsl:
+        ws = "%.2f" % e[0]
+        d = e[1]
+
+        for t in ["lcor", "rcor", "l1sd", "l2sd", "r1sd", "r2sd"]:
+            ws += "\t%.6f" % d[t]
+        ws += "\n"
+        f.write(ws)
+    f.close()
 
 def writeCSV(tsl):
     pref = "/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/test_runner/outputs/"
@@ -52,7 +73,7 @@ def initListenLog():
     )
 
 def listenLog():
-    global stopListenLogStopped, lBlinks, rBlinks
+    global stopListenLogStopped, lBlinks, rBlinks, tCors
 
     poll_obj = select.poll()
     poll_obj.register(proc.stdout, select.POLLIN)
@@ -60,7 +81,21 @@ def listenLog():
         poll_result = poll_obj.poll(0)
         if poll_result:
             output = proc.stdout.readline().strip()
-            if output.startswith("debug_blinks_d4:"):
+
+            if output.startswith("debug_blinks_d1:"):
+                corsInfo = output.split(" ")
+                print repr(corsInfo)
+                if corsInfo[1:] == ['blinkMeasureSize', 'is', 'zero'] or corsInfo[1:-1] == ['shortBmSize', 'is', 'less', 'than', 'X']:
+                    continue
+                ts   = float(corsInfo[corsInfo.index("lastT")+1])
+                lcor = float(corsInfo[corsInfo.index("La")+1])
+                rcor = float(corsInfo[corsInfo.index("Ra")+1])
+                l1sd = float(corsInfo[corsInfo.index("lSD12")+2])
+                l2sd = float(corsInfo[corsInfo.index("lSD12")+3])
+                r1sd = float(corsInfo[corsInfo.index("rSD12")+2])
+                r2sd = float(corsInfo[corsInfo.index("rSD12")+3])
+                tCors.append({"ts" : ts, "lcor" : lcor, "rcor" : rcor, "l1sd" : l1sd, "l2sd" : l2sd, "r1sd" : r1sd, "r2sd" : r2sd})
+            elif output.startswith("debug_blinks_d4:"):
                 blinkInfo = output.split(" ")
                 start     = float(blinkInfo[blinkInfo.index("start")+1])
                 end       = float(blinkInfo[blinkInfo.index("end")+1])
@@ -126,7 +161,7 @@ def main():
     terminateListenLog()
     terminateRunVideo()
 
-    writeCSV(generateCSV()[1])
+    writeTCSV(generateTCSV()[1])
 
 
 
