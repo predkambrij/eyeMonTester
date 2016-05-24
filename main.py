@@ -12,23 +12,17 @@ def generateTCSV():
     tsdict = {}
     for d in tCors:
         tsdict[d["ts"]] = {"lcor" : d["lcor"], "rcor" : d["rcor"], "l1sd" : d["l1sd"], "l2sd" : d["l2sd"], "r1sd" : d["r1sd"], "r2sd" : d["r2sd"]}
-    tsl = sorted(tsdict.items(), key=lambda x:x[0])
-    return tsdict, tsl
 
-def generateCSV():
-    #file(pref+"lBlinks.csv","wb").write("\n".join("%s\t%.2f" % (x["start"].strftime("%d/%m/%y %H:%M:%S"), x["duration"]) for x in lBlinks))
-    #file(pref+"rBlinks.csv","wb").write("\n".join("%s\t%.2f" % (x["start"].strftime("%d/%m/%y %H:%M:%S"), x["duration"]) for x in rBlinks))
-    #file(pref+"lBlinks.csv","wb").write("\n".join("%.2f\t%.2f" % (x["start"], 1) for x in lBlinks)) # x["duration"]
-    #file(pref+"rBlinks.csv","wb").write("\n".join("%.2f\t%.2f" % (x["start"], 1) for x in rBlinks)) # x["duration"]
-    # rewrite based on timestamp key
-    tsdict = {}
-    for bl, bn in [(lBlinks, "l"), (rBlinks, "r")]:
-        for e in bl:
-            for k, t in [("start", bn+"bs"), ("end", bn+"be")]:
-                if tsdict.has_key(e[k]):
-                    tsdict[e[k]][t] = 1
-                else:
-                    tsdict[e[k]] = {t:1}
+    for blinks, blinkLabelPrefix in [(lBlinks, "l"), (rBlinks, "r")]:
+        for blink in blinks:
+            for eventName, eventNameTranslation in [("start", blinkLabelPrefix+"bs"), ("end", blinkLabelPrefix+"be")]:
+                try:
+                    tsdict[blink[eventName]][eventNameTranslation] = 1
+                except:
+                    print repr(sorted(tsdict.keys()))
+                    print repr(blink[eventName])
+                    e = 2/0
+
     tsl = sorted(tsdict.items(), key=lambda x:x[0])
     return tsdict, tsl
 
@@ -36,26 +30,17 @@ def writeTCSV(tsl):
     pref = "/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/test_runner/outputs/"
     f = file(pref+"out.csv","wb")
     for e in tsl:
-        ws = "%.2f" % e[0]
+        ws = e[0]
         d = e[1]
 
         for t in ["lcor", "rcor", "l1sd", "l2sd", "r1sd", "r2sd"]:
             ws += "\t%.6f" % d[t]
-        ws += "\n"
-        f.write(ws)
-    f.close()
-
-def writeCSV(tsl):
-    pref = "/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/test_runner/outputs/"
-    f = file(pref+"out.csv","wb")
-    for e in tsl:
-        ws = "%.2f" % e[0]
-        d = e[1]
 
         for t in ["lbs", "lbe", "rbs", "rbe"]:
             ws += "\t"
             if d.has_key(t):
                 ws += "%.2f" % d[t]
+
         ws += "\n"
         f.write(ws)
     f.close()
@@ -87,7 +72,7 @@ def listenLog():
                 print repr(corsInfo)
                 if corsInfo[1:] == ['blinkMeasureSize', 'is', 'zero'] or corsInfo[1:-1] == ['shortBmSize', 'is', 'less', 'than', 'X']:
                     continue
-                ts   = float(corsInfo[corsInfo.index("lastT")+1])
+                ts   = "%.2f" % float(corsInfo[corsInfo.index("lastT")+1])
                 lcor = float(corsInfo[corsInfo.index("La")+1])
                 rcor = float(corsInfo[corsInfo.index("Ra")+1])
                 l1sd = float(corsInfo[corsInfo.index("lSD12")+2])
@@ -103,6 +88,8 @@ def listenLog():
                 if start > 1000000000:
                     start /= 1000.
                     end /= 1000.
+                start = "%.2f" % start
+                end   = "%.2f" % end
                 #start = datetime.datetime.fromtimestamp(start)
 
                 blinkInfoDict = {"start":start, "end":end, "duration":duration}
