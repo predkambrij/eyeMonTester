@@ -1,4 +1,4 @@
-import subprocess, threading, datetime, time, select
+import subprocess, threading, datetime, time, select, os
 
 stopListenLog        = False
 stopListenLogStopped = False
@@ -8,21 +8,37 @@ lBlinks = []
 rBlinks = []
 tCors   = []
 
+videoName = "o44" # doma
+videoName = "o88" # knjiznica 40s
+path = "/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/test_runner/"
 def generateTCSV():
     tsdict = {}
     for d in tCors:
         tsdict[d["ts"]] = {"lcor" : d["lcor"], "rcor" : d["rcor"], "l1sd" : d["l1sd"], "l2sd" : d["l2sd"], "r1sd" : d["r1sd"], "r2sd" : d["r2sd"]}
 
-    for blinks, blinkLabelPrefix, yval in [(lBlinks, "l", 0.998), (rBlinks, "r", 0.996)]:
+    for blinks, blinkLabelPrefix, yval in [(lBlinks, "l", 0.998), (rBlinks, "r", 0.997)]:
         for blink in blinks:
             for eventName, eventNameTranslation in [("start", blinkLabelPrefix+"bs"), ("end", blinkLabelPrefix+"be")]:
                 tsdict[blink[eventName]][eventNameTranslation] = yval
+
+    annotationsFile =  "annotations/"+videoName
+    if os.path.isfile(annotationsFile):
+        annotated = file(annotationsFile).read().strip()
+        annotatedblinks = annotated.split("\n")
+        for annotatedblink in annotatedblinks:
+            astart, aclosed, afinished = ["%.2f" % float(x) for x in annotatedblink.split(",")]
+            try:
+                tsdict[astart]["anots"] = 0.999
+                tsdict[aclosed]["anotc"] = 0.999
+                tsdict[afinished]["anote"] = 0.999
+            except:
+                print "No key %s %s %s" % (astart, aclosed, afinished)
 
     tsl = sorted(tsdict.items(), key=lambda x:float(x[0]))
     return tsdict, tsl
 
 def writeTCSV(tsl):
-    pref = "/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/test_runner/outputs/"
+    pref = path+"outputs/"
     f = file(pref+"out.csv","wb")
     for e in tsl:
         ws = e[0]
@@ -32,6 +48,11 @@ def writeTCSV(tsl):
             ws += "\t%.6f" % d[t]
 
         for t in ["lbs", "lbe", "rbs", "rbe"]:
+            ws += "\t"
+            if d.has_key(t):
+                ws += "%.3f" % d[t]
+
+        for t in ["anots", "anotc", "anote"]:
             ws += "\t"
             if d.has_key(t):
                 ws += "%.3f" % d[t]
