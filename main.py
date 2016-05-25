@@ -13,17 +13,12 @@ def generateTCSV():
     for d in tCors:
         tsdict[d["ts"]] = {"lcor" : d["lcor"], "rcor" : d["rcor"], "l1sd" : d["l1sd"], "l2sd" : d["l2sd"], "r1sd" : d["r1sd"], "r2sd" : d["r2sd"]}
 
-    for blinks, blinkLabelPrefix in [(lBlinks, "l"), (rBlinks, "r")]:
+    for blinks, blinkLabelPrefix, yval in [(lBlinks, "l", 0.998), (rBlinks, "r", 0.996)]:
         for blink in blinks:
             for eventName, eventNameTranslation in [("start", blinkLabelPrefix+"bs"), ("end", blinkLabelPrefix+"be")]:
-                try:
-                    tsdict[blink[eventName]][eventNameTranslation] = 1
-                except:
-                    print repr(sorted(tsdict.keys()))
-                    print repr(blink[eventName])
-                    e = 2/0
+                tsdict[blink[eventName]][eventNameTranslation] = yval
 
-    tsl = sorted(tsdict.items(), key=lambda x:x[0])
+    tsl = sorted(tsdict.items(), key=lambda x:float(x[0]))
     return tsdict, tsl
 
 def writeTCSV(tsl):
@@ -39,7 +34,7 @@ def writeTCSV(tsl):
         for t in ["lbs", "lbe", "rbs", "rbe"]:
             ws += "\t"
             if d.has_key(t):
-                ws += "%.2f" % d[t]
+                ws += "%.3f" % d[t]
 
         ws += "\n"
         f.write(ws)
@@ -70,7 +65,9 @@ def listenLog():
             if output.startswith("debug_blinks_d1:"):
                 corsInfo = output.split(" ")
                 print repr(corsInfo)
-                if corsInfo[1:] == ['blinkMeasureSize', 'is', 'zero'] or corsInfo[1:-1] == ['shortBmSize', 'is', 'less', 'than', 'X']:
+                if (corsInfo[1:] == ['blinkMeasureSize', 'is', 'zero'] or
+                    corsInfo[1:-1] == ['shortBmSize', 'is', 'less', 'than', 'X'] or
+                    corsInfo[1:-1] == ['shortBmSize', 'is']):
                     continue
                 ts   = "%.2f" % float(corsInfo[corsInfo.index("lastT")+1])
                 lcor = float(corsInfo[corsInfo.index("La")+1])
