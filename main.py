@@ -8,8 +8,8 @@ lBlinks = []
 rBlinks = []
 tCors   = []
 
-videoName = "o44" # doma
-videoName = "o88" # knjiznica 40s
+#videoName = "o44" # doma
+videoName = "o89" # knjiznica 40s
 path = "/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/test_runner/"
 def generateTCSV():
     tsdict = {}
@@ -26,7 +26,12 @@ def generateTCSV():
         annotated = file(annotationsFile).read().strip()
         annotatedblinks = annotated.split("\n")
         for annotatedblink in annotatedblinks:
-            astart, aclosed, afinished = ["%.2f" % float(x) for x in annotatedblink.split(",")]
+            temp = annotatedblink.split(",")
+            # partial blinks
+            if len(temp) == 4:
+                temp = temp[:3]
+            temp = ["%.2f" % float(x) for x in temp]
+            astart, aclosed, afinished = temp
             try:
                 tsdict[astart]["anots"] = 0.999
                 tsdict[aclosed]["anotc"] = 0.999
