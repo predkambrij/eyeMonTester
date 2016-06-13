@@ -126,37 +126,78 @@ def writeTCSV(fnl):
     f.close()
 
 def detectionCoverage(fnl):
+    lCaughtI = set()
+    rCaughtI = set()
     lCaught = set()
     rCaught = set()
-    tCaught = set()
-    lFalse = set()
-    rFalse = set()
-    tFalse = set()
     missed  = set()
     lookingEnd = False
     blinkId = None
 
-    blinkInfoDict = {"fs":fs, "fe":fe, "start":start, "end":end, "duration":duration}
-        lst.append(blinkInfoDict)
+    lStartBlink = {}
+    for i in xrange(len(lBlinks)):
+        lStartBlink[lBlinks[i]["fs"]] = i
+    rStartBlink = {}
+    for i in xrange(len(rBlinks)):
+        rStartBlink[rBlinks[i]["fs"]] = i
+    lEndBlink = {}
+    for i in xrange(len(lBlinks)):
+        lEndBlink[lBlinks[i]["fe"]] = i
+    rEndBlink = {}
+    for i in xrange(len(rBlinks)):
+        rEndBlink[rBlinks[i]["fe"]] = i
 
+    annotBlink = {}
     for frameNum, data in fnl:
         if lookingEnd == False:
             if data.has_key("anots"):
                 lookingEnd = True
                 blinkId = data["anotBlinkId"]
+                annotBlink[blinkId] = frameNum
         if lookingEnd == True:
-            if data.has_key("lbs") or data.has_key("lbe"):
+            if data.has_key("lbs"):
                 lCaught.add(blinkId)
-                tCaught.add(blinkId)
-            if data.has_key("rbs") or data.has_key("rbe"):
+                lCaughtI.add(lStartBlink[frameNum])
+            if data.has_key("lbe"):
+                lCaught.add(blinkId)
+                lCaughtI.add(lEndBlink[frameNum])
+            if data.has_key("rbs"):
                 rCaught.add(blinkId)
-                tCaught.add(blinkId)
+                rCaughtI.add(rStartBlink[frameNum])
+            if data.has_key("rbe"):
+                rCaught.add(blinkId)
+                rCaughtI.add(rEndBlink[frameNum])
             if data.has_key("anote"):
-                if not blinkId in tCaught:
+                if (not blinkId in lCaught) and (not blinkId in rCaught):
                     missed.add(blinkId)
                 lookingEnd = False
+    aCaught = set.union(lCaught, rCaught)
+    bCaught = set.intersection(*[lCaught, rCaught])
 
-    return [sorted(list(x), key=lambda y:int(y)) for x in (lCaught, rCaught, tCaught, missed)]
+    lFp = []
+    for bi in xrange(len(lBlinks)):
+        if not bi in lCaughtI:
+            lFp.append(lBlinks[bi])
+
+    rFp = []
+    for bi in xrange(len(rBlinks)):
+        if not bi in rCaughtI:
+            rFp.append(rBlinks[bi])
+    r = [sorted(list(x), key=lambda y:int(y)) for x in (lCaught, rCaught, bCaught, aCaught, missed)]
+
+    # timeline fs m, fs, lf
+    falseFrames = []
+    for mi in missed:
+        falseFrames.append((annotBlink[mi], "m"))
+    
+    for lfp in lFp:
+        falseFrames.append((lfp["fs"], "lf"))
+    for rfp in rFp:
+        falseFrames.append((rfp["fs"], "rf"))
+    falseFrames.sort(key=lambda x:x[0])
+
+    r.append(falseFrames)
+    return r
 
 def processLogLine(output):
     global lBlinks, rBlinks, tCors
@@ -274,7 +315,9 @@ def main():
 
     fnl = generateTCSV()[1]
     writeTCSV(fnl)
-    detectionCoverage(fnl)
+    res = detectionCoverage(fnl)
+    for r in res:
+        print r
 
 
 
