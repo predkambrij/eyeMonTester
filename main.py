@@ -37,6 +37,7 @@ def addDetectedBlinks(fndict):
 def writeBlinkToFndict(fndict, curBlinkId, curBlinkStart, curBlinkEnd, curBlinkLC, curBlinkRC):
     try:
         fndict[int(curBlinkStart)]["anots"] = 0.999
+        fndict[int(curBlinkStart)]["anotBlinkId"] = curBlinkId
         fndict[int(curBlinkEnd)]["anote"] = 0.999
     except KeyError:
         print "skipping %s %s %s" % (curBlinkId, curBlinkStart, curBlinkEnd)
@@ -95,25 +96,6 @@ def generateTCSV():
     parseAnnotations(f, fndict)
 
 
-    """
-    annotationsFile =  "annotations/"+videoName
-    if os.path.isfile(annotationsFile):
-        annotated = file(annotationsFile).read().strip()
-        annotatedblinks = annotated.split("\n")
-        for annotatedblink in annotatedblinks:
-            temp = annotatedblink.split(",")
-            # partial blinks
-            if len(temp) == 4:
-                temp = temp[:3]
-            temp = ["%.2f" % float(x) for x in temp]
-            astart, aclosed, afinished = temp
-            try:
-                tsdict[astart]["anots"] = 0.999
-                tsdict[aclosed]["anotc"] = 0.999
-                tsdict[afinished]["anote"] = 0.999
-            except:
-                print "No key %s %s %s" % (astart, aclosed, afinished)
-    """
     # sort by frame num
     fnl = sorted(fndict.items(), key=lambda x:float(x[0]))
     return fndict, fnl
@@ -142,6 +124,39 @@ def writeTCSV(fnl):
         line += "\n"
         f.write(line)
     f.close()
+
+def detectionCoverage(fnl):
+    lCaught = set()
+    rCaught = set()
+    tCaught = set()
+    lFalse = set()
+    rFalse = set()
+    tFalse = set()
+    missed  = set()
+    lookingEnd = False
+    blinkId = None
+
+    blinkInfoDict = {"fs":fs, "fe":fe, "start":start, "end":end, "duration":duration}
+        lst.append(blinkInfoDict)
+
+    for frameNum, data in fnl:
+        if lookingEnd == False:
+            if data.has_key("anots"):
+                lookingEnd = True
+                blinkId = data["anotBlinkId"]
+        if lookingEnd == True:
+            if data.has_key("lbs") or data.has_key("lbe"):
+                lCaught.add(blinkId)
+                tCaught.add(blinkId)
+            if data.has_key("rbs") or data.has_key("rbe"):
+                rCaught.add(blinkId)
+                tCaught.add(blinkId)
+            if data.has_key("anote"):
+                if not blinkId in tCaught:
+                    missed.add(blinkId)
+                lookingEnd = False
+
+    return [sorted(list(x), key=lambda y:int(y)) for x in (lCaught, rCaught, tCaught, missed)]
 
 def processLogLine(output):
     global lBlinks, rBlinks, tCors
@@ -257,7 +272,9 @@ def main():
     terminateListenLog()
     terminateRunVideo()
 
-    writeTCSV(generateTCSV()[1])
+    fnl = generateTCSV()[1]
+    writeTCSV(fnl)
+    detectionCoverage(fnl)
 
 
 
