@@ -1,5 +1,17 @@
 import unittest
 import main
+import farne
+
+class TestFarne(unittest.TestCase):
+    def test1(self):
+        lBlinks, rBlinks = [], []
+        fFlows = []
+
+        output = ""
+        output += "debug_fb_log_flow: F 1 T 66.666667 "
+        output += "lTotal -0.30  0.09 lbtotal -0.10  0.00 lDiff  0.21 -0.09 rTotal  0.56  0.46 rbtotal  0.59  0.23 rDiff  0.03 -0.23"
+        farne.Farne.processLogLine(output, fFlows, lBlinks, rBlinks)
+
 
 class Test(unittest.TestCase):
     def setUp(self):
@@ -39,13 +51,13 @@ class Test(unittest.TestCase):
         self.assertEquals((9966.67, {'rbs': 1}), tsl[14])#r5
         self.assertEquals((10033.333333, {'rbe': 1}), tsl[15])#r5e
         self.assertEquals((10100.0, {'lbe': 1}), tsl[16])#l5e
-    def testProcessLogLine(self):
+    def _testProcessLogLine(self):
         main.lBlinks = []
         main.rBlinks = []
         main.tCors   = []
         r = main.processLogLine("debug_blinks_d4: adding_lBlinkChunks fs 169 fe 173 start 5666.67 end 5800.000000 duration 133.333333")
 
-    def testParseAnnot1(self):
+    def _testParseAnnot1(self):
         tmpContent = ""
         tmpContent += "#eye-blink annotation file version 1.1\n"
         tmpContent += "#author:  fogelton\n"
@@ -83,7 +95,7 @@ class Test(unittest.TestCase):
         self.assertEquals({'anotBlinkId': '2', 'anots': 0.999}, fndict[7])
         self.assertEquals({'anote': 0.999}, fndict[9])
 
-    def testParseAnnot2(self):
+    def _testParseAnnot2(self):
         tmpContent = ""
         tmpContent += "#start\n"
         tmpContent += "0:-1:X:X:X:X:X:260:194:251:290:299:270:351:259:416:246:466:243\n"
@@ -101,7 +113,7 @@ class Test(unittest.TestCase):
 
         self.assertEquals({'anotBlinkId': '1', 'anots': 0.999, 'anote': 0.999}, fndict[1])
 
-    def testParseAnnot3(self):
+    def _testParseAnnot3(self):
         tmpContent = ""
         tmpContent += "#start\n"
         tmpContent += "0:1:X:X:X:X:X:260:194:251:290:299:270:351:259:416:246:466:243\n"
@@ -117,7 +129,7 @@ class Test(unittest.TestCase):
 
         self.assertEquals({'anotBlinkId': '1', 'anots': 0.999, 'anote': 0.999}, fndict[0])
 
-    def testParseAnnot4(self):
+    def _testParseAnnot4(self):
         tmpContent = ""
         tmpContent += "#start\n"
         tmpContent += "0:1:X:X:X:X:X:260:194:251:290:299:270:351:259:416:246:466:243\n"
@@ -135,7 +147,7 @@ class Test(unittest.TestCase):
         self.assertEquals({'anotBlinkId': '1', 'anots': 0.999, 'anote': 0.999}, fndict[0])
         self.assertEquals({'anotBlinkId': '2', 'anots': 0.999, 'anote': 0.999}, fndict[1])
 
-    def testDetectionCoverage(self):
+    def _testDetectionCoverage(self):
         fnl = [
             (1, {'anots': 1}),
             (2, {'lbs': 1}),

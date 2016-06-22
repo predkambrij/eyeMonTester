@@ -1,12 +1,14 @@
 import subprocess, threading, datetime, time, select, os
 from common import Common as Cmn
 from templ import Templ
+from farne import Farne
 
 # control flags
 flg_excel_export = True
 flg_coverage = True
-#flg_method = "farneback"
-flg_method = "templ"
+flg_end_hook = True
+flg_method = "farneback"
+#flg_method = "templ"
 
 # flow flags
 stopListenLog        = False
@@ -15,6 +17,7 @@ stopListenLogStopped = False
 # state variables
 lBlinks, rBlinks = [], []
 tCors = []
+fFlows = []
 
 #videoName = "o44" # doma
 #videoName = "o89" # knjiznica 40s
@@ -24,7 +27,6 @@ videoName = "talking.avi"
 videoAnnot = os.path.splitext(videoName)[0]+".tag"
 
 path = "/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/test_runner/"
-
 
 # parsing logs
 def initListenLog():
@@ -49,8 +51,15 @@ def listenLog():
                     if Templ.processLogLine(output, tCors, lBlinks, rBlinks):
                         stopListenLogStopped = True
                         break
-            except:
+                elif flg_method == "farneback":
+                    res = Farne.processLogLine(output, fFlows, lBlinks, rBlinks)
+                    if res:
+                        stopListenLogStopped = True
+                        break
+            except StandardError,e:
                 print "crash", output
+                print "msg", e.message
+
                 stopListenLogStopped = True
                 break
             continue
@@ -106,6 +115,9 @@ def main():
             res = Cmn.detectionCoverage(lBlinks, rBlinks, fnl)
             for r in res:
                 print r
+    if flg_end_hook:
+        if flg_method == "farneback":
+            Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, True)
 
 
 
