@@ -11,6 +11,7 @@ def analizeAnnotated(fn):
 def partialBlinks():
     filesNum = len(sys.argv)-1
     print filesNum
+    allBlinks = 0
     onePartialsN = 0
     bothPartialsN = 0
     for f in xrange(1, filesNum+1):
@@ -48,11 +49,13 @@ def partialBlinks():
                 else:
                     if curBlinkId == "":
                         # start of the blink
+                        allBlinks += 1
                         curBlinkId = line[1]
                         lFully = False
                         rFully = False
                     else:
                         # end of previous, start of new one
+                        allBlinks += 1
                         if lFully == False and rFully == False:
                             bothPartials.append([curBlinkId, lFully, rFully])
                         if (lFully == True and rFully == False) or (lFully == False and rFully == True):
@@ -75,6 +78,7 @@ def partialBlinks():
         onePartialsN += len(onePartials)
         bothPartialsN += len(bothPartials)
 
+    print allBlinks
     file("/tmp/partials", "ab").write("onePartials %d bothPartials %d\n" % (onePartialsN, bothPartialsN))
     return
 
