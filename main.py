@@ -2,11 +2,13 @@ import subprocess, threading, datetime, time, select, os
 from common import Common as Cmn
 from templ import Templ
 from farne import Farne
+from blackpixels import Blackpixels
 
 # control flags
 flg_excel_export = True
 flg_coverage = True
 flg_end_hook = True
+#flg_method = "blackpixels"
 flg_method = "farneback"
 #flg_method = "templ"
 
@@ -16,8 +18,7 @@ stopListenLogStopped = False
 
 # state variables
 lBlinks, rBlinks = [], []
-tCors = []
-fFlows = []
+tCors, fFlows, bPixes = [], [], []
 
 #videoName = "o44" # doma
 #videoName = "o89" # knjiznica 40s
@@ -53,6 +54,11 @@ def listenLog():
                         break
                 elif flg_method == "farneback":
                     res = Farne.processLogLine(output, fFlows, lBlinks, rBlinks)
+                    if res:
+                        stopListenLogStopped = True
+                        break
+                elif flg_method == "blackpixels":
+                    res = Blackpixels.processLogLine(output, bPixes, lBlinks, rBlinks)
                     if res:
                         stopListenLogStopped = True
                         break
@@ -117,7 +123,7 @@ def main():
                 print r
     if flg_end_hook:
         if flg_method == "farneback":
-            Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, True)
+            Farne.postProcessLogLine(bPixes, lBlinks, rBlinks, True)
 
 
 

@@ -38,7 +38,7 @@ class Farne:
     @staticmethod
     def postProcessLogLine(fFlows, lBlinks, rBlinks, isEnd):
         if not isEnd:
-            window = 90
+            window = 300
         else:
             window = 0
 

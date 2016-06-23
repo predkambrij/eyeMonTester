@@ -82,11 +82,13 @@ class Templ:
 
         pltx = []
         plty = []
+        plty1 = []
         for frameNum, data in fnl:
             line = ""
             line += str(frameNum)
             pltx.append(frameNum)
             plty.append(data["lcor"])
+            plty1.append(data["rcor"])
 
             for t in ["lcor", "rcor", "l1sd", "l2sd", "r1sd", "r2sd"]: # "ts", 
                 line += "\t%.6f" % data[t]
@@ -103,7 +105,7 @@ class Templ:
 
             line += "\n"
             f.write(line)
-        plt.plot(pltx, plty, 'ro-')
+        plt.plot(pltx, plty, 'ro-', pltx, plty1, 'bo-')
         plt.show()
         #plt.savefig('/tmp/plt.png', bbox_inches='tight')
         f.close()
