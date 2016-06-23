@@ -32,6 +32,7 @@ class Templ:
             r1sd = float(corsInfo[corsInfo.index("rSD12")+2])
             r2sd = float(corsInfo[corsInfo.index("rSD12")+3])
             tCors.append({"fn": fn, "ts" : ts, "lcor" : lcor, "rcor" : rcor, "l1sd" : l1sd, "l2sd" : l2sd, "r1sd" : r1sd, "r2sd" : r2sd})
+            #Templ.postProcessLogLine(tCors, lBlinks, rBlinks, False)
         elif output.startswith("debug_blinks_d4:"):
             blinkInfo = output.split(" ")
             if blinkInfo[1] == "adding_lBlinkChunks":
@@ -53,6 +54,31 @@ class Templ:
         elif output.startswith("exiting"):
             return True
         return False
+
+    @staticmethod
+    def postProcessLogLine(tCors, lBlinks, rBlinks, isEnd):
+        if not isEnd:
+            window = 300
+        else:
+            window = 0
+
+        if not isEnd and (len(tCors) == 0 or len(tCors) % window != 0):
+            return
+        print repr(tCors)
+        if isEnd:
+            window = 0
+        pltx = [x["fn"] for x in tCors[-window:]]
+        lcor, rcor = [x["lcor"] for x in tCors[-window:]], [x["rcor"] for x in tCors[-window:]]
+
+        plt.figure(1)
+        plt.subplot(211)
+        plt.plot(pltx, lcor, 'ro-', pltx, rcor, 'bo-')
+
+        #plt.subplot(212)
+        #plt.plot(pltx, pltlYdiff, 'ro-', pltx, pltrYdiff, 'bo-')
+        plt.show()
+        return
+
 
     # generating excel report
     @staticmethod
@@ -80,15 +106,9 @@ class Templ:
         pref = path+"outputs/"
         f = file(pref+"out.csv","wb")
 
-        pltx = []
-        plty = []
-        plty1 = []
         for frameNum, data in fnl:
             line = ""
             line += str(frameNum)
-            pltx.append(frameNum)
-            plty.append(data["lcor"])
-            plty1.append(data["rcor"])
 
             for t in ["lcor", "rcor", "l1sd", "l2sd", "r1sd", "r2sd"]: # "ts", 
                 line += "\t%.6f" % data[t]
@@ -105,7 +125,5 @@ class Templ:
 
             line += "\n"
             f.write(line)
-        plt.plot(pltx, plty, 'ro-', pltx, plty1, 'bo-')
-        plt.show()
-        #plt.savefig('/tmp/plt.png', bbox_inches='tight')
+
         f.close()

@@ -30,7 +30,7 @@ class Farne:
                 "lbtotalX":lbtotalX, "lbtotalY":lbtotalY, "rbtotalX":rbtotalX, "rbtotalY":rbtotalY,
                 "lDiffX":lDiffX, "lDiffY":lDiffY, "rDiffX":rDiffX, "rDiffY":rDiffY,
             })
-            Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, False)
+            #Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, False)
         elif output.startswith("exiting"):
             return True
         return False

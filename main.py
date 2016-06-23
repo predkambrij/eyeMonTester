@@ -123,7 +123,9 @@ def main():
                 print r
     if flg_end_hook:
         if flg_method == "farneback":
-            Farne.postProcessLogLine(bPixes, lBlinks, rBlinks, True)
+            Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, True)
+        elif flg_method == "templ":
+            Templ.postProcessLogLine(tCors, lBlinks, rBlinks, True)
 
 
 
