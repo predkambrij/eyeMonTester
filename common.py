@@ -15,7 +15,7 @@ class Common:
         return
 
     @staticmethod
-    def writeBlinkToFndict(fndict, curBlinkId, curBlinkStart, curBlinkEnd, curBlinkLC, curBlinkRC):
+    def writeBlinkToFndict(fndict, curBlinkId, curBlinkStart, curBlinkEnd):
         try:
             fndict[int(curBlinkStart)]["anots"] = 0.999
             fndict[int(curBlinkStart)]["anotBlinkId"] = curBlinkId
@@ -23,9 +23,9 @@ class Common:
         except KeyError:
             print "skipping %s %s %s" % (curBlinkId, curBlinkStart, curBlinkEnd)
 
-
     @staticmethod
-    def parseAnnotations(f, fndict):
+    def parseAnnotations(f, fndict, method):
+        annots = []
         curBlinkId = ""
         curBlinkStart = ""
         curBlinkEnd = ""
@@ -50,7 +50,10 @@ class Common:
                     if curBlinkId == "":
                         continue
                     else:
-                        Common.writeBlinkToFndict(fndict, curBlinkId, curBlinkStart, curBlinkEnd, curBlinkLC, curBlinkRC)
+                        if method == "farne":
+                            annots.append({"bs":int(curBlinkStart), "be":int(curBlinkEnd), "bi":int(curBlinkId)})
+                        else:
+                            Common.writeBlinkToFndict(fndict, curBlinkId, curBlinkStart, curBlinkEnd)
                         curBlinkId    = ""
                         curBlinkStart = ""
                         curBlinkEnd   = ""
@@ -59,7 +62,10 @@ class Common:
                         curBlinkId = line[1]
                         curBlinkStart = line[0]
                     else:
-                        Common.writeBlinkToFndict(fndict, curBlinkId, curBlinkStart, curBlinkEnd, curBlinkLC, curBlinkRC)
+                        if method == "farne":
+                            annots.append({"bs":int(curBlinkStart), "be":int(curBlinkEnd), "bi":int(curBlinkId)})
+                        else:
+                            Common.writeBlinkToFndict(fndict, curBlinkId, curBlinkStart, curBlinkEnd)
                         curBlinkId    = line[1]
                         curBlinkStart = line[0]
                         curBlinkEnd   = ""
@@ -67,9 +73,23 @@ class Common:
             curBlinkEnd = line[0]
 
         if curBlinkId != "":
-            Common.writeBlinkToFndict(fndict, curBlinkId, curBlinkStart, curBlinkEnd, curBlinkLC, curBlinkRC)
+            if method == "farne":
+                annots.append({"bs":int(curBlinkStart), "be":int(curBlinkEnd), "bi":int(curBlinkId)})
+            else:
+                Common.writeBlinkToFndict(fndict, curBlinkId, curBlinkStart, curBlinkEnd)
 
+        if method == "farne":
+            return Common.makeAnnotDicts(annots)
         return
+
+    @staticmethod
+    def makeAnnotDicts(annots):
+        annotsByStart = {}
+        annotsByEnd = {}
+        for annot in annots:
+            annotsByStart[annot["bs"]] = annot
+            annotsByEnd[annot["be"]]   = annot
+        return annotsByStart, annotsByEnd
 
     @staticmethod
     def detectionCoverage(lBlinks, rBlinks, fnl):

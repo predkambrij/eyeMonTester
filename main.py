@@ -53,7 +53,7 @@ def listenLog():
                         stopListenLogStopped = True
                         break
                 elif flg_method == "farneback":
-                    res = Farne.processLogLine(output, fFlows, lBlinks, rBlinks)
+                    res = Farne.processLogLine(output, annots, fFlows, lBlinks, rBlinks)
                     if res:
                         stopListenLogStopped = True
                         break
@@ -94,10 +94,13 @@ def terminateRunVideo():
 ###
 
 def main():
-    global stopListenLog
+    global stopListenLog, annots
     initListenLog()
     time.sleep(0.5)
     initRunVideo()
+
+    f = file(vidPrefix+videoAnnot)
+    annots = Cmn.parseAnnotations(f, None, "farne")
 
     listenLogThread = threading.Thread(target=listenLog, args=[])
     listenLogThread.start()
@@ -123,7 +126,7 @@ def main():
                 print r
     if flg_end_hook:
         if flg_method == "farneback":
-            Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, True)
+            Farne.postProcessLogLine(fFlows, annots, lBlinks, rBlinks, True)
         elif flg_method == "templ":
             Templ.postProcessLogLine(tCors, lBlinks, rBlinks, True)
 

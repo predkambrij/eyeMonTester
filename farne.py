@@ -11,7 +11,7 @@ class Farne:
         pass
 
     @staticmethod
-    def processLogLine(output, fFlows, lBlinks, rBlinks):
+    def processLogLine(output, annots, fFlows, lBlinks, rBlinks):
         # if output.startswith("debug_fb_log_flow:"):
         #     flowsInfo = [x for x in output.split(" ") if x != ""]
         #     if debugProcessLogLine:
@@ -74,13 +74,23 @@ class Farne:
                 fFlows.append({"fn":fn, "ts":ts, "type":logType, "rDiff":rDiff,
                     "prsd1":prsd1, "prsd2":prsd2, "mrsd1":mrsd1, "mrsd2":mrsd2,
                 })
-            Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, False)
+            elif logType == "n":
+                fFlows.append({"fn":fn, "ts":ts, "type":logType})
+
+            if annots[0].has_key(fn):
+                fFlows[-1].update(annots[0][fn])
+                fFlows[-1]["annotEvent"] = "s"
+            if annots[1].has_key(fn):
+                fFlows[-1].update(annots[1][fn])
+                fFlows[-1]["annotEvent"] = "e"
+
+            Farne.postProcessLogLine(fFlows, annots, lBlinks, rBlinks, False)
         elif output.startswith("exiting"):
             return True
         return False
 
     @staticmethod
-    def postProcessLogLine(fFlows, lBlinks, rBlinks, isEnd):
+    def postProcessLogLine(fFlows, annots, lBlinks, rBlinks, isEnd):
         if not isEnd:
             window = 300
         else:
@@ -94,12 +104,15 @@ class Farne:
         pltax = [x["fn"] for x in fFlows[-window:]]
         pltlx = [x["fn"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "l"]
         pltrx = [x["fn"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"]
+        pltasx = [x["fn"] for x in fFlows[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
+        pltaex = [x["fn"] for x in fFlows[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
         lDiff, rDiff = [x["lDiff"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "l"], [x["rDiff"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"]
         plsd1, mlsd1 = [x["plsd1"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "l"], [x["mlsd1"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "l"]
         plsd2, mlsd2 = [x["plsd2"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "l"], [x["mlsd2"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "l"]
         prsd1, mrsd1 = [x["prsd1"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"], [x["mrsd1"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"]
         prsd2, mrsd2 = [x["prsd2"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"], [x["mrsd2"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"]
-
+        pltas = [1 for x in fFlows[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
+        pltae = [1 for x in fFlows[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
         plt.figure(1)
         #plt.subplot(211)
         #plt.plot(pltx, pltlXdiff, 'ro-', pltx, pltrXdiff, 'bo-')
@@ -108,7 +121,8 @@ class Farne:
         plt.plot(pltlx, lDiff, 'ro-', pltrx, rDiff, 'bo-',
             pltax, [0 for x in xrange(len(pltax))], 'g--',
             pltlx, plsd1, 'r^-', pltlx, mlsd1, 'r^-', pltrx, prsd1, 'b^-', pltrx, mrsd1, 'b^-',
-            pltlx, plsd2, 'r^-', pltlx, mlsd2, 'r^-', pltrx, prsd2, 'b^-', pltrx, mrsd2, 'b^-'
+            pltlx, plsd2, 'r^-', pltlx, mlsd2, 'r^-', pltrx, prsd2, 'b^-', pltrx, mrsd2, 'b^-',
+            pltasx, pltas, 'go', pltaex, pltae, 'g^'
         )
         plt.show()
         #plt.show(block=False)
