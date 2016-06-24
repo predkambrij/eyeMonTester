@@ -1,4 +1,4 @@
-import subprocess, threading, datetime, time, select, os
+import subprocess, threading, datetime, time, select, os, traceback
 from common import Common as Cmn
 from templ import Templ
 from farne import Farne
@@ -64,7 +64,7 @@ def listenLog():
                         break
             except StandardError,e:
                 print "crash", output
-                print "msg", e.message
+                print traceback.format_exc()
 
                 stopListenLogStopped = True
                 break

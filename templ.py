@@ -32,7 +32,7 @@ class Templ:
             r1sd = float(corsInfo[corsInfo.index("rSD12")+2])
             r2sd = float(corsInfo[corsInfo.index("rSD12")+3])
             tCors.append({"fn": fn, "ts" : ts, "lcor" : lcor, "rcor" : rcor, "l1sd" : l1sd, "l2sd" : l2sd, "r1sd" : r1sd, "r2sd" : r2sd})
-            #Templ.postProcessLogLine(tCors, lBlinks, rBlinks, False)
+            Templ.postProcessLogLine(tCors, lBlinks, rBlinks, False)
         elif output.startswith("debug_blinks_d4:"):
             blinkInfo = output.split(" ")
             if blinkInfo[1] == "adding_lBlinkChunks":
@@ -69,10 +69,14 @@ class Templ:
             window = 0
         pltx = [x["fn"] for x in tCors[-window:]]
         lcor, rcor = [x["lcor"] for x in tCors[-window:]], [x["rcor"] for x in tCors[-window:]]
+        lsd1, rsd1 = [x["l1sd"] for x in tCors[-window:]], [x["r1sd"] for x in tCors[-window:]]
+        lsd2, rsd2 = [x["l2sd"] for x in tCors[-window:]], [x["r2sd"] for x in tCors[-window:]]
 
         plt.figure(1)
         plt.subplot(211)
-        plt.plot(pltx, lcor, 'ro-', pltx, rcor, 'bo-')
+        plt.plot(pltx, lcor, 'ro-', pltx, rcor, 'bo-',
+            pltx, lsd1, 'r^-', pltx, rsd1, 'b^-',
+            pltx, lsd2, 'rs-', pltx, rsd2, 'bs-')
 
         #plt.subplot(212)
         #plt.plot(pltx, pltlYdiff, 'ro-', pltx, pltrYdiff, 'bo-')
