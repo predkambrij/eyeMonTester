@@ -1,5 +1,7 @@
 import sys
 
+from common import Common as Cmn
+import main
 
 def analizeAnnotated(fn):
     blinks = [[float(y) for y in x.split(",") if y != "p"] for x in file("annotations/"+fn, "rb").read().strip().split("\n")]
@@ -82,8 +84,16 @@ def partialBlinks():
     file("/tmp/partials", "ab").write("onePartials %d bothPartials %d\n" % (onePartialsN, bothPartialsN))
     return
 
+def showAnnots():
+    f = file(main.vidPrefix+main.videoAnnot)
+    annots = Cmn.parseAnnotations(f, None, "farne")
+    print annots[0]
+    print
+    print annots[1]
+    return
 
 if __name__ == "__main__":
     #analizeAnnotated("o90")
-    partialBlinks()
+    #partialBlinks()
+    showAnnots()
 
