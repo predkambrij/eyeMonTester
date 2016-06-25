@@ -19,6 +19,7 @@ stopListenLogStopped = False
 # state variables
 lBlinks, rBlinks = [], []
 tCors, fFlows, bPixes = [], [], []
+fFlowsI = {}
 
 #videoName = "o44" # doma
 #videoName = "o89" # knjiznica 40s
@@ -53,7 +54,7 @@ def listenLog():
                         stopListenLogStopped = True
                         break
                 elif flg_method == "farneback":
-                    res = Farne.processLogLine(output, annots, fFlows, lBlinks, rBlinks)
+                    res = Farne.processLogLine(output, annots, fFlows, fFlowsI, lBlinks, rBlinks)
                     if res:
                         stopListenLogStopped = True
                         break
