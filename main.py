@@ -101,7 +101,7 @@ def main():
     initRunVideo()
 
     f = file(vidPrefix+videoAnnot)
-    annots = Cmn.parseAnnotations(f, None, "farne")
+    annotsl, annots = Cmn.parseAnnotations(f, None, "farne")
 
     listenLogThread = threading.Thread(target=listenLog, args=[])
     listenLogThread.start()
@@ -120,7 +120,10 @@ def main():
             Templ.writeTCSV(path, fnl)
 
     if flg_coverage:
-        if flg_method == "templ":
+        if flg_method == "farneback":
+            l, r, o = Cmn.detectionCoverageF(annotsl, lBlinks, rBlinks)
+            Cmn.displayDetectionCoverage(l, r, o)
+        elif flg_method == "templ":
             fnl = Templ.generateTCSV(vidPrefix, videoAnnot, tCors, lBlinks, rBlinks)[1]
             res = Cmn.detectionCoverage(lBlinks, rBlinks, fnl)
             for r in res:
