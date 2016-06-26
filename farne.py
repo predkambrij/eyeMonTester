@@ -107,13 +107,13 @@ class Farne:
             fFlows[fFlowsI[fs]][eye+"b"] = "s"
             fFlows[fFlowsI[fe]][eye+"b"] = "e"
 
-            #Farne.postProcessLogLine(fFlows, annots, lBlinks, rBlinks, False)
+            #Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, False)
         elif output.startswith("exiting"):
             return True
         return False
 
     @staticmethod
-    def postProcessLogLine(fFlows, annots, lBlinks, rBlinks, isEnd):
+    def postProcessLogLine(fFlows, lBlinks, rBlinks, isEnd):
         if not isEnd:
             window = 600
         else:
