@@ -25,7 +25,11 @@ fFlowsI = {}
 #videoName = "o89" # knjiznica 40s
 #videoName = "o90" # premikal glavo, zadej luc
 vidPrefix = "/home/developer/other/posnetki/"
-videoName = "talking.avi"
+#videoName = "talking.avi"
+
+vidPrefix += "sk/eyeblink8/1/" # punca od dalec
+videoName = "26122013_223310_cam.avi"
+
 videoAnnot = os.path.splitext(videoName)[0]+".tag"
 
 path = "/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/test_runner/"

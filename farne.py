@@ -84,6 +84,7 @@ class Farne:
             if annots[1].has_key(fn):
                 fFlows[-1].update(annots[1][fn])
                 fFlows[-1]["annotEvent"] = "e"
+            Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, False)
         elif output.startswith("debug_blinks_d4:"):
             blinkInfo = output.split(" ")
             if blinkInfo[1] == "adding_lBlinkChunksf":
@@ -106,8 +107,6 @@ class Farne:
             lst.append(blinkInfoDict)
             fFlows[fFlowsI[fs]][eye+"b"] = "s"
             fFlows[fFlowsI[fe]][eye+"b"] = "e"
-
-            #Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, False)
         elif output.startswith("exiting"):
             return True
         return False
@@ -115,7 +114,7 @@ class Farne:
     @staticmethod
     def postProcessLogLine(fFlows, lBlinks, rBlinks, isEnd):
         if not isEnd:
-            window = 600
+            window = 300
         else:
             window = 0
 
