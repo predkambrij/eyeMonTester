@@ -25,10 +25,12 @@ fFlowsI = {}
 #videoName = "o89" # knjiznica 40s
 #videoName = "o90" # premikal glavo, zadej luc
 vidPrefix = "/home/developer/other/posnetki/"
-#videoName = "talking.avi"
 
-vidPrefix += "sk/eyeblink8/1/" # punca od dalec
-videoName = "26122013_223310_cam.avi"
+if True:
+    vidPrefix += "sk/eyeblink8/1/" # punca od dalec
+    videoName = "26122013_223310_cam.avi"
+elif True:
+    videoName = "talking.avi"
 
 videoAnnot = os.path.splitext(videoName)[0]+".tag"
 

@@ -84,7 +84,7 @@ class Farne:
             if annots[1].has_key(fn):
                 fFlows[-1].update(annots[1][fn])
                 fFlows[-1]["annotEvent"] = "e"
-            Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, False)
+            #Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, False)
         elif output.startswith("debug_blinks_d4:"):
             blinkInfo = output.split(" ")
             if blinkInfo[1] == "adding_lBlinkChunksf":
