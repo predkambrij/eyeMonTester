@@ -32,7 +32,8 @@ class Farne:
         #     })
         #     #Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, False)
         if output.startswith("debug_fb_log_reinit:") or output.startswith("debug_fb_log_repupil:"):
-            print output
+            pass
+            #print output
         elif output.startswith("debug_blinks_d1:"):
             flowsInfo = [x for x in output.split(" ") if x != ""]
             if debugProcessLogLine:
@@ -157,9 +158,9 @@ class Farne:
         #plt.subplot(212)
         plt.plot(pltlx, lDiff, 'ro-', pltrx, rDiff, 'bo-',
             pltax, [0 for x in xrange(len(pltax))], 'g--',
-            pltlx, plsd1, 'r^-', pltlx, mlsd1, 'r^-', pltrx, prsd1, 'b^-', pltrx, mrsd1, 'b^-',
+            #pltlx, plsd1, 'r^-', pltlx, mlsd1, 'r^-', pltrx, prsd1, 'b^-', pltrx, mrsd1, 'b^-',
             pltlx, plsd2, 'r^-', pltlx, mlsd2, 'r^-', pltrx, prsd2, 'b^-', pltrx, mrsd2, 'b^-',
-            pltlx, plsdt, 'r^-', pltlx, mlsd2, 'r^-', pltrx, prsdt, 'b^-', pltrx, mrsdt, 'b^-',
+            #pltlx, plsdt, 'r^-', pltlx, mlsd2, 'r^-', pltrx, prsdt, 'b^-', pltrx, mrsdt, 'b^-',
             pltasx, pltas, 'go', pltaex, pltae, 'g^',
             pltlbsx, pltlbs, 'ro', pltlbex, pltlbe, 'r^', pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^'
         )
