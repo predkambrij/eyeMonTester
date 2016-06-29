@@ -26,10 +26,16 @@ fFlowsI = {}
 #videoName = "o90" # premikal glavo, zadej luc
 vidPrefix = "/home/developer/other/posnetki/"
 
-if True:
+vidNum = 0
+if vidNum == 0:
+    videoName = ""
+elif vidNum == 1:
     vidPrefix += "sk/eyeblink8/1/" # punca od dalec
     videoName = "26122013_223310_cam.avi"
-elif True:
+elif vidNum == 2:
+    vidPrefix += "sk/NightOfResearchers15/test/14/" # full partial
+    videoName = "26092014_211047_cam.avi"
+elif vidNum == 3:
     videoName = "talking.avi"
 
 videoAnnot = os.path.splitext(videoName)[0]+".tag"
@@ -89,8 +95,12 @@ def terminateListenLog():
 # configure and run video
 def initRunVideo():
     global vid
+    if vidNum != 0:
+        cmd = ['make', 'dt']
+    else:
+        cmd = ['make', 'd']
     vid = subprocess.Popen(
-        ['make', 'dt'],
+        cmd,
         cwd     = '/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/optical-flow',
         stdin   = subprocess.PIPE,
         stdout  = subprocess.PIPE,
@@ -106,8 +116,11 @@ def main():
     time.sleep(0.5)
     initRunVideo()
 
-    f = file(vidPrefix+videoAnnot)
-    annotsl, annots = Cmn.parseAnnotations(f, None, "farne")
+    if videoAnnot != ".tag":
+        f = file(vidPrefix+videoAnnot)
+        annotsl, annots = Cmn.parseAnnotations(f, None, "farne")
+    else:
+        annotsl, annots = [], ({}, {})
 
     listenLogThread = threading.Thread(target=listenLog, args=[])
     listenLogThread.start()
