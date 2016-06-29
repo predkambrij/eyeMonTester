@@ -31,7 +31,9 @@ class Farne:
         #         "lDiffX":lDiffX, "lDiffY":lDiffY, "rDiffX":rDiffX, "rDiffY":rDiffY,
         #     })
         #     #Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, False)
-        if output.startswith("debug_blinks_d1:"):
+        if output.startswith("debug_fb_log_reinit:") or output.startswith("debug_fb_log_repupil:"):
+            print output
+        elif output.startswith("debug_blinks_d1:"):
             flowsInfo = [x for x in output.split(" ") if x != ""]
             if debugProcessLogLine:
                 print repr(flowsInfo)
@@ -49,30 +51,33 @@ class Farne:
                 lDiff, rDiff = float(flowsInfo[flowsInfo.index("La")+1]), float(flowsInfo[flowsInfo.index("Ra")+1])
                 #la, ra = float(flowsInfo[flowsInfo.index("La")+2]), float(flowsInfo[flowsInfo.index("Ra")+2])
                 lSD, rSD = float(flowsInfo[flowsInfo.index("lrSD")+1]), float(flowsInfo[flowsInfo.index("lrSD")+2])
-                plsd1, prsd1 = float(flowsInfo[flowsInfo.index("plrSD12")+1]), float(flowsInfo[flowsInfo.index("plrSD12")+3])
-                plsd2, prsd2 = float(flowsInfo[flowsInfo.index("plrSD12")+2]), float(flowsInfo[flowsInfo.index("plrSD12")+4])
-                mlsd1, mrsd1 = float(flowsInfo[flowsInfo.index("mlrSD12")+1]), float(flowsInfo[flowsInfo.index("mlrSD12")+3])
-                mlsd2, mrsd2 = float(flowsInfo[flowsInfo.index("mlrSD12")+2]), float(flowsInfo[flowsInfo.index("mlrSD12")+4])
+                plsd1, prsd1 = float(flowsInfo[flowsInfo.index("plrSD12t")+1]), float(flowsInfo[flowsInfo.index("plrSD12t")+4])
+                plsd2, prsd2 = float(flowsInfo[flowsInfo.index("plrSD12t")+2]), float(flowsInfo[flowsInfo.index("plrSD12t")+5])
+                plsdt, prsdt = float(flowsInfo[flowsInfo.index("plrSD12t")+3]), float(flowsInfo[flowsInfo.index("plrSD12t")+6])
+                mlsd1, mrsd1 = float(flowsInfo[flowsInfo.index("mlrSD12t")+1]), float(flowsInfo[flowsInfo.index("mlrSD12t")+4])
+                mlsd2, mrsd2 = float(flowsInfo[flowsInfo.index("mlrSD12t")+2]), float(flowsInfo[flowsInfo.index("mlrSD12t")+5])
+                mlsdt, mrsdt = float(flowsInfo[flowsInfo.index("mlrSD12t")+3]), float(flowsInfo[flowsInfo.index("mlrSD12t")+6])
 
                 fFlows.append({"fn":fn, "ts":ts, "type":logType, "lDiff":lDiff, "rDiff":rDiff,
                     "plsd1":plsd1, "prsd1":prsd1, "mlsd1":mlsd1, "mrsd1":mrsd1,
                     "plsd2":plsd2, "prsd2":prsd2, "mlsd2":mlsd2, "mrsd2":mrsd2,
+                    "plsdt":plsdt, "prsdt":prsdt, "mlsdt":mlsdt, "mrsdt":mrsdt,
                 })
             elif logType == "l":
                 lDiff, lSD = float(flowsInfo[flowsInfo.index("La")+1]), float(flowsInfo[flowsInfo.index("lrSD")+1])
-                plsd1, plsd2 = float(flowsInfo[flowsInfo.index("plrSD12")+1]), float(flowsInfo[flowsInfo.index("plrSD12")+2])
-                mlsd1, mlsd2 = float(flowsInfo[flowsInfo.index("mlrSD12")+1]), float(flowsInfo[flowsInfo.index("mlrSD12")+2])
+                plsd1, plsd2, plsdt = float(flowsInfo[flowsInfo.index("plrSD12t")+1]), float(flowsInfo[flowsInfo.index("plrSD12t")+2]), float(flowsInfo[flowsInfo.index("plrSD12t")+3])
+                mlsd1, mlsd2, mlsdt = float(flowsInfo[flowsInfo.index("mlrSD12t")+1]), float(flowsInfo[flowsInfo.index("mlrSD12t")+2]), float(flowsInfo[flowsInfo.index("mlrSD12t")+3])
 
                 fFlows.append({"fn":fn, "ts":ts, "type":logType, "lDiff":lDiff,
-                    "plsd1":plsd1, "plsd2":plsd2, "mlsd1":mlsd1, "mlsd2":mlsd2,
+                    "plsd1":plsd1, "plsd2":plsd2, "plsdt":plsdt, "mlsd1":mlsd1, "mlsd2":mlsd2, "mlsdt":mlsdt,
                 })
             elif logType == "r":
                 rDiff, rSD = float(flowsInfo[flowsInfo.index("Ra")+1]), float(flowsInfo[flowsInfo.index("lrSD")+1])
-                prsd1, prsd2 = float(flowsInfo[flowsInfo.index("plrSD12")+1]), float(flowsInfo[flowsInfo.index("plrSD12")+2])
-                mrsd1, mrsd2 = float(flowsInfo[flowsInfo.index("mlrSD12")+1]), float(flowsInfo[flowsInfo.index("mlrSD12")+2])
+                prsd1, prsd2, prsdt = float(flowsInfo[flowsInfo.index("plrSD12t")+1]), float(flowsInfo[flowsInfo.index("plrSD12t")+2]), float(flowsInfo[flowsInfo.index("plrSD12t")+3])
+                mrsd1, mrsd2, mrsdt = float(flowsInfo[flowsInfo.index("mlrSD12t")+1]), float(flowsInfo[flowsInfo.index("mlrSD12t")+2]), float(flowsInfo[flowsInfo.index("mlrSD12t")+3])
 
                 fFlows.append({"fn":fn, "ts":ts, "type":logType, "rDiff":rDiff,
-                    "prsd1":prsd1, "prsd2":prsd2, "mrsd1":mrsd1, "mrsd2":mrsd2,
+                    "prsd1":prsd1, "prsd2":prsd2, "prsdt":prsdt, "mrsd1":mrsd1, "mrsd2":mrsd2, "mrsdt":mrsdt,
                 })
             elif logType == "n":
                 fFlows.append({"fn":fn, "ts":ts, "type":logType})
@@ -135,8 +140,10 @@ class Farne:
         lDiff, rDiff = [x["lDiff"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "l"], [x["rDiff"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"]
         plsd1, mlsd1 = [x["plsd1"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "l"], [x["mlsd1"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "l"]
         plsd2, mlsd2 = [x["plsd2"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "l"], [x["mlsd2"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "l"]
+        plsdt, mlsdt = [x["plsdt"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "l"], [x["mlsdt"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "l"]
         prsd1, mrsd1 = [x["prsd1"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"], [x["mrsd1"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"]
         prsd2, mrsd2 = [x["prsd2"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"], [x["mrsd2"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"]
+        prsdt, mrsdt = [x["prsdt"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"], [x["mrsdt"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"]
         pltas = [1 for x in fFlows[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
         pltae = [1 for x in fFlows[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
         pltlbs = [1.1 for x in fFlows[-window:]  if x.has_key("lb") and x["lb"] == "s"]
@@ -152,6 +159,7 @@ class Farne:
             pltax, [0 for x in xrange(len(pltax))], 'g--',
             pltlx, plsd1, 'r^-', pltlx, mlsd1, 'r^-', pltrx, prsd1, 'b^-', pltrx, mrsd1, 'b^-',
             pltlx, plsd2, 'r^-', pltlx, mlsd2, 'r^-', pltrx, prsd2, 'b^-', pltrx, mrsd2, 'b^-',
+            pltlx, plsdt, 'r^-', pltlx, mlsd2, 'r^-', pltrx, prsdt, 'b^-', pltrx, mrsdt, 'b^-',
             pltasx, pltas, 'go', pltaex, pltae, 'g^',
             pltlbsx, pltlbs, 'ro', pltlbex, pltlbe, 'r^', pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^'
         )
