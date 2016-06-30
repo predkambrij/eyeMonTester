@@ -168,6 +168,7 @@ class Farne:
             pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
             pltlbsx, pltlbs, 'ro', pltlbex, pltlbe, 'r^', pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^' # start & end of blinks
         )
+        plt.tight_layout()
         plt.show()
         #plt.show(block=False)
 

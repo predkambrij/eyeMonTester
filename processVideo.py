@@ -10,10 +10,15 @@ stopListenLogStopped = False
 
 
 # parsing logs
-def initListenLog():
+def initListenLog(isWebcam):
     global proc
+    if not isWebcam:
+        tailfCmd = ['tail', '-n0', '-f', '/tmp/eyemonpy.log']
+    else:
+        tailfCmd = ['tail', '-n0', '-f', '/tmp/testlog.txt']
+
     proc = subprocess.Popen(
-        ['tail', '-n0', '-f', '/tmp/testlog.txt'],
+        tailfCmd,
         stdin   = subprocess.PIPE,
         stdout  = subprocess.PIPE,
         bufsize = 0,
@@ -63,7 +68,7 @@ def terminateListenLog():
 def initRunVideo(isWebcam):
     global vid
     if not isWebcam:
-        cmd = ['make', 'dt']
+        cmd = ['make', 'dtp']
     else:
         cmd = ['make', 'd']
     vid = subprocess.Popen(
@@ -84,7 +89,7 @@ def processVideo(cfg, isWebcam, annotFilename):
     fFlows, fFlowsI = [], {}
     tCors, bPixes   = [], []
 
-    initListenLog()
+    initListenLog(isWebcam)
     time.sleep(0.5)
     initRunVideo(isWebcam)
 
