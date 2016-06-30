@@ -3,6 +3,15 @@ import processVideo
 
 
 def main():
+    cfg = {
+        "excel_export": True,
+        "coverage":     True,
+        "end_hook":     True,
+        #"method": "blackpixels",
+        "method": "farneback",
+        #"method": "templ",
+    }
+
     outputs = "vidProcOutputs"
 
     #videoName = "o44" # doma
@@ -31,7 +40,7 @@ def main():
         "tCors":[], "fFlows":[], "bPixes":[],
         "fFlowsI":{},
     }
-    processVideo.processVideo(stateVariables, isWebcam, vidPrefix, videoAnnot)
+    processVideo.processVideo(cfg, stateVariables, isWebcam, vidPrefix, videoAnnot)
     return
 
 

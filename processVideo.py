@@ -4,14 +4,6 @@ from templ import Templ
 from farne import Farne
 from blackpixels import Blackpixels
 
-# control flags
-flg_excel_export = True
-flg_coverage = True
-flg_end_hook = True
-#flg_method = "blackpixels"
-flg_method = "farneback"
-#flg_method = "templ"
-
 # flow flags
 stopListenLog        = False
 stopListenLogStopped = False
@@ -26,7 +18,7 @@ def initListenLog():
         stdout  = subprocess.PIPE,
         bufsize = 0,
     )
-def listenLog(annots, fFlows, fFlowsI, tCors, bPixes, lBlinks, rBlinks):
+def listenLog(cfg, annots, fFlows, fFlowsI, tCors, bPixes, lBlinks, rBlinks):
     global stopListenLogStopped
 
     poll_obj = select.poll()
@@ -36,16 +28,16 @@ def listenLog(annots, fFlows, fFlowsI, tCors, bPixes, lBlinks, rBlinks):
         if poll_result:
             output = proc.stdout.readline().strip()
             try:
-                if flg_method == "templ":
+                if cfg["method"] == "templ":
                     if Templ.processLogLine(output, tCors, lBlinks, rBlinks):
                         stopListenLogStopped = True
                         break
-                elif flg_method == "farneback":
+                elif cfg["method"] == "farneback":
                     res = Farne.processLogLine(output, annots, fFlows, fFlowsI, lBlinks, rBlinks)
                     if res:
                         stopListenLogStopped = True
                         break
-                elif flg_method == "blackpixels":
+                elif cfg["method"] == "blackpixels":
                     res = Blackpixels.processLogLine(output, bPixes, lBlinks, rBlinks)
                     if res:
                         stopListenLogStopped = True
@@ -85,7 +77,7 @@ def terminateRunVideo():
     vid.terminate()
 ###
 
-def processVideo(stateVariables, isWebcam, vidPrefix, videoAnnot):
+def processVideo(cfg, stateVariables, isWebcam, vidPrefix, videoAnnot):
     global stopListenLog
 
     lBlinks, rBlinks = stateVariables["lBlinks"], stateVariables["rBlinks"]
@@ -102,7 +94,7 @@ def processVideo(stateVariables, isWebcam, vidPrefix, videoAnnot):
     else:
         annotsl, annots = [], ({}, {})
 
-    listenLogThread = threading.Thread(target=listenLog, args=[annots, fFlows, fFlowsI, tCors, bPixes, lBlinks, rBlinks])
+    listenLogThread = threading.Thread(target=listenLog, args=[cfg, annots, fFlows, fFlowsI, tCors, bPixes, lBlinks, rBlinks])
     listenLogThread.start()
     listenLogThread.join()
 
@@ -113,23 +105,23 @@ def processVideo(stateVariables, isWebcam, vidPrefix, videoAnnot):
     terminateListenLog()
     terminateRunVideo()
 
-    if flg_excel_export:
-        if flg_method == "templ":
+    if cfg["excel_export"]:
+        if cfg["method"] == "templ":
             fnl = Templ.generateTCSV(vidPrefix, videoAnnot, tCors, lBlinks, rBlinks)[1]
             Templ.writeTCSV("/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/test_runner/", fnl)
 
-    if flg_coverage:
-        if flg_method == "farneback":
+    if cfg["coverage"]:
+        if cfg["method"] == "farneback":
             l, r, o = Cmn.detectionCoverageF(annotsl, lBlinks, rBlinks)
             Cmn.displayDetectionCoverage(l, r, o)
-        elif flg_method == "templ":
+        elif cfg["method"] == "templ":
             fnl = Templ.generateTCSV(vidPrefix, videoAnnot, tCors, lBlinks, rBlinks)[1]
             res = Cmn.detectionCoverage(lBlinks, rBlinks, fnl)
             for r in res:
                 print r
-    if flg_end_hook:
-        if flg_method == "farneback":
+    if cfg["end_hook"]:
+        if cfg["method"] == "farneback":
             Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, True)
-        elif flg_method == "templ":
+        elif cfg["method"] == "templ":
             Templ.postProcessLogLine(tCors, lBlinks, rBlinks, True)
 
