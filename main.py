@@ -20,23 +20,23 @@ def main():
     vidPrefix = "/home/developer/other/posnetki/"
 
 
-    vidNum = 1
+    vidNum = 0
     isWebcam = False
     if vidNum == 0:
         isWebcam = True
-        videoName = ""
-    elif vidNum == 1:
-        vidPrefix += "sk/eyeblink8/1/" # punca od dalec
-        videoName = "26122013_223310_cam.avi"
-    elif vidNum == 2:
-        vidPrefix += "sk/NightOfResearchers15/test/14/" # full partial
-        videoName = "26092014_211047_cam.avi"
+        annotFilename = None
+    elif vidNum == 1: # punca od dalec
+        videoName = vidPrefix+"sk/eyeblink8/1/26122013_223310_cam.avi"
+    elif vidNum == 2: # full partial
+        videoName = vidPrefix+"sk/NightOfResearchers15/test/14/26092014_211047_cam.avi"
     elif vidNum == 3:
-        videoName = "talking.avi"
+        videoName = vidPrefix+"talking.avi"
 
-    videoAnnot = os.path.splitext(videoName)[0]+".tag"
+    if not 'annotFilename' in locals():
+        annotFilename = os.path.splitext(videoName)[0]+".tag"
+        if not os.path.isfile(annotFilename):
+            annotFilename = None
 
-    annotFilename = vidPrefix+videoAnnot
     fFlows, lBlinks, rBlinks, l, r, o = processVideo.processVideo(cfg, isWebcam, annotFilename)
     return
 
