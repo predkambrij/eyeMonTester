@@ -26,7 +26,8 @@ fFlowsI = {}
 #videoName = "o90" # premikal glavo, zadej luc
 vidPrefix = "/home/developer/other/posnetki/"
 
-vidNum = 0
+vidNum = 1
+
 if vidNum == 0:
     videoName = ""
 elif vidNum == 1:
