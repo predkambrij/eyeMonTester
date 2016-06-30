@@ -36,11 +36,8 @@ def main():
 
     videoAnnot = os.path.splitext(videoName)[0]+".tag"
 
-    stateVariables = {"lBlinks":[], "rBlinks":[],
-        "tCors":[], "fFlows":[], "bPixes":[],
-        "fFlowsI":{},
-    }
-    processVideo.processVideo(cfg, stateVariables, isWebcam, vidPrefix, videoAnnot)
+    annotFilename = vidPrefix+videoAnnot
+    fFlows, lBlinks, rBlinks, l, r, o = processVideo.processVideo(cfg, isWebcam, annotFilename)
     return
 
 

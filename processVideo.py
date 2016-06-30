@@ -77,20 +77,23 @@ def terminateRunVideo():
     vid.terminate()
 ###
 
-def processVideo(cfg, stateVariables, isWebcam, vidPrefix, videoAnnot):
+def processVideo(cfg, isWebcam, annotFilename):
     global stopListenLog
 
-    lBlinks, rBlinks = stateVariables["lBlinks"], stateVariables["rBlinks"]
-    fFlows, fFlowsI = stateVariables["fFlows"], stateVariables["fFlowsI"]
-    tCors, bPixes   = stateVariables["tCors"], stateVariables["bPixes"]
+    lBlinks, rBlinks = [], []
+    fFlows, fFlowsI = [], {}
+    tCors, bPixes   = [], []
 
     initListenLog()
     time.sleep(0.5)
     initRunVideo(isWebcam)
 
-    if videoAnnot != ".tag":
-        f = file(vidPrefix+videoAnnot)
-        annotsl, annots = Cmn.parseAnnotations(f, None, "farne")
+    if type(annotFilename) == type(""):
+        if annotFilename.endswith(".tag"):
+            f = file(annotFilename)
+            annotsl, annots = Cmn.parseAnnotations(f, None, "farne")
+        else:
+            raise ValueError("unknown annotation format")
     else:
         annotsl, annots = [], ({}, {})
 
@@ -125,3 +128,8 @@ def processVideo(cfg, stateVariables, isWebcam, vidPrefix, videoAnnot):
         elif cfg["method"] == "templ":
             Templ.postProcessLogLine(tCors, lBlinks, rBlinks, True)
 
+    if cfg["method"] == "farneback":
+        l, r, o = Cmn.detectionCoverageF(annotsl, lBlinks, rBlinks)
+        return fFlows, lBlinks, rBlinks, l, r, o
+    else:
+        return
