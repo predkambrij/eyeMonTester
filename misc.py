@@ -1,8 +1,36 @@
 import sys
 
 from common import Common as Cmn
-import main
+from farne import Farne
+import main, processVideo
 
+def readOutputsToVariables(outputFileName):
+    variablesMap = {0:"fFlows", 1:"lBlinks", 2:"rBlinks", 3:"l", 4:"r", 5:"o"}
+    varsDict = {}
+
+    index = 0
+    for line in file(outputFileName, "rb"):
+        varsDict[variablesMap[index]] = eval(line)
+        index += 1
+
+    return varsDict
+
+def detectionCoverageAndPyplotFromOutputs():
+    cfg = main.getConfigs()
+    videos, videoRange = main.prepareVideosList(cfg)
+    videoName = videos[videoRange[0]]
+    outputFileName = main.prepareOutputFileName(cfg["othr"]["codeDirectory"], cfg["othr"]["outputsPref"], videoName)
+    if cfg["method"] == "farneback":
+        varsDict = readOutputsToVariables(outputFileName)
+        Cmn.displayDetectionCoverage(varsDict["l"], varsDict["r"], varsDict["o"])
+        Farne.postProcessLogLine(varsDict["fFlows"], varsDict["lBlinks"], varsDict["rBlinks"], True)
+    return
+
+def testMain():
+    detectionCoverageAndPyplotFromOutputs()
+
+def pyplotGraphFromOutput():
+    return
 def analizeAnnotated(fn):
     blinks = [[float(y) for y in x.split(",") if y != "p"] for x in file("annotations/"+fn, "rb").read().strip().split("\n")]
     for blink in blinks:
@@ -108,5 +136,6 @@ if __name__ == "__main__":
     #analizeAnnotated("o90")
     #partialBlinks()
     #showAnnots()
-    bc()
+    #bc()
+    testMain()
 
