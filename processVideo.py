@@ -16,13 +16,6 @@ flg_method = "farneback"
 stopListenLog        = False
 stopListenLogStopped = False
 
-# state variables
-lBlinks, rBlinks = [], []
-tCors, fFlows, bPixes = [], [], []
-fFlowsI = {}
-
-
-path = "/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/test_runner/"
 
 # parsing logs
 def initListenLog():
@@ -33,7 +26,7 @@ def initListenLog():
         stdout  = subprocess.PIPE,
         bufsize = 0,
     )
-def listenLog():
+def listenLog(annots, fFlows, fFlowsI, tCors, bPixes, lBlinks, rBlinks):
     global stopListenLogStopped
 
     poll_obj = select.poll()
@@ -75,9 +68,9 @@ def terminateListenLog():
 ####
 
 # configure and run video
-def initRunVideo(vidNum):
+def initRunVideo(isWebcam):
     global vid
-    if vidNum != 0:
+    if not isWebcam:
         cmd = ['make', 'dt']
     else:
         cmd = ['make', 'd']
@@ -92,11 +85,16 @@ def terminateRunVideo():
     vid.terminate()
 ###
 
-def processVideo(vidNum, vidPrefix, videoAnnot):
-    global stopListenLog, annots
+def processVideo(stateVariables, isWebcam, vidPrefix, videoAnnot):
+    global stopListenLog
+
+    lBlinks, rBlinks = stateVariables["lBlinks"], stateVariables["rBlinks"]
+    fFlows, fFlowsI = stateVariables["fFlows"], stateVariables["fFlowsI"]
+    tCors, bPixes   = stateVariables["tCors"], stateVariables["bPixes"]
+
     initListenLog()
     time.sleep(0.5)
-    initRunVideo(vidNum)
+    initRunVideo(isWebcam)
 
     if videoAnnot != ".tag":
         f = file(vidPrefix+videoAnnot)
@@ -104,7 +102,7 @@ def processVideo(vidNum, vidPrefix, videoAnnot):
     else:
         annotsl, annots = [], ({}, {})
 
-    listenLogThread = threading.Thread(target=listenLog, args=[])
+    listenLogThread = threading.Thread(target=listenLog, args=[annots, fFlows, fFlowsI, tCors, bPixes, lBlinks, rBlinks])
     listenLogThread.start()
     listenLogThread.join()
 
@@ -118,7 +116,7 @@ def processVideo(vidNum, vidPrefix, videoAnnot):
     if flg_excel_export:
         if flg_method == "templ":
             fnl = Templ.generateTCSV(vidPrefix, videoAnnot, tCors, lBlinks, rBlinks)[1]
-            Templ.writeTCSV(path, fnl)
+            Templ.writeTCSV("/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/test_runner/", fnl)
 
     if flg_coverage:
         if flg_method == "farneback":

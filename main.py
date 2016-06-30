@@ -12,8 +12,9 @@ def main():
 
 
     vidNum = 1
-
+    isWebcam = False
     if vidNum == 0:
+        isWebcam = True
         videoName = ""
     elif vidNum == 1:
         vidPrefix += "sk/eyeblink8/1/" # punca od dalec
@@ -26,7 +27,11 @@ def main():
 
     videoAnnot = os.path.splitext(videoName)[0]+".tag"
 
-    processVideo.processVideo(vidNum, vidPrefix, videoAnnot)
+    stateVariables = {"lBlinks":[], "rBlinks":[],
+        "tCors":[], "fFlows":[], "bPixes":[],
+        "fFlowsI":{},
+    }
+    processVideo.processVideo(stateVariables, isWebcam, vidPrefix, videoAnnot)
     return
 
 
