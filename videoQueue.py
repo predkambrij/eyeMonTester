@@ -1,5 +1,7 @@
 import os
 import processVideo
+from common import Common as Cmn
+from farne import Farne
 
 class VideoQueue:
     def __init__(self):
@@ -29,10 +31,6 @@ class VideoQueue:
         return
 
     @staticmethod
-    def writeOverallReport():
-        return
-
-    @staticmethod
     def processVideoQueue(cfg, videos, videoRange):
         isWebcam = False
         if isWebcam == True:
@@ -40,8 +38,8 @@ class VideoQueue:
             return
 
         for vi in videoRange:
-            videoName = videos[vi]
-            print videoName
+            videoDescription, videoName = videos[vi]
+            print videoDescription, videoName
 
             # sed videoname in c++ source code
             settingsFile = cfg["othr"]["sourceCodePrefix"]+"/jni/main_settings_testpy.cpp"
@@ -58,3 +56,45 @@ class VideoQueue:
             outputFileName = VideoQueue.prepareOutputFileName(cfg["othr"]["codeDirectory"], cfg["othr"]["outputsPref"], videoName)
             VideoQueue.writeVideoResults(outputFileName, fFlows, lBlinks, rBlinks, l, r, o)
         return
+
+    @staticmethod
+    def readOutputsToVariables(outputFileName):
+        variablesMap = {0:"fFlows", 1:"lBlinks", 2:"rBlinks", 3:"l", 4:"r", 5:"o"}
+        varsDict = {}
+
+        index = 0
+        for line in file(outputFileName, "rb"):
+            varsDict[variablesMap[index]] = eval(line)
+            index += 1
+
+        return varsDict
+
+    @staticmethod
+    def initOverallReport():
+        return
+
+    @staticmethod
+    def writeOverallReport():
+        return
+
+    @staticmethod
+    def processOutputs(cfg, videos, videoRange, actions):
+        #videoRange = videoRange[:1]
+
+        if "writeOverallReport" in actions:
+
+        for vi in videoRange:
+            videoDescription, videoName = videos[vi]
+            print videoDescription, videoName
+
+            outputFileName = VideoQueue.prepareOutputFileName(cfg["othr"]["codeDirectory"], cfg["othr"]["outputsPref"], videoName)
+            if cfg["method"] == "farneback":
+                varsDict = VideoQueue.readOutputsToVariables(outputFileName)
+                if "displayDetectionCoverage" in actions:
+                    Cmn.displayDetectionCoverage(varsDict["l"], varsDict["r"], varsDict["o"])
+                if "postProcessLogLine" in actions:
+                    Farne.postProcessLogLine(varsDict["fFlows"], varsDict["lBlinks"], varsDict["rBlinks"], True)
+                if "writeOverallReport" in actions:
+                    VideoQueue.writeOverallReport()
+        return
+
