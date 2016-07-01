@@ -34,6 +34,8 @@ def processVideoQueue(cfg):
     videos, videoRange = prepareVideosList(cfg)
     for vi in videoRange:
         videoName = videos[vi]
+        print videoName
+
         # sed videoname in c++ source code
         settingsFile = cfg["othr"]["sourceCodePrefix"]+"/jni/main_settings_testpy.cpp"
         sedCmd = "sed -i 's|\(^char\ fileName\[100\]\ =\ \"\)\(.*\)\(\";$\)|\\1%s\\3|' %s " % (videoName, settingsFile)
@@ -44,32 +46,47 @@ def processVideoQueue(cfg):
             annotFilename = None
 
         fFlows, lBlinks, rBlinks, l, r, o = processVideo.processVideo(cfg, isWebcam, annotFilename)
+        # reset processVideo's global variables
+        reload(processVideo)
         outputFileName = prepareOutputFileName(cfg["othr"]["codeDirectory"], cfg["othr"]["outputsPref"], videoName)
         writeVideoResults(outputFileName, fFlows, lBlinks, rBlinks, l, r, o)
     return
 
+#############################################
 def prepareVideosList(cfg):
     #videoName = "o44" # doma
     #videoName = "o89" # knjiznica 40s
     #videoName = "o90" # premikal glavo, zadej luc
     vidPrefix = cfg["othr"]["vidPrefix"]
-    videos = [
-        # 0 punca od dalec
+    eyeblink8 = [
+        # punca od dalec
         vidPrefix+"sk/eyeblink8/1/26122013_223310_cam.avi",
-        # 1 full partial
+
+        vidPrefix+"sk/eyeblink8/2/26122013_224532_cam.avi",
+        vidPrefix+"sk/eyeblink8/3/26122013_230103_cam.avi",
+        vidPrefix+"sk/eyeblink8/4/26122013_230654_cam.avi",
+        vidPrefix+"sk/eyeblink8/8/27122013_151644_cam.avi",
+        vidPrefix+"sk/eyeblink8/9/27122013_152435_cam.avi",
+        vidPrefix+"sk/eyeblink8/10/27122013_153916_cam.avi",
+        vidPrefix+"sk/eyeblink8/11/27122013_154548_cam.avi",
+    ]
+    others = [
+        # full partial
         vidPrefix+"sk/NightOfResearchers15/test/14/26092014_211047_cam.avi",
-        # 2 talking
+        # talking
         vidPrefix+"talking.avi",
     ]
-    videoRange = [0]
+    #videos = others+eyeblink8
+    videos = eyeblink8+others
+    videoRange = range(len(videos)) #[0, 1, 2]
     #videoRange = xrange(len(videos))
     return videos, videoRange
 
 def getConfigs():
     return {
-        "excel_export": True,
-        "coverage":     True,
-        "end_hook":     True,
+        "excel_export": False,
+        "coverage":     False,
+        "end_hook":     False,
         #"method": "blackpixels",
         "method": "farneback",
         #"method": "templ",
