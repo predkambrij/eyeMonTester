@@ -9,7 +9,11 @@ import main, processVideo
 def testMain():
     cfg = main.getConfigs()
     videos, videoRange = main.prepareVideosList(cfg)
-    VideoQueue.detectionCoverageAndPyplotFromOutputs(cfg, videos, videoRange)
+    actions = [
+        "writeOverallReport",
+        #"displayDetectionCoverage",
+    ]
+    VideoQueue.processOutputs(cfg, videos, videoRange, actions)
 
 def pyplotGraphFromOutput():
     return

@@ -95,8 +95,7 @@ def processVideo(cfg, isWebcam, annotFilename):
 
     if type(annotFilename) == type(""):
         if annotFilename.endswith(".tag"):
-            f = file(annotFilename)
-            annotsl, annots = Cmn.parseAnnotations(f, None, "farne")
+            annotsl, annots = Cmn.parseAnnotations(file(annotFilename), None, "farne")
         else:
             raise ValueError("unknown annotation format")
     else:

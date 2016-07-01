@@ -70,11 +70,47 @@ class VideoQueue:
         return varsDict
 
     @staticmethod
-    def initOverallReport():
-        return
+    def initOverallReport(cfg):
+        fileName = cfg["othr"]["codeDirectory"] + cfg["othr"]["outputsPref"] + "/overall.tsv"
+        # truncate the file or create it, if it doesn't exist yet
+        title = "Description\tFile path\t"
+        title += "Ann\t"
+        title += "L tot\tL TP\tL mis\tL FP\t"
+        title += "R tot\tR TP\tR mis\tR FP\t"
+
+        title += "B TP\tB mis\t"
+        title += "A TP\tA mis\t"
+
+        title += "L TP/ann\tL FP/ann\t"
+        title += "R TP/ann\tR FP/ann\t"
+        title += "\n"
+        file(fileName, "wb").write(title)
+        return fileName
 
     @staticmethod
-    def writeOverallReport():
+    def writeOverallReport(fileName, videoDescription, videoName, varsDict):
+        annotFilename = os.path.splitext(videoName)[0]+".tag"
+        if not os.path.isfile(annotFilename):
+            return
+        annotsl, annots = Cmn.parseAnnotations(file(annotFilename), None, "farne")
+        l, r, o = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"])
+
+        line = "%s\t%s\t" % (videoDescription, videoName.split("/posnetki/")[1])
+        line += "%i\t" % len(o[4])
+        line += "%i\t%i\t%i\t%i\t" % (len(l[0]), len(l[1]), len(l[2]), len(l[3]))
+        line += "%i\t%i\t%i\t%i\t" % (len(r[0]), len(r[1]), len(r[2]), len(r[3]))
+
+        line += "%i\t%i\t" % (len(o[0]), len(o[1]))
+        line += "%i\t%i\t" % (len(o[2]), len(o[3]))
+
+        lTPRatio = 0 if len(o[4]) == 0 else len(l[1])/float(len(o[4]))*100
+        lFPRatio = len(l[3]) if len(o[4]) == 0 else len(l[3])/float(len(o[4]))*100
+        rTPRatio = 0 if len(o[4]) == 0 else len(r[1])/float(len(o[4]))*100
+        rFPRatio = len(r[3]) if len(o[4]) == 0 else len(r[3])/float(len(o[4]))*100
+        line += "%.2f\t%.2f\t" % (lTPRatio, lFPRatio)
+        line += "%.2f\t%.2f\t" % (rTPRatio, rFPRatio)
+        line += "\n"
+        file(fileName, "ab").write(line)
         return
 
     @staticmethod
@@ -82,6 +118,7 @@ class VideoQueue:
         #videoRange = videoRange[:1]
 
         if "writeOverallReport" in actions:
+            reportFileName = VideoQueue.initOverallReport(cfg)
 
         for vi in videoRange:
             videoDescription, videoName = videos[vi]
@@ -90,11 +127,12 @@ class VideoQueue:
             outputFileName = VideoQueue.prepareOutputFileName(cfg["othr"]["codeDirectory"], cfg["othr"]["outputsPref"], videoName)
             if cfg["method"] == "farneback":
                 varsDict = VideoQueue.readOutputsToVariables(outputFileName)
-                if "displayDetectionCoverage" in actions:
-                    Cmn.displayDetectionCoverage(varsDict["l"], varsDict["r"], varsDict["o"])
-                if "postProcessLogLine" in actions:
-                    Farne.postProcessLogLine(varsDict["fFlows"], varsDict["lBlinks"], varsDict["rBlinks"], True)
-                if "writeOverallReport" in actions:
-                    VideoQueue.writeOverallReport()
+
+            if "displayDetectionCoverage" in actions:
+                Cmn.displayDetectionCoverage(varsDict["l"], varsDict["r"], varsDict["o"])
+            if "postProcessLogLine" in actions:
+                Farne.postProcessLogLine(varsDict["fFlows"], varsDict["lBlinks"], varsDict["rBlinks"], True)
+            if "writeOverallReport" in actions:
+                VideoQueue.writeOverallReport(reportFileName, videoDescription, videoName, varsDict)
         return
 
