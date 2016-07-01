@@ -232,8 +232,9 @@ class Common:
         lCaught, lMissed, lFp = Common._detectionCoverageHelper(annotsl[:], annotsD, lBlinks)
         rCaught, rMissed, rFp = Common._detectionCoverageHelper(annotsl[:], annotsD, rBlinks)
 
-        aMissed = [x["bi"] for x in annotsl if not x["bi"] in set(lCaught+rCaught)]
         aCaught = set.union(set(lCaught), set(rCaught))
+        aMissed = [x["bi"] for x in annotsl if not x["bi"] in aCaught]
         bCaught = set.intersection(*[set(lCaught), set(rCaught)])
+        bMissed = [x["bi"] for x in annotsl if not x["bi"] in bCaught]
 
-        return (lBlinks, lCaught, lMissed, lFp), (rBlinks, rCaught, rMissed, rFp), (bCaught, aCaught, aMissed, annotsl)
+        return (lBlinks, lCaught, lMissed, lFp), (rBlinks, rCaught, rMissed, rFp), (bCaught, bMissed, aCaught, aMissed, annotsl)
