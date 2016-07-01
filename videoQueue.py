@@ -95,18 +95,25 @@ class VideoQueue:
         annotsl, annots = Cmn.parseAnnotations(file(annotFilename), None, "farne")
         l, r, o = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"])
 
+        # video desc, filepath
         line = "%s\t%s\t" % (videoDescription, videoName.split("/posnetki/")[1])
-        line += "%i\t" % len(o[4])
+        # annot, left, right
+        line += "%i\t" % len(annotsl)
         line += "%i\t%i\t%i\t%i\t" % (len(l[0]), len(l[1]), len(l[2]), len(l[3]))
         line += "%i\t%i\t%i\t%i\t" % (len(r[0]), len(r[1]), len(r[2]), len(r[3]))
-
+        # both, any
         line += "%i\t%i\t" % (len(o[0]), len(o[1]))
         line += "%i\t%i\t" % (len(o[2]), len(o[3]))
 
-        lTPRatio = 0 if len(o[4]) == 0 else len(l[1])/float(len(o[4]))*100
-        lFPRatio = len(l[3]) if len(o[4]) == 0 else len(l[3])/float(len(o[4]))*100
-        rTPRatio = 0 if len(o[4]) == 0 else len(r[1])/float(len(o[4]))*100
-        rFPRatio = len(r[3]) if len(o[4]) == 0 else len(r[3])/float(len(o[4]))*100
+        lTPRatio = 0 if len(annotsl) == 0 else len(l[1])/float(len(annotsl))*100
+        lFPRatio = len(l[3]) if len(annotsl) == 0 else len(l[3])/float(len(annotsl))*100
+        rTPRatio = 0 if len(annotsl) == 0 else len(r[1])/float(len(annotsl))*100
+        rFPRatio = len(r[3]) if len(annotsl) == 0 else len(r[3])/float(len(annotsl))*100
+
+        bTPRatio = 0 if len(annotsl) == 0 else len(o[0])/float(len(annotsl))*100
+        #bFPRatio = len(r[3]) if len(annotsl) == 0 else len(r[3])/float(len(annotsl))*100
+        aTPRatio = 0 if len(annotsl) == 0 else len(o[2])/float(len(annotsl))*100
+
         line += "%.2f\t%.2f\t" % (lTPRatio, lFPRatio)
         line += "%.2f\t%.2f\t" % (rTPRatio, rFPRatio)
         line += "\n"

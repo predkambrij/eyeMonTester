@@ -237,4 +237,4 @@ class Common:
         bCaught = set.intersection(*[set(lCaught), set(rCaught)])
         bMissed = [x["bi"] for x in annotsl if not x["bi"] in bCaught]
 
-        return (lBlinks, lCaught, lMissed, lFp), (rBlinks, rCaught, rMissed, rFp), (bCaught, bMissed, aCaught, aMissed, annotsl)
+        return (lBlinks, lCaught, lMissed, lFp), (rBlinks, rCaught, rMissed, rFp), (bCaught, bMissed, aCaught, aMissed)
