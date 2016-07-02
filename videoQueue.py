@@ -83,8 +83,10 @@ class VideoQueue:
         title += "M:A\tB\tLO\tRO\t"
         title += "FP:A\tB\tLO\tRO\t"
 
-        title += "TP/:L\tR\t"
-        title += "FP/:L\tR\t"
+        title += "TP/:A\tB\tL\tR\t"
+        title += "FP/:A\tB\tLO\tRO\t"
+
+        title += "S:A\tB\t"
 
         title += "\n"
         file(fileName, "wb").write(title)
@@ -110,15 +112,22 @@ class VideoQueue:
         anyFp = len(dc["fpByOnlyL"])+len(dc["fpByOnlyR"])+len(dc["fpByBothEyes"])
         line += "%i\t%i\t%i\t%i\t" % (anyFp, len(dc["fpByBothEyes"]), len(dc["fpByOnlyL"]), len(dc["fpByOnlyR"]))
 
-        lTPRatio = 0 if len(annotsl) == 0 else len(dc["lCaught"])/float(len(annotsl))*100
-        lFPRatio = len(dc["lFp"]) if len(annotsl) == 0 else len(dc["lFp"])/float(len(annotsl))*100
-        rTPRatio = 0 if len(annotsl) == 0 else len(dc["rCaught"])/float(len(annotsl))*100
-        rFPRatio = len(dc["rFp"]) if len(annotsl) == 0 else len(dc["rFp"])/float(len(annotsl))*100
-        bTPRatio = 0 if len(annotsl) == 0 else len(dc["bCaught"])/float(len(annotsl))*100
+        # tp ratio a, b, l, r
         aTPRatio = 0 if len(annotsl) == 0 else len(dc["aCaught"])/float(len(annotsl))*100
+        bTPRatio = 0 if len(annotsl) == 0 else len(dc["bCaught"])/float(len(annotsl))*100
+        lTPRatio = 0 if len(annotsl) == 0 else len(dc["lCaught"])/float(len(annotsl))*100
+        rTPRatio = 0 if len(annotsl) == 0 else len(dc["rCaught"])/float(len(annotsl))*100
+        line += "%.1f\t%.1f\t%.1f\t%.1f\t" % (aTPRatio, bTPRatio, lTPRatio, rTPRatio)
 
-        line += "%.2f\t%.2f\t" % (lTPRatio, rTPRatio)
-        line += "%.2f\t%.2f\t" % (lFPRatio, rFPRatio)
+        # fp ratio a, b, l, r
+        aFPRatio = anyFp if len(annotsl) == 0 else anyFp/float(len(annotsl))*100
+        bFPRatio = len(dc["fpByBothEyes"]) if len(annotsl) == 0 else len(dc["fpByBothEyes"])/float(len(annotsl))*100
+        loFPRatio = len(dc["fpByOnlyL"]) if len(annotsl) == 0 else len(dc["fpByOnlyL"])/float(len(annotsl))*100
+        roFPRatio = len(dc["fpByOnlyR"]) if len(annotsl) == 0 else len(dc["fpByOnlyR"])/float(len(annotsl))*100
+        line += "%.2f\t%.2f\t%.2f\t%.2f\t" % (aFPRatio, bFPRatio, loFPRatio, roFPRatio)
+
+        line += "%.2f\t%.2f\t" % (100-(100-aTPRatio)-aFPRatio, 100-(100-bTPRatio)-aFPRatio)
+
         line += "\n"
         file(fileName, "ab").write(line)
         return
