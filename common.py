@@ -266,14 +266,21 @@ class Common:
         rCaught, rCaughtIndices, rMissed, rFp = Common._detectionCoverageHelper(annotsl[:], annotsD, rBlinks)
 
         aCaught = set.union(set(lCaught), set(rCaught))
+        bCaught = set.intersection(*[set(lCaught), set(rCaught)])
+
+        loCaught = [x["bi"] for x in annotsl if (x["bi"] in lCaught and (not x["bi"] in bCaught))]
+        roCaught = [x["bi"] for x in annotsl if (x["bi"] in rCaught and (not x["bi"] in bCaught))]
 
         aMissed = [x["bi"] for x in annotsl if not x["bi"] in aCaught]
-        bCaught = set.intersection(*[set(lCaught), set(rCaught)])
         bMissed = [x["bi"] for x in annotsl if not x["bi"] in bCaught]
 
         fpByBothEyes, fpByOnlyL, fpByOnlyR = Common._processFps(lFp, rFp)
 
-        l = (lBlinks, lCaught, lMissed, lFp)
-        r = (rBlinks, rCaught, rMissed, rFp)
-        o = (bCaught, bMissed, aCaught, aMissed, fpByBothEyes, fpByOnlyL, fpByOnlyR)
-        return l, r, o
+        dc = {
+            "lCaught":lCaught, "lMissed":lMissed, "lFp":lFp,
+            "rCaught":rCaught, "rMissed":rMissed, "rFp":rFp,
+            "loCaught":loCaught, "roCaught":roCaught, "bCaught":bCaught, "aCaught":aCaught,
+            "bMissed":bMissed, "aMissed":aMissed,
+            "fpByBothEyes":fpByBothEyes, "fpByOnlyL":fpByOnlyL, "fpByOnlyR":fpByOnlyR
+        }
+        return dc

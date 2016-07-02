@@ -96,25 +96,27 @@ class VideoQueue:
         if not os.path.isfile(annotFilename):
             return
         annotsl, annots = Cmn.parseAnnotations(file(annotFilename), None, "farne")
-        l, r, o = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"])
+        dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"])
 
         # video desc, filepath
         line = "%s\t%s\t" % (videoDescription, videoName.split("/posnetki/")[1])
         # total annot, left, right
-        line += "%i\t%i\t%i\t" % (len(annotsl), len(l[0]), len(r[0]))
+        line += "%i\t%i\t%i\t" % (len(annotsl), len(varsDict["lBlinks"]), len(varsDict["rBlinks"]))
         # tp l, r, b, a
-        line += "%i\t%i\t%i\t%i\t" % (len(l[1]), len(r[1]), len(o[0]), len(o[2]))
+        line += "%i\t%i\t%i\t%i\t" % (len(dc["lCaught"]), len(dc["rCaught"]), len(dc["bCaught"]), len(dc["aCaught"]))
         # miss left, right, both, any
-        line += "%i\t%i\t%i\t%i\t" % (len(l[2]), len(r[2]), len(o[1]), len(o[3]))
+        line += "%i\t%i\t%i\t%i\t" % (len(dc["lMissed"]), len(dc["rMissed"]), len(dc["bMissed"]), len(dc["aMissed"]))
         # fp (l, r, lo, ro, b, all)
-        line += "%i\t%i\t%i\t%i\t%i\t%i\t" % (len(l[3]), len(r[3]), len(o[5]), len(o[6]), len(o[4]), len(o[5])+len(o[6])+len(o[4]))
+        line += "%i\t%i\t%i\t%i\t" % (len(dc["lFp"]), len(dc["rFp"]), len(dc["fpByOnlyL"]), len(dc["fpByOnlyR"]))
+        # fp (b, all)
+        line += "%i\t%i\t" % (len(dc["fpByBothEyes"]), len(dc["fpByOnlyL"])+len(dc["fpByOnlyR"])+len(dc["fpByBothEyes"]))
 
-        lTPRatio = 0 if len(annotsl) == 0 else len(l[1])/float(len(annotsl))*100
-        lFPRatio = len(l[3]) if len(annotsl) == 0 else len(l[3])/float(len(annotsl))*100
-        rTPRatio = 0 if len(annotsl) == 0 else len(r[1])/float(len(annotsl))*100
-        rFPRatio = len(r[3]) if len(annotsl) == 0 else len(r[3])/float(len(annotsl))*100
-        bTPRatio = 0 if len(annotsl) == 0 else len(o[0])/float(len(annotsl))*100
-        aTPRatio = 0 if len(annotsl) == 0 else len(o[2])/float(len(annotsl))*100
+        lTPRatio = 0 if len(annotsl) == 0 else len(dc["lCaught"])/float(len(annotsl))*100
+        lFPRatio = len(dc["lFp"]) if len(annotsl) == 0 else len(dc["lFp"])/float(len(annotsl))*100
+        rTPRatio = 0 if len(annotsl) == 0 else len(dc["rCaught"])/float(len(annotsl))*100
+        rFPRatio = len(dc["rFp"]) if len(annotsl) == 0 else len(dc["rFp"])/float(len(annotsl))*100
+        bTPRatio = 0 if len(annotsl) == 0 else len(dc["bCaught"])/float(len(annotsl))*100
+        aTPRatio = 0 if len(annotsl) == 0 else len(dc["aCaught"])/float(len(annotsl))*100
 
         line += "%.2f\t%.2f\t" % (lTPRatio, rTPRatio)
         line += "%.2f\t%.2f\t" % (lFPRatio, rFPRatio)
