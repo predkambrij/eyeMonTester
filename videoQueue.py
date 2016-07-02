@@ -81,7 +81,7 @@ class VideoQueue:
         title += "T:A\tL\tR\t"
         title += "TP:A\tB\tLO\tRO\t"
         title += "M:A\tB\tLO\tRO\t"
-        title += "FP:L\tR\tLO\tRO\tB\tAll\t"
+        title += "FP:A\tB\tLO\tRO\t"
 
         title += "TP/:L\tR\t"
         title += "FP/:L\tR\t"
@@ -106,10 +106,9 @@ class VideoQueue:
         line += "%i\t%i\t%i\t%i\t" % (len(dc["aCaught"]), len(dc["bCaught"]), len(dc["loCaught"]), len(dc["roCaught"]))
         # miss a, b, lo, ro
         line += "%i\t%i\t%i\t%i\t" % (len(dc["aMissed"]), len(dc["bMissed"]), len(dc["loMissed"]), len(dc["roMissed"]))
-        # fp (l, r, lo, ro, b, all)
-        line += "%i\t%i\t%i\t%i\t" % (len(dc["lFp"]), len(dc["rFp"]), len(dc["fpByOnlyL"]), len(dc["fpByOnlyR"]))
-        # fp (b, all)
-        line += "%i\t%i\t" % (len(dc["fpByBothEyes"]), len(dc["fpByOnlyL"])+len(dc["fpByOnlyR"])+len(dc["fpByBothEyes"]))
+        # fp (a, b, lo, ro)
+        anyFp = len(dc["fpByOnlyL"])+len(dc["fpByOnlyR"])+len(dc["fpByBothEyes"])
+        line += "%i\t%i\t%i\t%i\t" % (anyFp, len(dc["fpByBothEyes"]), len(dc["fpByOnlyL"]), len(dc["fpByOnlyR"]))
 
         lTPRatio = 0 if len(annotsl) == 0 else len(dc["lCaught"])/float(len(annotsl))*100
         lFPRatio = len(dc["lFp"]) if len(annotsl) == 0 else len(dc["lFp"])/float(len(annotsl))*100

@@ -212,29 +212,24 @@ class Common:
         byBothEyesLIndexesS = set()
         byBothEyesRIndexesS = set()
 
-        # [(0, {'duration': 333.333333, 'start': 13000.0, 'fs': 389, 'end': 13333.333333, 'fe': 399}),
-        for lIndex, lFp in lFps:
-            for rIndex, rFp in rFps:
-                if ((rFp["start"] <= lFp["start"] and lFp["start"] <= rFp["end"])
-                    or (rFp["start"] <= lFp["end"] and lFp["end"] <= rFp["end"])):
-                    byBothEyesLIndexesS.add(lIndex)
-                    byBothEyesRIndexesS.add(rIndex)
-                    byBothEyesS.add((lIndex, rIndex))
+        for lFpsIndex, (lIndex, lFp) in zip(xrange(len(lFps)), lFps):
+            for rFpsIndex, (rIndex, rFp) in zip(xrange(len(rFps)), rFps):
+                if ((rFp["fs"] <= lFp["fs"] and lFp["fs"] <= rFp["fe"]) or (rFp["fs"] <= lFp["fe"] and lFp["fe"] <= rFp["fe"])):
+                    byBothEyesLIndexesS.add(lFpsIndex)
+                    byBothEyesRIndexesS.add(rFpsIndex)
+                    byBothEyesS.add((lFpsIndex, rFpsIndex))
                     break
-                elif ((lFp["start"] <= rFp["start"] and rFp["start"] <= lFp["end"])
-                    or (lFp["start"] <= rFp["end"] and rFp["end"] <= lFp["end"])):
-                    byBothEyesLIndexesS.add(lIndex)
-                    byBothEyesRIndexesS.add(rIndex)
-                    byBothEyesS.add((lIndex, rIndex))
+                elif ((lFp["fs"] <= rFp["fs"] and rFp["fs"] <= lFp["fe"]) or (lFp["fs"] <= rFp["fe"] and rFp["fe"] <= lFp["fe"])):
+                    byBothEyesLIndexesS.add(lFpsIndex)
+                    byBothEyesRIndexesS.add(rFpsIndex)
+                    byBothEyesS.add((lFpsIndex, rFpsIndex))
                     break
+
         byOnlyL = [lFps[x] for x in xrange(len(lFps)) if x not in byBothEyesLIndexesS]
         byOnlyR = [rFps[x] for x in xrange(len(rFps)) if x not in byBothEyesRIndexesS]
-        try:
-            byBothEyes = [(lFps[li], rFps[ri]) for li, ri in byBothEyesS]
-            byBothEyes.sort(key=lambda x:x[0][0])
-        except:
-            print traceback.format_exc()
-            byBothEyes = []
+
+        byBothEyes = [(lFps[li], rFps[ri]) for li, ri in byBothEyesS]
+        byBothEyes.sort(key=lambda x:x[0][0])
 
         return byBothEyes, byOnlyL, byOnlyR
 
