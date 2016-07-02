@@ -10,7 +10,7 @@ def prepareVideosList(cfg):
         ("", vidPrefix+"sk/eyeblink8/3/26122013_230103_cam.avi"),
         ("", vidPrefix+"sk/eyeblink8/8/27122013_151644_cam.avi"),
         ("", vidPrefix+"sk/eyeblink8/9/27122013_152435_cam.avi"),
-        ("", vidPrefix+"sk/eyeblink8/10/27122013_153916_cam.avi"),
+        ("bere neki, dobra slika", vidPrefix+"sk/eyeblink8/10/27122013_153916_cam.avi"),
         ("", vidPrefix+"sk/eyeblink8/11/27122013_154548_cam.avi"),
     ]
     eyeblink8HandInTheFirstFrames = [

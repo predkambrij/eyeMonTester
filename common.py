@@ -1,3 +1,4 @@
+import traceback
 
 class Common:
     def __init__(self):
@@ -187,13 +188,13 @@ class Common:
             ai = 0
             for annot in annotsl:
                 if ((annot["bs"] <= blink["fs"] and blink["fs"] <= annot["be"])
-                    or (annot["bs"] <= blink["fe"] and blink["fs"] <= annot["be"])):
+                    or (annot["bs"] <= blink["fe"] and blink["fe"] <= annot["be"])):
                     caught.add(annot["bi"])
                     caughtIndices.add(i)
                     del annotsl[ai]
                     break
                 elif ((blink["fs"] <= annot["bs"] and annot["bs"] <= blink["fe"])
-                    or (blink["fs"] <= annot["be"] and annot["bs"] <= blink["fe"])):
+                    or (blink["fs"] <= annot["be"] and annot["be"] <= blink["fe"])):
                     caught.add(annot["bi"])
                     caughtIndices.add(i)
                     del annotsl[ai]
@@ -203,7 +204,39 @@ class Common:
         fp = [(x, blinks[x]) for x in xrange(len(blinks)) if x not in caughtIndices]
         missed = [x["bi"] for x in annotsl if not x["bi"] in caught]
         caught = sorted(list(caught), key=lambda x:x)
-        return caught, missed, fp
+        return caught, caughtIndices, missed, fp
+
+    @staticmethod
+    def _processFps(lFps, rFps):
+        byBothEyesS = set()
+        byBothEyesLIndexesS = set()
+        byBothEyesRIndexesS = set()
+
+        # [(0, {'duration': 333.333333, 'start': 13000.0, 'fs': 389, 'end': 13333.333333, 'fe': 399}),
+        for lIndex, lFp in lFps:
+            for rIndex, rFp in rFps:
+                if ((rFp["start"] <= lFp["start"] and lFp["start"] <= rFp["end"])
+                    or (rFp["start"] <= lFp["end"] and lFp["end"] <= rFp["end"])):
+                    byBothEyesLIndexesS.add(lIndex)
+                    byBothEyesRIndexesS.add(rIndex)
+                    byBothEyesS.add((lIndex, rIndex))
+                    break
+                elif ((lFp["start"] <= rFp["start"] and rFp["start"] <= lFp["end"])
+                    or (lFp["start"] <= rFp["end"] and rFp["end"] <= lFp["end"])):
+                    byBothEyesLIndexesS.add(lIndex)
+                    byBothEyesRIndexesS.add(rIndex)
+                    byBothEyesS.add((lIndex, rIndex))
+                    break
+        byOnlyL = [lFps[x] for x in xrange(len(lFps)) if x not in byBothEyesLIndexesS]
+        byOnlyR = [rFps[x] for x in xrange(len(rFps)) if x not in byBothEyesRIndexesS]
+        try:
+            byBothEyes = [(lFps[li], rFps[ri]) for li, ri in byBothEyesS]
+            byBothEyes.sort(key=lambda x:x[0][0])
+        except:
+            print traceback.format_exc()
+            byBothEyes = []
+
+        return byBothEyes, byOnlyL, byOnlyR
 
     @staticmethod
     def displayDetectionCoverage(l, r, o):
@@ -229,12 +262,18 @@ class Common:
         """
         # TODO max frameNum
         annotsD = Common._annotsById(annotsl)
-        lCaught, lMissed, lFp = Common._detectionCoverageHelper(annotsl[:], annotsD, lBlinks)
-        rCaught, rMissed, rFp = Common._detectionCoverageHelper(annotsl[:], annotsD, rBlinks)
+        lCaught, lCaughtIndices, lMissed, lFp = Common._detectionCoverageHelper(annotsl[:], annotsD, lBlinks)
+        rCaught, rCaughtIndices, rMissed, rFp = Common._detectionCoverageHelper(annotsl[:], annotsD, rBlinks)
 
         aCaught = set.union(set(lCaught), set(rCaught))
+
         aMissed = [x["bi"] for x in annotsl if not x["bi"] in aCaught]
         bCaught = set.intersection(*[set(lCaught), set(rCaught)])
         bMissed = [x["bi"] for x in annotsl if not x["bi"] in bCaught]
 
-        return (lBlinks, lCaught, lMissed, lFp), (rBlinks, rCaught, rMissed, rFp), (bCaught, bMissed, aCaught, aMissed)
+        fpByBothEyes, fpByOnlyL, fpByOnlyR = Common._processFps(lFp, rFp)
+
+        l = (lBlinks, lCaught, lMissed, lFp)
+        r = (rBlinks, rCaught, rMissed, rFp)
+        o = (bCaught, bMissed, aCaught, aMissed, fpByBothEyes, fpByOnlyL, fpByOnlyR)
+        return l, r, o
