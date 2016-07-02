@@ -79,8 +79,8 @@ class VideoQueue:
         #title += "R tot\tR TP\tR mis\t"
 
         title += "T:A\tL\tR\t"
-        title += "TP:L\tR\tB\tA\t"
-        title += "M:L\tR\tB\tA\t"
+        title += "TP:A\tB\tLO\tRO\t"
+        title += "M:A\tB\tLO\tRO\t"
         title += "FP:L\tR\tLO\tRO\tB\tAll\t"
 
         title += "TP/:L\tR\t"
@@ -102,10 +102,10 @@ class VideoQueue:
         line = "%s\t%s\t" % (videoDescription, videoName.split("/posnetki/")[1])
         # total annot, left, right
         line += "%i\t%i\t%i\t" % (len(annotsl), len(varsDict["lBlinks"]), len(varsDict["rBlinks"]))
-        # tp l, r, b, a
-        line += "%i\t%i\t%i\t%i\t" % (len(dc["lCaught"]), len(dc["rCaught"]), len(dc["bCaught"]), len(dc["aCaught"]))
-        # miss left, right, both, any
-        line += "%i\t%i\t%i\t%i\t" % (len(dc["lMissed"]), len(dc["rMissed"]), len(dc["bMissed"]), len(dc["aMissed"]))
+        # tp a, b, lo, ro
+        line += "%i\t%i\t%i\t%i\t" % (len(dc["aCaught"]), len(dc["bCaught"]), len(dc["loCaught"]), len(dc["roCaught"]))
+        # miss a, b, lo, ro
+        line += "%i\t%i\t%i\t%i\t" % (len(dc["aMissed"]), len(dc["bMissed"]), len(dc["loMissed"]), len(dc["roMissed"]))
         # fp (l, r, lo, ro, b, all)
         line += "%i\t%i\t%i\t%i\t" % (len(dc["lFp"]), len(dc["rFp"]), len(dc["fpByOnlyL"]), len(dc["fpByOnlyR"]))
         # fp (b, all)

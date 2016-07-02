@@ -271,16 +271,17 @@ class Common:
         loCaught = [x["bi"] for x in annotsl if (x["bi"] in lCaught and (not x["bi"] in bCaught))]
         roCaught = [x["bi"] for x in annotsl if (x["bi"] in rCaught and (not x["bi"] in bCaught))]
 
-        aMissed = [x["bi"] for x in annotsl if not x["bi"] in aCaught]
-        bMissed = [x["bi"] for x in annotsl if not x["bi"] in bCaught]
+        bMissed = [x["bi"] for x in annotsl if not x["bi"] in aCaught]
+        aMissed = [x["bi"] for x in annotsl if not x["bi"] in bCaught]
+
+        loMissed = [x["bi"] for x in annotsl if (x["bi"] in lMissed and (not x["bi"] in bMissed))]
+        roMissed = [x["bi"] for x in annotsl if (x["bi"] in rMissed and (not x["bi"] in bMissed))]
 
         fpByBothEyes, fpByOnlyL, fpByOnlyR = Common._processFps(lFp, rFp)
 
         dc = {
-            "lCaught":lCaught, "lMissed":lMissed, "lFp":lFp,
-            "rCaught":rCaught, "rMissed":rMissed, "rFp":rFp,
-            "loCaught":loCaught, "roCaught":roCaught, "bCaught":bCaught, "aCaught":aCaught,
-            "bMissed":bMissed, "aMissed":aMissed,
-            "fpByBothEyes":fpByBothEyes, "fpByOnlyL":fpByOnlyL, "fpByOnlyR":fpByOnlyR
+            "lCaught":lCaught, "rCaught":rCaught, "loCaught":loCaught, "roCaught":roCaught, "bCaught":bCaught, "aCaught":aCaught,
+            "lMissed":lMissed, "roMissed":roMissed, "loMissed":loMissed, "rMissed":rMissed, "bMissed":bMissed, "aMissed":aMissed,
+            "lFp":lFp, "rFp":rFp, "fpByBothEyes":fpByBothEyes, "fpByOnlyL":fpByOnlyL, "fpByOnlyR":fpByOnlyR
         }
         return dc
