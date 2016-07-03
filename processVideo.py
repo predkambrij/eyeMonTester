@@ -133,7 +133,8 @@ def processVideo(cfg, isWebcam, annotFilename):
             Templ.postProcessLogLine(tCors, lBlinks, rBlinks, True)
 
     if cfg["method"] == "farneback":
-        dc = Cmn.detectionCoverageF(annotsl, lBlinks, rBlinks)
         return fFlows, lBlinks, rBlinks, tracking
-    else:
-        return
+    elif cfg["method"] == "templ":
+        return tCors, lBlinks, rBlinks, tracking
+    elif cfg["method"] == "blackpixels":
+        return bPixes, lBlinks, rBlinks, tracking

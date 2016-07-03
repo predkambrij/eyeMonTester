@@ -2,6 +2,7 @@ import os
 import processVideo
 from common import Common as Cmn
 from farne import Farne
+from templ import Templ
 
 class VideoQueue:
     def __init__(self):
@@ -19,9 +20,9 @@ class VideoQueue:
         return outputFileName
 
     @staticmethod
-    def writeVideoResults(outputFileName, fFlows, lBlinks, rBlinks, tracking):
+    def writeVideoResults(outputFileName, methodVar, lBlinks, rBlinks, tracking):
         f = file(outputFileName, "wb")
-        f.write(repr(fFlows)+"\n")
+        f.write(repr(methodVar)+"\n")
         f.write(repr(lBlinks)+"\n")
         f.write(repr(rBlinks)+"\n")
         f.write(repr(tracking)+"\n")
@@ -48,23 +49,39 @@ class VideoQueue:
             if not os.path.isfile(annotFilename):
                 annotFilename = None
 
-            fFlows, lBlinks, rBlinks, tracking = processVideo.processVideo(cfg, isWebcam, annotFilename)
+            if cfg["method"] == "farneback":
+                fFlows, lBlinks, rBlinks, tracking = processVideo.processVideo(cfg, isWebcam, annotFilename)
+            elif cfg["method"] == "templ":
+                tCors, lBlinks, rBlinks, tracking = processVideo.processVideo(cfg, isWebcam, annotFilename)
+            elif cfg["method"] == "blackpixels":
+                bPixes, lBlinks, rBlinks, tracking = processVideo.processVideo(cfg, isWebcam, annotFilename)
             # reset processVideo's global variables
             reload(processVideo)
             outputFileName = VideoQueue.prepareOutputFileName(cfg["othr"]["codeDirectory"], cfg["othr"]["outputsPref"], videoName)
-            VideoQueue.writeVideoResults(outputFileName, fFlows, lBlinks, rBlinks, tracking)
+            if cfg["method"] == "farneback":
+                VideoQueue.writeVideoResults(outputFileName, fFlows, lBlinks, rBlinks, tracking)
+            elif cfg["method"] == "templ":
+                VideoQueue.writeVideoResults(outputFileName, tCors, lBlinks, rBlinks, tracking)
+            elif cfg["method"] == "blackpixels":
+                VideoQueue.writeVideoResults(outputFileName, bPixes, lBlinks, rBlinks, tracking)
         return
 
     @staticmethod
-    def readOutputsToVariables(outputFileName):
-        variablesMap = {0:"fFlows", 1:"lBlinks", 2:"rBlinks", 3:"tracking"}
+    def readOutputsToVariables(cfg, outputFileName):
+        if cfg["method"] == "farneback":
+            methodVar = "fFlows"
+        elif cfg["method"] == "templ":
+            methodVar = "tCors"
+        elif cfg["method"] == "blackpixels":
+            methodVar = "bPixes"
+
+        variablesMap = {0:methodVar, 1:"lBlinks", 2:"rBlinks", 3:"tracking"}
         varsDict = {}
 
         f = file(outputFileName, "rb")
         for index in sorted(variablesMap.keys()):
             if index == 3: # TODO remove once rerun
                 break
-                pass
             line = f.readline()
             varsDict[variablesMap[index]] = eval(line)
 
@@ -187,13 +204,23 @@ class VideoQueue:
             print videoDescription, videoName
 
             outputFileName = VideoQueue.prepareOutputFileName(cfg["othr"]["codeDirectory"], cfg["othr"]["outputsPref"], videoName)
-            if cfg["method"] == "farneback":
-                varsDict = VideoQueue.readOutputsToVariables(outputFileName)
+            varsDict = VideoQueue.readOutputsToVariables(cfg, outputFileName)
 
             if "displayDetectionCoverage" in actions:
-                Cmn.displayDetectionCoverage(varsDict["l"], varsDict["r"], varsDict["o"])
+                if cfg["method"] == "farneback":
+                    pass
+                    #Cmn.displayDetectionCoverage(varsDict["l"], varsDict["r"], varsDict["o"])
+                elif cfg["method"] == "templ":
+                    pass
+                elif cfg["method"] == "blackpixels":
+                    pass
             if "postProcessLogLine" in actions:
-                Farne.postProcessLogLine(varsDict["fFlows"], varsDict["lBlinks"], varsDict["rBlinks"], True)
+                if cfg["method"] == "farneback":
+                    Farne.postProcessLogLine(varsDict["fFlows"], varsDict["lBlinks"], varsDict["rBlinks"], True)
+                elif cfg["method"] == "templ":
+                    Templ.postProcessLogLine(varsDict["tCors"], varsDict["lBlinks"], varsDict["rBlinks"], True)
+                elif cfg["method"] == "blackpixels":
+                    Blackpixels.postProcessLogLine(varsDict["bPixes"], varsDict["lBlinks"], varsDict["rBlinks"], True)
             if "writeOverallReport" in actions:
                 annotFilename = os.path.splitext(videoName)[0]+".tag"
                 if not os.path.isfile(annotFilename):

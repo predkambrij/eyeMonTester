@@ -24,17 +24,19 @@ def prepareVideosList(cfg):
     videos = others+eyeblink8HandInTheFirstFrames+eyeblink8
     videoRange = range(len(videos))
     #videoRange = [4] # punca od dalec
+    videoRange = [8] # dobra slika
     #videoRange = [0]
     return videos, videoRange
 
 def getConfigs():
+    #method = "blackpixels"
+    method = "templ"
+    #method = "farneback"
     return {
         "excel_export": False,
         "coverage":     False,
         "end_hook":     False,
-        #"method": "blackpixels",
-        "method": "farneback",
-        #"method": "templ",
+        "method": method,
         "othr" : {
             "vidPrefix":"/home/developer/other/posnetki/",
             "sourceCodePrefix":"/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/optical-flow",
@@ -42,7 +44,8 @@ def getConfigs():
 
             #"outputsPref":"/vidProcOutputs",
             #"outputsPref":"/vidProcOutputs/verTest",
-            "outputsPref":"/vidProcOutputs/ver1",
+            #"outputsPref":"/vidProcOutputs/ver1", # farne
+            "outputsPref":"/vidProcOutputs/ver1"+method,
         }
     }
 
