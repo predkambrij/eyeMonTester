@@ -22,8 +22,9 @@ def prepareVideosList(cfg):
         ("talking", vidPrefix+"talking.avi"),
     ]
     videos = others+eyeblink8HandInTheFirstFrames+eyeblink8
-    #videoRange = range(len(videos))
-    videoRange = [4]
+    videoRange = range(len(videos))
+    #videoRange = [4] # punca od dalec
+    #videoRange = [0]
     return videos, videoRange
 
 def getConfigs():

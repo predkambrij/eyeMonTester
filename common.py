@@ -48,6 +48,11 @@ class Common:
                 if fline == "#end":
                     break
 
+            #&temp.frameCounter,&temp.blinkID,
+            #&nonFrontalFace,&leftFullyClosed,&leftNonFrontal,&rightFullyClosed,&rightNonFrontal,
+            #&temp.faceX,&temp.faceY,&temp.faceWidth,&temp.faceHeight,
+            #&temp.leftEye1x,&temp.leftEye1y,&temp.leftEye2x,&temp.leftEye2y,
+            #&temp.rightEye1x,&temp.rightEye1y,&temp.rightEye2x,&temp.rightEye2y);
             # 0 frameCounter 1 blinkID 2 nonFrontalFace 3 leftFullyClosed 4 leftNonFrontal 5 rightFullyClosed 6 rightNonFrontal
             line = fline.split(":")
             # parse tracking slices

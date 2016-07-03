@@ -39,23 +39,26 @@ class Farne:
 
             fn     = int(statusInfo[statusInfo.index("F")+1])
             ts     = float(statusInfo[statusInfo.index("T")+1])
-            status = statusInfo[statusInfo.index("status")+1]
+            if statusInfo.count("status") == 1:
+                status = statusInfo[statusInfo.index("status")+1]
 
-            if status == "start":
-                if len(tracking["detecting"]) > 0:
-                    if len(tracking["detecting"][-1]) != 2:
-                        print "error: tracking start: previous entry is not finished yet %s (%s)" % (repr(tracking["detecting"][-1]), statusInfo)
-                tracking["detecting"].append([(status, fn, ts)])
-            elif status == "stop":
-                if len(tracking["detecting"]) > 0:
-                    if len(tracking["detecting"][-1]) == 1:
-                        tracking["detecting"][-1].append((status, fn, ts))
+                if status == "start":
+                    if len(tracking["detecting"]) > 0:
+                        if len(tracking["detecting"][-1]) != 2:
+                            print "error: tracking start: previous entry is not finished yet %s (%s)" % (repr(tracking["detecting"][-1]), statusInfo)
+                    tracking["detecting"].append([(status, fn, ts)])
+                elif status == "stop":
+                    if len(tracking["detecting"]) > 0:
+                        if len(tracking["detecting"][-1]) == 1:
+                            tracking["detecting"][-1].append((status, fn, ts))
+                        else:
+                            print "error: tracking stop: detecting[-1] is not len of 1 %s (%s)" % (repr(tracking["detecting"][-1]), statusInfo)
                     else:
-                        print "error: tracking stop: detecting[-1] is not len of 1 %s (%s)" % (repr(tracking["detecting"][-1]), statusInfo)
+                        print "error: tracking stop: len(detecting) is zero (%s)" % statusInfo
                 else:
-                    print "error: tracking stop: len(detecting) is zero (%s)" % statusInfo
+                    print "error: unknown tracking status (%s)" % statusInfo
             else:
-                print "error: unknown tracking status (%s)" % statusInfo
+                print statusInfo
         elif output.startswith("debug_blinks_d1:"):
             flowsInfo = [x for x in output.split(" ") if x != ""]
             if debugProcessLogLine:

@@ -125,7 +125,7 @@ def bc():
 if __name__ == "__main__":
     #analizeAnnotated("o90")
     #partialBlinks()
-    showAnnots()
+    #showAnnots()
     #bc()
-    #testMain()
+    testMain()
 

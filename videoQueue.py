@@ -60,10 +60,13 @@ class VideoQueue:
         variablesMap = {0:"fFlows", 1:"lBlinks", 2:"rBlinks", 3:"tracking"}
         varsDict = {}
 
-        index = 0
-        for line in file(outputFileName, "rb"):
+        f = file(outputFileName, "rb")
+        for index in sorted(variablesMap.keys()):
+            if index == 3: # TODO remove once rerun
+                break
+                pass
+            line = f.readline()
             varsDict[variablesMap[index]] = eval(line)
-            index += 1
 
         return varsDict
 
@@ -91,11 +94,7 @@ class VideoQueue:
         return fileName
 
     @staticmethod
-    def writeOverallReport(fileName, videoDescription, videoName, varsDict):
-        annotFilename = os.path.splitext(videoName)[0]+".tag"
-        if not os.path.isfile(annotFilename):
-            return
-        annotsl, annots = Cmn.parseAnnotations(file(annotFilename), None, "farne")
+    def writeOverallReport(fileName, videoDescription, videoName, annotsl, annots, varsDict):
         dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"])
 
         # video desc, filepath
@@ -130,6 +129,52 @@ class VideoQueue:
         file(fileName, "ab").write(line)
         return
 
+    # @staticmethod
+    # def calculateTrackingCoverage(methodTracks, annotTracks):
+    #     trackableFrames = 0
+    #     trackedFrames = 0
+    #     missedRanges = []
+    #     for annotTrack in annotTracks["track"]:
+    #         lastAddedStart, lastAddedStop = -1, -1
+    #         aStart, aStop = annotTrack[0][1], annotTrack[1][1]
+    #         trackableFrames += (aStop-aStart)
+
+    #         for methodTrack in methodTracks["detecting"]:
+    #             if len(methodTrack) != 2:
+    #                 print "foobar", repr(methodTrack)
+    #                 continue
+    #             mStart, mStop = methodTrack[0][1], methodTrack[1][1]
+    #             addStart, addStop = -1, -1
+    #             if mStart <= aStart and (aStart <= mStop and mStop <= aStop):
+    #                 addStart, addStop = aStart, mStop
+    #             elif aStart <= mStart and mStop <= aStop:
+    #                 addStart, addStop = mStart, mStop
+    #             elif (aStart <= mStart and mStart <= aStop) and aStop < mStop:
+    #                 addStart, addStop = mStart, aStop
+    #             elif mStart <= aStart and aStop <= mStop:
+    #                 addStart, addStop = aStart, aStop
+
+    #             if addStart != -1 and addStop != -1:
+    #                 trackedFrames += (addStop-addStart)
+    #                 if lastAddedStart == -1 and lastAddedStop == -1:
+    #                     print "here once?"
+    #                     if addStart != aStart:
+    #                         missedRanges.append((aStart, addStart-1))
+    #                 else:
+    #                     print "here multiple times?"
+    #                     if (addStart-lastAddedStop) > 1:
+    #                         missedRanges.append((lastAddedStop+1, addStart-1))
+    #                 lastAddedStart, lastAddedStop = addStart, addStop
+    #     if lastAddedStop != aStop:
+    #         missedRanges.append((lastAddedStop+1, aStop))
+    #     print "missedRanges", missedRanges
+
+
+    #     print repr(methodTracks)
+    #     print repr(annotTracks)
+    #     print "trackedFrames", trackedFrames, "trackableFrames",trackableFrames
+    #     return
+
     @staticmethod
     def processOutputs(cfg, videos, videoRange, actions):
         #videoRange = videoRange[:1]
@@ -150,6 +195,11 @@ class VideoQueue:
             if "postProcessLogLine" in actions:
                 Farne.postProcessLogLine(varsDict["fFlows"], varsDict["lBlinks"], varsDict["rBlinks"], True)
             if "writeOverallReport" in actions:
-                VideoQueue.writeOverallReport(reportFileName, videoDescription, videoName, varsDict)
+                annotFilename = os.path.splitext(videoName)[0]+".tag"
+                if not os.path.isfile(annotFilename):
+                    return
+                annotsl, annots = Cmn.parseAnnotations(file(annotFilename), None, "farne")
+                #VideoQueue.calculateTrackingCoverage(varsDict["tracking"], annots[2])
+                VideoQueue.writeOverallReport(reportFileName, videoDescription, videoName, annotsl, annots, varsDict)
         return
 
