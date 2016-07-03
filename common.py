@@ -26,6 +26,9 @@ class Common:
 
     @staticmethod
     def parseAnnotations(f, fndict, method):
+        tracking = {"track":[]}
+        curTrack = None
+        lastFn = None
         annots = []
         curBlinkId = ""
         curBlinkStart = ""
@@ -36,6 +39,7 @@ class Common:
         content = False
         for fline in f:
             fline = fline.strip()
+            # starting part of annot file
             if not content:
                 if fline == "#start":
                     content = True
@@ -46,6 +50,18 @@ class Common:
 
             # 0 frameCounter 1 blinkID 2 nonFrontalFace 3 leftFullyClosed 4 leftNonFrontal 5 rightFullyClosed 6 rightNonFrontal
             line = fline.split(":")
+            # parse tracking slices
+            if curTrack == None:
+                lastFn = int(line[0])
+                curTrack = [("start", lastFn)]
+            else:
+                curFn = int(line[0])
+                if curFn != (lastFn+1):
+                    curTrack.append(("end", lastFn))
+                    tracking["track"].append(curTrack)
+                    curTrack = [("start", curFn)]
+                lastFn = curFn
+            # parse blinks
             if line[1] != curBlinkId:
                 if line[1] == "-1":
                     if curBlinkId == "":
@@ -73,6 +89,11 @@ class Common:
             # still the same, can also parse FullyClosed
             curBlinkEnd = line[0]
 
+        # finish tracking slices
+        curTrack.append(("end", lastFn))
+        tracking["track"].append(curTrack)
+
+        # finish last blink if applicable
         if curBlinkId != "":
             if method == "farne":
                 annots.append({"bs":int(curBlinkStart), "be":int(curBlinkEnd), "bi":int(curBlinkId)})
@@ -81,6 +102,7 @@ class Common:
 
         if method == "farne":
             annotsD = Common.makeAnnotDicts(annots)
+            annotsD.append(tracking)
             return annots, annotsD
         return
 
@@ -91,7 +113,7 @@ class Common:
         for annot in annots:
             annotsByStart[annot["bs"]] = annot
             annotsByEnd[annot["be"]]   = annot
-        return annotsByStart, annotsByEnd
+        return [annotsByStart, annotsByEnd]
 
     @staticmethod
     def detectionCoverage(lBlinks, rBlinks, fnl):

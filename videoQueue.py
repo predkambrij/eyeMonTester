@@ -19,14 +19,12 @@ class VideoQueue:
         return outputFileName
 
     @staticmethod
-    def writeVideoResults(outputFileName, fFlows, lBlinks, rBlinks, l, r, o):
+    def writeVideoResults(outputFileName, fFlows, lBlinks, rBlinks, tracking):
         f = file(outputFileName, "wb")
         f.write(repr(fFlows)+"\n")
         f.write(repr(lBlinks)+"\n")
         f.write(repr(rBlinks)+"\n")
-        f.write(repr(l)+"\n")
-        f.write(repr(r)+"\n")
-        f.write(repr(o)+"\n")
+        f.write(repr(tracking)+"\n")
         f.close()
         return
 
@@ -34,7 +32,7 @@ class VideoQueue:
     def processVideoQueue(cfg, videos, videoRange):
         isWebcam = False
         if isWebcam == True:
-            fFlows, lBlinks, rBlinks, l, r, o = processVideo.processVideo(cfg, isWebcam, None)
+            fFlows, lBlinks, rBlinks, tracking = processVideo.processVideo(cfg, isWebcam, None)
             return
 
         for vi in videoRange:
@@ -50,16 +48,16 @@ class VideoQueue:
             if not os.path.isfile(annotFilename):
                 annotFilename = None
 
-            fFlows, lBlinks, rBlinks, l, r, o = processVideo.processVideo(cfg, isWebcam, annotFilename)
+            fFlows, lBlinks, rBlinks, tracking = processVideo.processVideo(cfg, isWebcam, annotFilename)
             # reset processVideo's global variables
             reload(processVideo)
             outputFileName = VideoQueue.prepareOutputFileName(cfg["othr"]["codeDirectory"], cfg["othr"]["outputsPref"], videoName)
-            VideoQueue.writeVideoResults(outputFileName, fFlows, lBlinks, rBlinks, l, r, o)
+            VideoQueue.writeVideoResults(outputFileName, fFlows, lBlinks, rBlinks, tracking)
         return
 
     @staticmethod
     def readOutputsToVariables(outputFileName):
-        variablesMap = {0:"fFlows", 1:"lBlinks", 2:"rBlinks", 3:"l", 4:"r", 5:"o"}
+        variablesMap = {0:"fFlows", 1:"lBlinks", 2:"rBlinks", 3:"tracking"}
         varsDict = {}
 
         index = 0

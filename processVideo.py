@@ -23,7 +23,7 @@ def initListenLog(isWebcam):
         stdout  = subprocess.PIPE,
         bufsize = 0,
     )
-def listenLog(cfg, annots, fFlows, fFlowsI, tCors, bPixes, lBlinks, rBlinks):
+def listenLog(cfg, annots, fFlows, fFlowsI, tracking, tCors, bPixes, lBlinks, rBlinks):
     global stopListenLogStopped
 
     poll_obj = select.poll()
@@ -38,7 +38,7 @@ def listenLog(cfg, annots, fFlows, fFlowsI, tCors, bPixes, lBlinks, rBlinks):
                         stopListenLogStopped = True
                         break
                 elif cfg["method"] == "farneback":
-                    res = Farne.processLogLine(output, annots, fFlows, fFlowsI, lBlinks, rBlinks)
+                    res = Farne.processLogLine(output, annots, fFlows, fFlowsI, tracking, lBlinks, rBlinks)
                     if res:
                         stopListenLogStopped = True
                         break
@@ -86,7 +86,7 @@ def processVideo(cfg, isWebcam, annotFilename):
     global stopListenLog
 
     lBlinks, rBlinks = [], []
-    fFlows, fFlowsI = [], {}
+    fFlows, fFlowsI, tracking = [], {}, {"detecting":[]}
     tCors, bPixes   = [], []
 
     initListenLog(isWebcam)
@@ -101,7 +101,7 @@ def processVideo(cfg, isWebcam, annotFilename):
     else:
         annotsl, annots = [], ({}, {})
 
-    listenLogThread = threading.Thread(target=listenLog, args=[cfg, annots, fFlows, fFlowsI, tCors, bPixes, lBlinks, rBlinks])
+    listenLogThread = threading.Thread(target=listenLog, args=[cfg, annots, fFlows, fFlowsI, tracking, tCors, bPixes, lBlinks, rBlinks])
     listenLogThread.start()
     listenLogThread.join()
 
@@ -133,7 +133,7 @@ def processVideo(cfg, isWebcam, annotFilename):
             Templ.postProcessLogLine(tCors, lBlinks, rBlinks, True)
 
     if cfg["method"] == "farneback":
-        l, r, o = Cmn.detectionCoverageF(annotsl, lBlinks, rBlinks)
-        return fFlows, lBlinks, rBlinks, l, r, o
+        dc = Cmn.detectionCoverageF(annotsl, lBlinks, rBlinks)
+        return fFlows, lBlinks, rBlinks, tracking
     else:
         return

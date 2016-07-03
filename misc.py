@@ -1,4 +1,4 @@
-import sys
+import sys, os
 
 from common import Common as Cmn
 from farne import Farne
@@ -99,11 +99,15 @@ def partialBlinks():
     return
 
 def showAnnots():
-    f = file(main.vidPrefix+main.videoAnnot)
-    annots = Cmn.parseAnnotations(f, None, "farne")
-    print annots[0]
-    print
-    print annots[1]
+    cfg = main.getConfigs()
+    videos, videoRange = main.prepareVideosList(cfg)
+    videoName = videos[videoRange[0]][1]
+
+    annotFilename = os.path.splitext(videoName)[0]+".tag"
+    if not os.path.isfile(annotFilename):
+        return
+    annotsl, annots = Cmn.parseAnnotations(file(annotFilename), None, "farne")
+    print annots[2]
     return
 
 def bc():
@@ -121,7 +125,7 @@ def bc():
 if __name__ == "__main__":
     #analizeAnnotated("o90")
     #partialBlinks()
-    #showAnnots()
+    showAnnots()
     #bc()
-    testMain()
+    #testMain()
 
