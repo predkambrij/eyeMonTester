@@ -1,4 +1,4 @@
-import os
+import os, traceback
 import processVideo
 from common import Common as Cmn
 from farne import Farne
@@ -38,7 +38,7 @@ class VideoQueue:
 
         for vi in videoRange:
             videoDescription, videoName = videos[vi]
-            print videoDescription, videoName
+            print vi, videoDescription, videoName
 
             # sed videoname in c++ source code
             settingsFile = cfg["othr"]["sourceCodePrefix"]+"/jni/main_settings_testpy.cpp"
@@ -91,7 +91,7 @@ class VideoQueue:
     def initOverallReport(cfg):
         fileName = cfg["othr"]["codeDirectory"] + cfg["othr"]["outputsPref"] + "/overall.tsv"
         # truncate the file or create it, if it doesn't exist yet
-        title = "Description\tFile path\t"
+        title = "I\tDesc\tFile path\t"
         #title += "Ann\t"
         #title += "L tot\tL TP\tL mis\t"
         #title += "R tot\tR TP\tR mis\t"
@@ -111,11 +111,11 @@ class VideoQueue:
         return fileName
 
     @staticmethod
-    def writeOverallReport(fileName, videoDescription, videoName, annotsl, annots, varsDict):
+    def writeOverallReport(fileName, videoDescription, videoName, vi, annotsl, annots, varsDict):
         dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"])
 
         # video desc, filepath
-        line = "%s\t%s\t" % (videoDescription, videoName.split("/posnetki/")[1])
+        line = "%d\t%s\t%s\t" % (vi, videoDescription, videoName.split("/posnetki/")[1])
         # total annot, left, right
         line += "%i\t%i\t%i\t" % (len(annotsl), len(varsDict["lBlinks"]), len(varsDict["rBlinks"]))
         # tp a, b, lo, ro
@@ -140,7 +140,7 @@ class VideoQueue:
         roFPRatio = len(dc["fpByOnlyR"]) if len(annotsl) == 0 else len(dc["fpByOnlyR"])/float(len(annotsl))*100
         line += "%.2f\t%.2f\t%.2f\t%.2f\t" % (aFPRatio, bFPRatio, loFPRatio, roFPRatio)
 
-        line += "%.2f\t%.2f\t" % (100-(100-aTPRatio)-aFPRatio, 100-(100-bTPRatio)-aFPRatio)
+        line += "%.2f\t%.2f\t" % (100-(100-aTPRatio)-aFPRatio, 100-(100-bTPRatio)-bFPRatio)
 
         line += "\n"
         file(fileName, "ab").write(line)
@@ -201,10 +201,15 @@ class VideoQueue:
 
         for vi in videoRange:
             videoDescription, videoName = videos[vi]
-            print videoDescription, videoName
+            print vi, videoDescription, videoName
 
             outputFileName = VideoQueue.prepareOutputFileName(cfg["othr"]["codeDirectory"], cfg["othr"]["outputsPref"], videoName)
-            varsDict = VideoQueue.readOutputsToVariables(cfg, outputFileName)
+            try:
+                varsDict = VideoQueue.readOutputsToVariables(cfg, outputFileName)
+            except IOError, e:
+                print "breaking"
+                print traceback.format_exc()
+                break
 
             if "displayDetectionCoverage" in actions:
                 if cfg["method"] == "farneback":
@@ -227,6 +232,6 @@ class VideoQueue:
                     return
                 annotsl, annots = Cmn.parseAnnotations(file(annotFilename), None, "farne")
                 #VideoQueue.calculateTrackingCoverage(varsDict["tracking"], annots[2])
-                VideoQueue.writeOverallReport(reportFileName, videoDescription, videoName, annotsl, annots, varsDict)
+                VideoQueue.writeOverallReport(reportFileName, videoDescription, videoName, vi, annotsl, annots, varsDict)
         return
 

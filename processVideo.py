@@ -6,8 +6,6 @@ from blackpixels import Blackpixels
 
 # flow flags
 stopListenLog        = False
-stopListenLogStopped = False
-
 
 # parsing logs
 def initListenLog(isWebcam):
@@ -24,8 +22,6 @@ def initListenLog(isWebcam):
         bufsize = 0,
     )
 def listenLog(cfg, annots, fFlows, fFlowsI, tracking, tCors, bPixes, lBlinks, rBlinks):
-    global stopListenLogStopped
-
     poll_obj = select.poll()
     poll_obj.register(proc.stdout, select.POLLIN)
     while True:
@@ -35,30 +31,25 @@ def listenLog(cfg, annots, fFlows, fFlowsI, tracking, tCors, bPixes, lBlinks, rB
             try:
                 if cfg["method"] == "templ":
                     if Templ.processLogLine(output, tCors, lBlinks, rBlinks):
-                        stopListenLogStopped = True
                         break
                 elif cfg["method"] == "farneback":
                     res = Farne.processLogLine(output, annots, fFlows, fFlowsI, tracking, lBlinks, rBlinks)
                     if res:
-                        stopListenLogStopped = True
                         break
                 elif cfg["method"] == "blackpixels":
                     res = Blackpixels.processLogLine(output, bPixes, lBlinks, rBlinks)
                     if res:
-                        stopListenLogStopped = True
                         break
             except StandardError,e:
                 print "crash", output
                 print traceback.format_exc()
-
-                stopListenLogStopped = True
                 break
             continue
 
         time.sleep(0.1)
         if stopListenLog == True:
-            stopListenLogStopped = True
             break
+    return
 
 def terminateListenLog():
     proc.terminate()
@@ -103,14 +94,12 @@ def processVideo(cfg, isWebcam, annotFilename):
 
     listenLogThread = threading.Thread(target=listenLog, args=[cfg, annots, fFlows, fFlowsI, tracking, tCors, bPixes, lBlinks, rBlinks])
     listenLogThread.start()
+    r = vid.wait()
+    if r != 0:
+        stopListenLog = True
+        print "Processing didn't stop correctly %i" % r
     listenLogThread.join()
-
-    stopListenLog = True
-    while stopListenLogStopped != True:
-        #print "Waiting thread to stop"
-        time.sleep(0.1)
     terminateListenLog()
-    terminateRunVideo()
 
     if cfg["excel_export"]:
         if cfg["method"] == "templ":

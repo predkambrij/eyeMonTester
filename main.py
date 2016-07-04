@@ -94,7 +94,7 @@ def prepareVideosList(cfg):
         ("", vidPrefix+"sk/NightOfResearchers15/test/11/26092014_204021_cam.avi"),
         ("", vidPrefix+"sk/NightOfResearchers15/test/12/26092014_205740_cam.avi"),
         ("", vidPrefix+"sk/NightOfResearchers15/test/13/26092014_210519_cam.avi"),
-        ("", vidPrefix+"sk/NightOfResearchers15/test/14/26092014_211047_cam.avi"),
+        ("full partial", vidPrefix+"sk/NightOfResearchers15/test/14/26092014_211047_cam.avi"),
         ("", vidPrefix+"sk/NightOfResearchers15/test/15/26092014_175102_cam.avi"),
         ("", vidPrefix+"sk/NightOfResearchers15/test/16/26092014_175705_cam.avi"),
         ("", vidPrefix+"sk/NightOfResearchers15/test/17/26092014_180329_cam.avi"),
@@ -129,20 +129,20 @@ def prepareVideosList(cfg):
         ("", vidPrefix+"sk/NightOfResearchers15/trainval/val/9/26092014_175359_cam.avi"),
     ]
     others = [
-        #("full partial", vidPrefix+"sk/NightOfResearchers15/test/14/26092014_211047_cam.avi"),
         ("talking", vidPrefix+"talking.avi"),
     ]
     videos = nightOfResearchers15+nightOfResearchers30+eyeblink8HandInTheFirstFrames+eyeblink8+others
     videoRange = range(len(videos))
     #videoRange = [4] # punca od dalec
     #videoRange = [8] # dobra slika
-    #videoRange = [0]
+    videoRange = [5] # full partial
+    #videoRange = [23, 24]
     return videos, videoRange
 
 def getConfigs():
     #method = "blackpixels"
-    #method = "templ"
-    method = "farneback"
+    method = "templ"
+    #method = "farneback"
     return {
         "excel_export": False,
         "coverage":     False,

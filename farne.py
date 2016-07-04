@@ -58,7 +58,8 @@ class Farne:
                 else:
                     print "error: unknown tracking status (%s)" % statusInfo
             else:
-                print statusInfo
+                pass
+                #print statusInfo
         elif output.startswith("debug_blinks_d1:"):
             flowsInfo = [x for x in output.split(" ") if x != ""]
             if debugProcessLogLine:
