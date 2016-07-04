@@ -42,8 +42,11 @@ class Blackpixels:
         lNum, rNum = [x["lNum"] for x in bPixes[-window:]], [x["rNum"] for x in bPixes[-window:]]
 
         plt.figure(1)
-        plt.subplot(211)
-        plt.plot(pltx, lNum, 'ro-', pltx, rNum, 'bo-')
+        plt.plot(pltx, lNum, 'ro-')
+        plt.figure(2)
+        #plt.subplot(211)
+        plt.plot(pltx, rNum, 'bo-')
+        #plt.plot(pltx, lNum, 'ro-', pltx, rNum, 'bo-')
         plt.show()
         #plt.show(block=False)
 
