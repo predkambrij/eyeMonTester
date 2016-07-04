@@ -243,6 +243,16 @@ class VideoQueue:
                     Templ.postProcessLogLine(varsDict["tCors"], varsDict["lBlinks"], varsDict["rBlinks"], True)
                 elif cfg["method"] == "blackpixels":
                     Blackpixels.postProcessLogLine(varsDict["bPixes"], varsDict["lBlinks"], varsDict["rBlinks"], True)
+            if "signalProcessing" in actions:
+                #print repr(varsDict["tCors"])
+                print repr([x["fn"] for x in varsDict["tCors"]])
+                print
+                print
+                print repr([x["lcor"] for x in varsDict["tCors"]])
+                print
+                print
+                print repr([x["rcor"] for x in varsDict["tCors"]])
+                pass
             if "writeOverallReport" in actions:
                 annotFilename = os.path.splitext(videoName)[0]+".tag"
                 if not os.path.isfile(annotFilename):

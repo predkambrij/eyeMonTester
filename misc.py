@@ -6,13 +6,41 @@ from videoQueue import VideoQueue
 import main, processVideo
 
 
+import numpy as np
+import matplotlib.pyplot as plt
+def sd(data):
+    n = len(data)
+    mean = sum(data)/float(n)
+    ss = sum((x-mean)**2 for x in data)
+    return (ss/float(n))**0.5
+
+def signalProc():
+    inp = [1,1,1,1,1, 1. ,  1. ,  1. ,  1. ,  1. ,  1. ,  1. ,  1.1,  1. ,  0.8,  0.9,
+        1. ,  1.2,  0.9,  1. ,  1. ,  1.1,  1.2,  1. ,  1.5,  1. ,  3. ,
+        2. ,  5. ,  3. ,  2. ,  1. ,  1. ,  1. ,  0.9,  1. ,  1. ,  3. ,
+        2.6,  4. ,  3. ,  3.2,  2. ,  1. ,  1. ,  1. ,  1. ,  1., 1.5,1,1.5,1,1,1,1,1,1,1,1,1,1,
+        2,3,4,5,5,5,4,4,3,4,5,5,6,7,8,9,8,9,8,7,6,5,4,4,4,3,2,4 ]
+    input = np.array(inp)
+    s = sd(inp)
+    #m = 0.5
+    m = s*0.8
+    signal = (input > (np.roll(input,6)+m)) & (input > (np.roll(input,-6)+m))
+    print signal
+    plt.plot(input)
+    plt.plot(signal.nonzero()[0], input[signal], 'ro')
+    plt.show()
+
+
 def testMain():
+    #signalProc()
+    #return
     cfg = main.getConfigs()
     videos, videoRange = main.prepareVideosList(cfg)
     actions = [
-        "writeOverallReport",
+        #"writeOverallReport",
         #"displayDetectionCoverage",
-        #"postProcessLogLine",
+        "postProcessLogLine",
+        #"signalProcessing",
     ]
     VideoQueue.processOutputs(cfg, videos, videoRange, actions)
 
