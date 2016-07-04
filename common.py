@@ -27,6 +27,7 @@ class Common:
     @staticmethod
     def parseAnnotations(f, fndict, method):
         tracking = {"track":[]}
+        notes = {"challenging":None, "glasses":None}
         curTrack = None
         lastFn = None
         annots = []
@@ -43,6 +44,18 @@ class Common:
             if not content:
                 if fline == "#start":
                     content = True
+                elif fline.startswith("#challenging:"):
+                    data = fline.split(" ")
+                    if data[1] == "YES":
+                        notes["challenging"] = True
+                    elif data[1] == "NO":
+                        notes["challenging"] = False
+                elif fline.startswith("#glasses:"):
+                    data = fline.split(" ")
+                    if data[1] == "YES":
+                        notes["glasses"] = True
+                    elif data[1] == "NO":
+                        notes["glasses"] = False
                 continue
             else:
                 if fline == "#end":
@@ -108,6 +121,7 @@ class Common:
         if method == "farne":
             annotsD = Common.makeAnnotDicts(annots)
             annotsD.append(tracking)
+            annotsD.append(notes)
             return annots, annotsD
         return
 

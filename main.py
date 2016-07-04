@@ -135,8 +135,12 @@ def prepareVideosList(cfg):
     videoRange = range(len(videos))
     #videoRange = [4] # punca od dalec
     #videoRange = [8] # dobra slika
-    videoRange = [5] # full partial
-    #videoRange = [23, 24]
+    #videoRange = [5] # full partial
+    #videoRange = [23, 24, 26, 32, 39] # out of borders
+    #videoRange = [28] #templ winner
+    #videoRange = [41] #templ lots of fp
+    #videoRange = [19] #templ lots of missed
+    videoRange = [91] #templ lots of missed, fp
     return videos, videoRange
 
 def getConfigs():

@@ -91,7 +91,7 @@ class VideoQueue:
     def initOverallReport(cfg):
         fileName = cfg["othr"]["codeDirectory"] + cfg["othr"]["outputsPref"] + "/overall.tsv"
         # truncate the file or create it, if it doesn't exist yet
-        title = "I\tDesc\tFile path\t"
+        title = "I\tC\tG\tDesc\tFile path\t"
         #title += "Ann\t"
         #title += "L tot\tL TP\tL mis\t"
         #title += "R tot\tR TP\tR mis\t"
@@ -114,8 +114,25 @@ class VideoQueue:
     def writeOverallReport(fileName, videoDescription, videoName, vi, annotsl, annots, varsDict):
         dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"])
 
+        isChallenging = "U"
+        hasGlasses = "U"
+        if annots[3]["challenging"] == True:
+            isChallenging = "Y"
+        elif annots[3]["challenging"] == False:
+            isChallenging = "N"
+        if annots[3]["glasses"] == True:
+            hasGlasses = "Y"
+        elif annots[3]["glasses"] == False:
+            hasGlasses = "N"
+        if isChallenging == "Y":
+            pass
+            return
+        if hasGlasses == "Y":
+            pass
+            #return
+
         # video desc, filepath
-        line = "%d\t%s\t%s\t" % (vi, videoDescription, videoName.split("/posnetki/")[1])
+        line = "%d\t%s\t%s\t%s\t%s\t" % (vi, isChallenging, hasGlasses, videoDescription, videoName.split("/posnetki/")[1])
         # total annot, left, right
         line += "%i\t%i\t%i\t" % (len(annotsl), len(varsDict["lBlinks"]), len(varsDict["rBlinks"]))
         # tp a, b, lo, ro

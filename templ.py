@@ -74,9 +74,14 @@ class Templ:
 
         plt.figure(1)
         #plt.subplot(211)
-        plt.plot(pltx, lcor, 'ro-', pltx, rcor, 'bo-',
-            pltx, lsd1, 'r^-', pltx, rsd1, 'b^-',
-            pltx, lsd2, 'rs-', pltx, rsd2, 'bs-')
+        plt.plot(pltx, lcor, 'ro-',
+            pltx, lsd1, 'y^-',
+            pltx, lsd2, 'ys-')
+
+        plt.figure(2)
+        plt.plot(pltx, rcor, 'bo-',
+            pltx, rsd1, 'y^-',
+            pltx, rsd2, 'ys-')
 
         #plt.subplot(212)
         #plt.plot(pltx, pltlYdiff, 'ro-', pltx, pltrYdiff, 'bo-')
