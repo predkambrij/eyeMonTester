@@ -27,13 +27,19 @@ class Templ:
             ts   = float(corsInfo[corsInfo.index("T")+1])
             lcor = float(corsInfo[corsInfo.index("La")+1])
             rcor = float(corsInfo[corsInfo.index("Ra")+1])
-            lsd = float(corsInfo[corsInfo.index("lSD12")+1])
-            l1sd = float(corsInfo[corsInfo.index("lSD12")+2])
-            l2sd = float(corsInfo[corsInfo.index("lSD12")+3])
-            rsd = float(corsInfo[corsInfo.index("rSD12")+1])
-            r1sd = float(corsInfo[corsInfo.index("rSD12")+2])
-            r2sd = float(corsInfo[corsInfo.index("rSD12")+3])
-            tCors.append({"fn":fn, "ts":ts, "lcor":lcor, "rcor":rcor, "lsd":lsd, "l1sd":l1sd, "l2sd":l2sd, "rsd":rsd, "r1sd":r1sd, "r2sd":r2sd})
+            la = float(corsInfo[corsInfo.index("La")+2])
+            ra = float(corsInfo[corsInfo.index("Ra")+2])
+            lDiff = float(corsInfo[corsInfo.index("La")+3])
+            rDiff = float(corsInfo[corsInfo.index("Ra")+3])
+            lsd = float(corsInfo[corsInfo.index("lSDft")+1])
+            pl1sd = float(corsInfo[corsInfo.index("lSDft")+2])
+            ml1sd = float(corsInfo[corsInfo.index("lSDft")+3])
+            l2sd = float(corsInfo[corsInfo.index("lSDft")+4])
+            rsd = float(corsInfo[corsInfo.index("rSDft")+1])
+            pr1sd = float(corsInfo[corsInfo.index("rSDft")+2])
+            mr1sd = float(corsInfo[corsInfo.index("rSDft")+3])
+            r2sd = float(corsInfo[corsInfo.index("rSDft")+4])
+            tCors.append({"fn":fn, "ts":ts, "lcor":lcor, "rcor":rcor, "lDiff":lDiff, "rDiff":rDiff, "la":la, "ra":ra, "lsd":lsd, "pl1sd":pl1sd, "ml1sd":ml1sd, "l2sd":l2sd, "rsd":rsd, "pr1sd":pr1sd, "mr1sd":mr1sd, "r2sd":r2sd})
             tCorsI[fn] = len(tCors)-1
             if annots[0].has_key(fn):
                 tCors[-1].update(annots[0][fn])
@@ -62,8 +68,13 @@ class Templ:
             #start = datetime.datetime.fromtimestamp(start)
             blinkInfoDict = {"fs":fs, "fe":fe, "start":start, "end":end, "duration":duration}
             lst.append(blinkInfoDict)
-            tCors[tCorsI[fs]][eye+"b"] = "s"
-            tCors[tCorsI[fe]][eye+"b"] = "e"
+            try:
+                tCors[tCorsI[fs]][eye+"b"] = "s"
+                tCors[tCorsI[fe]][eye+"b"] = "e"
+            except:
+                print repr(sorted(tCorsI.items()))
+                print len(tCors)
+                #raise ValueError("b")
         elif output.startswith("exiting"):
             return True
         return False
@@ -81,6 +92,9 @@ class Templ:
         if isEnd:
             window = 0
         pltx = [x["fn"] for x in tCors[-window:]]
+        pltld = [(xm1["lcor"]-x["lcor"]) for xm1, x in zip((tCors[1:-1]), (tCors[0:]))]
+        #print repr(pltld)
+        pltldx = pltx[:len(pltld)]
         pltasx = [x["fn"] for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
         pltaex = [x["fn"] for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
         pltas = [1.002 for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
@@ -96,20 +110,24 @@ class Templ:
         pltrbe = [1.001 for x in tCors[-window:]  if x.has_key("rb") and x["rb"] == "e"]
         
         lcor, rcor = [x["lcor"] for x in tCors[-window:]], [x["rcor"] for x in tCors[-window:]]
-        lsd, rsd = [1-(x["lsd"]*2) for x in tCors[-window:]], [1-(x["rsd"]*2) for x in tCors[-window:]]
-        lsd1, rsd1 = [x["l1sd"] for x in tCors[-window:]], [x["r1sd"] for x in tCors[-window:]]
-        lsd2, rsd2 = [x["l2sd"] for x in tCors[-window:]], [x["r2sd"] for x in tCors[-window:]]
+        la, ra = [x["la"] for x in tCors[-window:]], [x["ra"] for x in tCors[-window:]]
+        lDiff, rDiff = [x["lDiff"] for x in tCors[-window:]], [x["rDiff"] for x in tCors[-window:]]
+        #lsd, rsd = [1-(x["lsd"]*2) for x in tCors[-window:]], [1-(x["rsd"]*2) for x in tCors[-window:]]
+        plsd1, prsd1 = [x["pl1sd"] for x in tCors[-window:]], [x["pr1sd"] for x in tCors[-window:]]
+        mlsd1, mrsd1 = [x["ml1sd"] for x in tCors[-window:]], [x["mr1sd"] for x in tCors[-window:]]
+        lsd2, rsd2 = [1-x["l2sd"] for x in tCors[-window:]], [1-x["r2sd"] for x in tCors[-window:]]
 
         plt.figure(1)
         #plt.subplot(211)
         plt.plot(
             pltx, [1 for x in xrange(len(pltx))], 'g--', # ones
             pltx, lcor, 'ro-',
+            #pltx, la, 'ks-',
             pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
             pltlxbs, pltlbs, 'ro', pltlxbe, pltlbe, 'r^', # start & end of blinks
-            pltx, lsd, 'y^-'
+            #pltx, lsd, 'y^-',
             #pltx, lsd1, 'y^-',
-            #pltx, lsd2, 'ys-'
+            pltx, lsd2, 'gs-',
             )
         plt.tight_layout()
 
@@ -117,11 +135,22 @@ class Templ:
         plt.plot(
             pltx, [1 for x in xrange(len(pltx))], 'g--', # ones
             pltx, rcor, 'bo-',
+            #pltx, ra, 'ks-',
             pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
             pltrxbs, pltrbs, 'bo', pltrxbe, pltrbe, 'b^', # start & end of blinks
-            pltx, rsd, 'y^-',
+            #pltx, rsd, 'y^-',
             #pltx, rsd1, 'y^-',
-            #pltx, rsd2, 'ys-'
+            pltx, rsd2, 'gs-',
+            )
+        plt.tight_layout()
+        plt.figure(3)
+        plt.plot(
+            pltx, lDiff, 'r--',
+            pltx, plsd1, 'y^-',
+            pltx, mlsd1, 'y^-',
+            pltx, rDiff, 'b--',
+            pltx, prsd1, 'y^-',
+            pltx, mrsd1, 'y^-',
             )
         plt.tight_layout()
 
