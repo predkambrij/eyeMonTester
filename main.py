@@ -156,8 +156,8 @@ def prepareVideosList(cfg):
 
 def getConfigs():
     #method = "blackpixels"
-    #method = "templ"
-    method = "farneback"
+    method = "templ"
+    #method = "farneback"
     return {
         "excel_export": False,
         "coverage":     False,

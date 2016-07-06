@@ -21,7 +21,7 @@ def initListenLog(isWebcam):
         stdout  = subprocess.PIPE,
         bufsize = 0,
     )
-def listenLog(cfg, annots, fFlows, fFlowsI, tracking, tCors, bPixes, lBlinks, rBlinks):
+def listenLog(cfg, annots, fFlows, fFlowsI, tracking, tCors, tCorsI, bPixes, lBlinks, rBlinks):
     poll_obj = select.poll()
     poll_obj.register(proc.stdout, select.POLLIN)
     while True:
@@ -30,7 +30,7 @@ def listenLog(cfg, annots, fFlows, fFlowsI, tracking, tCors, bPixes, lBlinks, rB
             output = proc.stdout.readline().strip()
             try:
                 if cfg["method"] == "templ":
-                    if Templ.processLogLine(output, annots, tCors, lBlinks, rBlinks):
+                    if Templ.processLogLine(output, annots, tCors, tCorsI, lBlinks, rBlinks):
                         break
                 elif cfg["method"] == "farneback":
                     res = Farne.processLogLine(output, annots, fFlows, fFlowsI, tracking, lBlinks, rBlinks)
@@ -78,7 +78,7 @@ def processVideo(cfg, isWebcam, annotFilename):
 
     lBlinks, rBlinks = [], []
     fFlows, fFlowsI, tracking = [], {}, {"detecting":[]}
-    tCors, bPixes   = [], []
+    tCors, tCorsI, bPixes   = [], {}, []
 
     initListenLog(isWebcam)
     time.sleep(0.5)
@@ -94,7 +94,7 @@ def processVideo(cfg, isWebcam, annotFilename):
     else:
         annotsl, annots = [], ({}, {})
 
-    listenLogThread = threading.Thread(target=listenLog, args=[cfg, annots, fFlows, fFlowsI, tracking, tCors, bPixes, lBlinks, rBlinks])
+    listenLogThread = threading.Thread(target=listenLog, args=[cfg, annots, fFlows, fFlowsI, tracking, tCors, tCorsI, bPixes, lBlinks, rBlinks])
     listenLogThread.start()
     r = vid.wait()
     if r != 0:

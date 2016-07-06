@@ -11,7 +11,7 @@ class Templ:
         pass
 
     @staticmethod
-    def processLogLine(output, annots, tCors, lBlinks, rBlinks):
+    def processLogLine(output, annots, tCors, tCorsI, lBlinks, rBlinks):
         if output.startswith("debug_blinks_d1:"):
             corsInfo = output.split(" ")
             if debugProcessLogLine:
@@ -27,11 +27,14 @@ class Templ:
             ts   = float(corsInfo[corsInfo.index("T")+1])
             lcor = float(corsInfo[corsInfo.index("La")+1])
             rcor = float(corsInfo[corsInfo.index("Ra")+1])
+            lsd = float(corsInfo[corsInfo.index("lSD12")+1])
             l1sd = float(corsInfo[corsInfo.index("lSD12")+2])
             l2sd = float(corsInfo[corsInfo.index("lSD12")+3])
+            rsd = float(corsInfo[corsInfo.index("rSD12")+1])
             r1sd = float(corsInfo[corsInfo.index("rSD12")+2])
             r2sd = float(corsInfo[corsInfo.index("rSD12")+3])
-            tCors.append({"fn": fn, "ts" : ts, "lcor" : lcor, "rcor" : rcor, "l1sd" : l1sd, "l2sd" : l2sd, "r1sd" : r1sd, "r2sd" : r2sd})
+            tCors.append({"fn":fn, "ts":ts, "lcor":lcor, "rcor":rcor, "lsd":lsd, "l1sd":l1sd, "l2sd":l2sd, "rsd":rsd, "r1sd":r1sd, "r2sd":r2sd})
+            tCorsI[fn] = len(tCors)-1
             if annots[0].has_key(fn):
                 tCors[-1].update(annots[0][fn])
                 tCors[-1]["annotEvent"] = "s"
@@ -43,8 +46,10 @@ class Templ:
             blinkInfo = output.split(" ")
             if blinkInfo[1] == "adding_lBlinkChunks":
                 lst = lBlinks
+                eye = "l"
             elif blinkInfo[1] == "adding_rBlinkChunks":
                 lst = rBlinks
+                eye = "r"
 
             fs = int(blinkInfo[blinkInfo.index("fs")+1])
             fe = int(blinkInfo[blinkInfo.index("fe")+1])
@@ -57,6 +62,8 @@ class Templ:
             #start = datetime.datetime.fromtimestamp(start)
             blinkInfoDict = {"fs":fs, "fe":fe, "start":start, "end":end, "duration":duration}
             lst.append(blinkInfoDict)
+            tCors[tCorsI[fs]][eye+"b"] = "s"
+            tCors[tCorsI[fe]][eye+"b"] = "e"
         elif output.startswith("exiting"):
             return True
         return False
@@ -76,25 +83,43 @@ class Templ:
         pltx = [x["fn"] for x in tCors[-window:]]
         pltasx = [x["fn"] for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
         pltaex = [x["fn"] for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
-        pltas = [1 for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
-        pltae = [1 for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
+        pltas = [1.002 for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
+        pltae = [1.002 for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
+
+        pltlxbs = [x["fn"] for x in tCors[-window:] if  x.has_key("lb") and x["lb"] == "s"]
+        pltlxbe = [x["fn"] for x in tCors[-window:] if  x.has_key("lb") and x["lb"] == "e"]
+        pltlbs = [1.001 for x in tCors[-window:]  if x.has_key("lb") and x["lb"] == "s"]
+        pltlbe = [1.001 for x in tCors[-window:]  if x.has_key("lb") and x["lb"] == "e"]
+        pltrxbs = [x["fn"] for x in tCors[-window:] if  x.has_key("rb") and x["rb"] == "s"]
+        pltrxbe = [x["fn"] for x in tCors[-window:] if  x.has_key("rb") and x["rb"] == "e"]
+        pltrbs = [1.001 for x in tCors[-window:]  if x.has_key("rb") and x["rb"] == "s"]
+        pltrbe = [1.001 for x in tCors[-window:]  if x.has_key("rb") and x["rb"] == "e"]
         
         lcor, rcor = [x["lcor"] for x in tCors[-window:]], [x["rcor"] for x in tCors[-window:]]
+        lsd, rsd = [1-(x["lsd"]*2) for x in tCors[-window:]], [1-(x["rsd"]*2) for x in tCors[-window:]]
         lsd1, rsd1 = [x["l1sd"] for x in tCors[-window:]], [x["r1sd"] for x in tCors[-window:]]
         lsd2, rsd2 = [x["l2sd"] for x in tCors[-window:]], [x["r2sd"] for x in tCors[-window:]]
 
         plt.figure(1)
         #plt.subplot(211)
-        plt.plot(pltx, lcor, 'ro-',
+        plt.plot(
+            pltx, [1 for x in xrange(len(pltx))], 'g--', # ones
+            pltx, lcor, 'ro-',
             pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
+            pltlxbs, pltlbs, 'ro', pltlxbe, pltlbe, 'r^', # start & end of blinks
+            pltx, lsd, 'y^-'
             #pltx, lsd1, 'y^-',
             #pltx, lsd2, 'ys-'
             )
         plt.tight_layout()
 
         plt.figure(2)
-        plt.plot(pltx, rcor, 'bo-',
+        plt.plot(
+            pltx, [1 for x in xrange(len(pltx))], 'g--', # ones
+            pltx, rcor, 'bo-',
             pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
+            pltrxbs, pltrbs, 'bo', pltrxbe, pltrbe, 'b^', # start & end of blinks
+            pltx, rsd, 'y^-',
             #pltx, rsd1, 'y^-',
             #pltx, rsd2, 'ys-'
             )
