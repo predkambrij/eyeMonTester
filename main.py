@@ -7,7 +7,7 @@ def prepareVideosList(cfg):
     vidPrefix = cfg["othr"]["vidPrefix"]
     eyeblink8 = [
         ("punca od dalec", vidPrefix+"sk/eyeblink8/1/26122013_223310_cam.avi"),
-        ("", vidPrefix+"sk/eyeblink8/3/26122013_230103_cam.avi"),
+        ("fant gleda neki", vidPrefix+"sk/eyeblink8/3/26122013_230103_cam.avi"),
         ("", vidPrefix+"sk/eyeblink8/8/27122013_151644_cam.avi"),
         ("", vidPrefix+"sk/eyeblink8/9/27122013_152435_cam.avi"),
         ("bere neki, dobra slika", vidPrefix+"sk/eyeblink8/10/27122013_153916_cam.avi"),
@@ -131,7 +131,16 @@ def prepareVideosList(cfg):
     others = [
         ("talking", vidPrefix+"talking.avi"),
     ]
-    videos = nightOfResearchers15+nightOfResearchers30+eyeblink8HandInTheFirstFrames+eyeblink8+others
+    myAnnots = [
+        ("domaIv", vidPrefix+"o4_44.mp4"),
+        ("knjiznica", vidPrefix+"o4_89.mp4"),
+        ("knjiznica luc, premikal glavo", vidPrefix+"o4_90.mp4"),
+        ("iso noise", vidPrefix+"o4_101.mp4"),
+    ]
+    #videos = nightOfResearchers15+nightOfResearchers30+eyeblink8HandInTheFirstFrames+eyeblink8+others
+    #videos = eyeblink8HandInTheFirstFrames+eyeblink8+others
+    videos = myAnnots
+    #videos = others
     videoRange = range(len(videos))
     #videoRange = [4] # punca od dalec
     #videoRange = [8] # dobra slika
@@ -140,13 +149,15 @@ def prepareVideosList(cfg):
     #videoRange = [28] #templ winner
     #videoRange = [41] #templ lots of fp
     #videoRange = [19] #templ lots of missed
-    videoRange = [91] #templ lots of missed, fp
+    #videoRange = [91] #templ lots of missed, fp
+    #videoRange = videoRange[-1:] #talking
+    videoRange = [3]
     return videos, videoRange
 
 def getConfigs():
     #method = "blackpixels"
-    method = "templ"
-    #method = "farneback"
+    #method = "templ"
+    method = "farneback"
     return {
         "excel_export": False,
         "coverage":     False,
@@ -160,10 +171,14 @@ def getConfigs():
             #"outputsPref":"/vidProcOutputs",
             #"outputsPref":"/vidProcOutputs/ver1",
             "outputsPref":"/vidProcOutputs/ver2"+method,
+            #"outputsPref":"/vidProcOutputs/verTest"+method,
         }
     }
 
 def main():
+    # TODO add an option that we can roll over all possible settings
+    #  - an option to getConfigs to postfix when options were used for outputsPref
+    #  - for loop over VideoQueue with parameters what to sed
     cfg = getConfigs()
     videos, videoRange = prepareVideosList(cfg)
 

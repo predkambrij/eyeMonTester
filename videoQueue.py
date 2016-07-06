@@ -3,6 +3,7 @@ import processVideo
 from common import Common as Cmn
 from farne import Farne
 from templ import Templ
+from blackpixels import Blackpixels
 
 class VideoQueue:
     def __init__(self):
@@ -42,11 +43,14 @@ class VideoQueue:
 
             # sed videoname in c++ source code
             settingsFile = cfg["othr"]["sourceCodePrefix"]+"/jni/main_settings_testpy.cpp"
-            sedCmd = "sed -i 's|\(^char\ fileName\[100\]\ =\ \"\)\(.*\)\(\";$\)|\\1%s\\3|' %s " % (videoName, settingsFile)
+            sedCmd = "sed -i 's|\(^char\ fileName\[200\]\ =\ \"\)\(.*\)\(\";$\)|\\1%s\\3|' %s " % (videoName, settingsFile)
             os.system(sedCmd)
 
             annotFilename = os.path.splitext(videoName)[0]+".tag"
-            if not os.path.isfile(annotFilename):
+            annotFilename1 = os.path.splitext(videoName)[0]+".v1"
+            if (os.path.isfile(annotFilename1)):
+                annotFilename = annotFilename1
+            if (not os.path.isfile(annotFilename)) and (not os.path.isfile(annotFilename1)):
                 annotFilename = None
 
             if cfg["method"] == "farneback":
@@ -230,19 +234,22 @@ class VideoQueue:
 
             if "displayDetectionCoverage" in actions:
                 if cfg["method"] == "farneback":
+                    annotFilename = os.path.splitext(videoName)[0]+".tag"
+                    annotFilename1 = os.path.splitext(videoName)[0]+".v1"
+                    if os.path.isfile(annotFilename):
+                        annotsl, annots = Cmn.parseAnnotations(file(annotFilename), None, "farne")
+                        dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"])
+                        Cmn.displayDetectionCoverageF1(dc, annotsl)
+                    elif os.path.isfile(annotFilename1):
+                        annotsl, annots = Cmn.parseAnnotationsMy(file(annotFilename1), None, "farne")
+                        dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"])
+                        Cmn.displayDetectionCoverageF1(dc, annotsl)
                     pass
                     #Cmn.displayDetectionCoverage(varsDict["l"], varsDict["r"], varsDict["o"])
                 elif cfg["method"] == "templ":
                     pass
                 elif cfg["method"] == "blackpixels":
                     pass
-            if "postProcessLogLine" in actions:
-                if cfg["method"] == "farneback":
-                    Farne.postProcessLogLine(varsDict["fFlows"], varsDict["lBlinks"], varsDict["rBlinks"], True)
-                elif cfg["method"] == "templ":
-                    Templ.postProcessLogLine(varsDict["tCors"], varsDict["lBlinks"], varsDict["rBlinks"], True)
-                elif cfg["method"] == "blackpixels":
-                    Blackpixels.postProcessLogLine(varsDict["bPixes"], varsDict["lBlinks"], varsDict["rBlinks"], True)
             if "signalProcessing" in actions:
                 #print repr(varsDict["tCors"])
                 print repr([x["fn"] for x in varsDict["tCors"]])
@@ -255,10 +262,20 @@ class VideoQueue:
                 pass
             if "writeOverallReport" in actions:
                 annotFilename = os.path.splitext(videoName)[0]+".tag"
-                if not os.path.isfile(annotFilename):
-                    return
-                annotsl, annots = Cmn.parseAnnotations(file(annotFilename), None, "farne")
-                #VideoQueue.calculateTrackingCoverage(varsDict["tracking"], annots[2])
-                VideoQueue.writeOverallReport(reportFileName, videoDescription, videoName, vi, annotsl, annots, varsDict)
+                annotFilename1 = os.path.splitext(videoName)[0]+".v1"
+                if os.path.isfile(annotFilename):
+                    annotsl, annots = Cmn.parseAnnotations(file(annotFilename), None, "farne")
+                    #VideoQueue.calculateTrackingCoverage(varsDict["tracking"], annots[2])
+                    VideoQueue.writeOverallReport(reportFileName, videoDescription, videoName, vi, annotsl, annots, varsDict)
+                elif os.path.isfile(annotFilename1):
+                    annotsl, annots = Cmn.parseAnnotationsMy(file(annotFilename1), None, "farne")
+                    VideoQueue.writeOverallReport(reportFileName, videoDescription, videoName, vi, annotsl, annots, varsDict)
+            if "postProcessLogLine" in actions:
+                if cfg["method"] == "farneback":
+                    Farne.postProcessLogLine(varsDict["fFlows"], varsDict["lBlinks"], varsDict["rBlinks"], True)
+                elif cfg["method"] == "templ":
+                    Templ.postProcessLogLine(varsDict["tCors"], varsDict["lBlinks"], varsDict["rBlinks"], True)
+                elif cfg["method"] == "blackpixels":
+                    Blackpixels.postProcessLogLine(varsDict["bPixes"], varsDict["lBlinks"], varsDict["rBlinks"], True)
         return
 

@@ -29,13 +29,13 @@ class Blackpixels:
     @staticmethod
     def postProcessLogLine(bPixes, lBlinks, rBlinks, isEnd):
         if not isEnd:
-            window = 300
+            window = 600
         else:
             window = 0
 
         if not isEnd and (len(bPixes) == 0 or len(bPixes) % window != 0):
             return
-        print repr(bPixes)
+        #print repr(bPixes)
         if isEnd:
             window = 0
         pltx = [x["fn"] for x in bPixes[-window:]]

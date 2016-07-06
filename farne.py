@@ -185,14 +185,34 @@ class Farne:
         #plt.plot(pltx, pltlXdiff, 'ro-', pltx, pltrXdiff, 'bo-')
 
         #plt.subplot(212)
-        plt.plot(pltlx, lDiff, 'ro-', pltrx, rDiff, 'bo-',
+        #plt.plot(pltlx, lDiff, 'ro-', pltrx, rDiff, 'bo-',
+        #    pltax, [0 for x in xrange(len(pltax))], 'g--', # zero
+        #    pltlx, la, 'r--', pltrx, ra, 'b--', # average
+        #    #pltlx, plsd1, 'r^-', pltlx, mlsd1, 'r^-', pltrx, prsd1, 'b^-', pltrx, mrsd1, 'b^-',
+        #    #pltlx, plsd2, 'r^-', pltlx, mlsd2, 'r^-', pltrx, prsd2, 'b^-', pltrx, mrsd2, 'b^-',
+        #    pltlx, plsdt, 'ro-', pltlx, mlsdt, 'ro-', pltrx, prsdt, 'bo-', pltrx, mrsdt, 'bo-', # t SD
+        #    pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
+        #    pltlbsx, pltlbs, 'ro', pltlbex, pltlbe, 'r^', pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^' # start & end of blinks
+        #)
+        plt.plot(pltlx, lDiff, 'ro-',
             pltax, [0 for x in xrange(len(pltax))], 'g--', # zero
-            pltlx, la, 'r--', pltrx, ra, 'b--', # average
+            pltlx, la, 'r--', # average
             #pltlx, plsd1, 'r^-', pltlx, mlsd1, 'r^-', pltrx, prsd1, 'b^-', pltrx, mrsd1, 'b^-',
             #pltlx, plsd2, 'r^-', pltlx, mlsd2, 'r^-', pltrx, prsd2, 'b^-', pltrx, mrsd2, 'b^-',
-            pltlx, plsdt, 'ro-', pltlx, mlsdt, 'ro-', pltrx, prsdt, 'bo-', pltrx, mrsdt, 'bo-', # t SD
+            pltlx, plsdt, 'yo-', pltlx, mlsdt, 'yo-', # t SD
             pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
-            pltlbsx, pltlbs, 'ro', pltlbex, pltlbe, 'r^', pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^' # start & end of blinks
+            pltlbsx, pltlbs, 'ro', pltlbex, pltlbe, 'r^', # start & end of blinks
+        )
+        plt.tight_layout()
+        plt.figure(2)
+        plt.plot(pltrx, rDiff, 'bo-',
+            pltax, [0 for x in xrange(len(pltax))], 'g--', # zero
+            pltrx, ra, 'b--', # average
+            #pltlx, plsd1, 'r^-', pltlx, mlsd1, 'r^-', pltrx, prsd1, 'b^-', pltrx, mrsd1, 'b^-',
+            #pltlx, plsd2, 'r^-', pltlx, mlsd2, 'r^-', pltrx, prsd2, 'b^-', pltrx, mrsd2, 'b^-',
+            pltrx, prsdt, 'yo-', pltrx, mrsdt, 'yo-', # t SD
+            pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
+            pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^' # start & end of blinks
         )
         plt.tight_layout()
         plt.show()

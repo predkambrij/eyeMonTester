@@ -25,6 +25,24 @@ class Common:
             print "skipping %s %s %s" % (curBlinkId, curBlinkStart, curBlinkEnd)
 
     @staticmethod
+    def parseAnnotationsMy(f, fndict, method):
+        di2 = {'track': [[('start', 0), ('end', 0)]]}
+        di3 = {'challenging': False, 'glasses': True}
+        annotsl = []
+        lines = f.read().strip().split("\n")
+        blinks = [(xi, [int(y) for y in x.split(",") if y != "p"]) for xi, x in zip(range(1, len(lines)+1), lines)]
+        for blinki, blink in blinks:
+            annotsl.append({"bi":blinki, "bs":blink[0], "be":blink[1]})
+
+        if method == "farne":
+            annotsD = Common.makeAnnotDicts(annotsl)
+            annotsD.append(di2)
+            annotsD.append(di3)
+            return annotsl, annotsD
+        else:
+            return
+
+    @staticmethod
     def parseAnnotations(f, fndict, method):
         tracking = {"track":[]}
         notes = {"challenging":None, "glasses":None}
@@ -129,6 +147,7 @@ class Common:
     def makeAnnotDicts(annots):
         annotsByStart = {}
         annotsByEnd = {}
+        #annotsById = {}
         for annot in annots:
             annotsByStart[annot["bs"]] = annot
             annotsByEnd[annot["be"]]   = annot
@@ -245,6 +264,17 @@ class Common:
         }
         return dc
 
+    @staticmethod
+    def displayDetectionCoverageF1(dc, annots):
+        annotsById = {}
+        for annot in annots:
+            annotsById[annot["bi"]] = annot
+        
+        print "aMissed(%d) %s" % (len(dc["aMissed"]), repr([annotsById[x] for x in dc["aMissed"]]))
+        print "bMissed(%d) %s" % (len(dc["bMissed"]), repr([annotsById[x] for x in dc["bMissed"]]))
+        print "loMissed(%d) %s" % (len(dc["loMissed"]), repr([annotsById[x] for x in dc["loMissed"]]))
+        print "roMissed(%d) %s" % (len(dc["roMissed"]), repr([annotsById[x] for x in dc["roMissed"]]))
+        return
     @staticmethod
     def detectionCoverage(lBlinks, rBlinks, fnl):
         """requires "lbs", "lbe", "rbs", "rbe", "anots", "anote", "anotBlinkId"

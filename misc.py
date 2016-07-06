@@ -37,7 +37,7 @@ def testMain():
     cfg = main.getConfigs()
     videos, videoRange = main.prepareVideosList(cfg)
     actions = [
-        #"writeOverallReport",
+        "writeOverallReport",
         #"displayDetectionCoverage",
         "postProcessLogLine",
         #"signalProcessing",

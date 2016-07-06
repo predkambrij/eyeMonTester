@@ -30,7 +30,7 @@ def listenLog(cfg, annots, fFlows, fFlowsI, tracking, tCors, bPixes, lBlinks, rB
             output = proc.stdout.readline().strip()
             try:
                 if cfg["method"] == "templ":
-                    if Templ.processLogLine(output, tCors, lBlinks, rBlinks):
+                    if Templ.processLogLine(output, annots, tCors, lBlinks, rBlinks):
                         break
                 elif cfg["method"] == "farneback":
                     res = Farne.processLogLine(output, annots, fFlows, fFlowsI, tracking, lBlinks, rBlinks)
@@ -87,6 +87,8 @@ def processVideo(cfg, isWebcam, annotFilename):
     if type(annotFilename) == type(""):
         if annotFilename.endswith(".tag"):
             annotsl, annots = Cmn.parseAnnotations(file(annotFilename), None, "farne")
+        elif annotFilename.endswith(".v1"):
+            annotsl, annots = Cmn.parseAnnotationsMy(file(annotFilename), None, "farne")
         else:
             raise ValueError("unknown annotation format")
     else:
