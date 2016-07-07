@@ -85,7 +85,7 @@ class VideoQueue:
 
         f = file(outputFileName, "rb")
         for index in sorted(variablesMap.keys()):
-            if index == 3: # TODO remove once rerun
+            if index == 4: # TODO remove once rerun
                 break
             line = f.readline()
             varsDict[variablesMap[index]] = eval(line)

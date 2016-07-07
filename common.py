@@ -242,9 +242,8 @@ class Common:
         annotsD = Common._annotsById(annotsl)
         lCaught, lCaughtIndices, lMissed, lFp = Common._detectionCoverageHelper(annotsl[:], annotsD, lBlinks)
         rCaught, rCaughtIndices, rMissed, rFp = Common._detectionCoverageHelper(annotsl[:], annotsD, rBlinks)
-
-        aCaught = set.union(set(lCaught), set(rCaught))
-        bCaught = set.intersection(*[set(lCaught), set(rCaught)])
+        bCaught, bCaughtIndices, bMissed, bFp = Common._detectionCoverageHelper(annotsl[:], annotsD, jBlinks)
+        aCaught = set.union(set(lCaught), set(rCaught), set(bCaught))
 
         loCaught = [x["bi"] for x in annotsl if (x["bi"] in lCaught and (not x["bi"] in bCaught))]
         roCaught = [x["bi"] for x in annotsl if (x["bi"] in rCaught and (not x["bi"] in bCaught))]

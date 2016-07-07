@@ -87,7 +87,6 @@ class Templ:
                 end /= 1000.
 
             blinkInfoDict = {"fs":fs, "fe":fe, "start":start, "end":end, "duration":duration}
-            print "adding %s" % repr(blinkInfoDict)
             jBlinks.append(blinkInfoDict)
             tCors[tCorsI[fs]]["jb"] = "s"
             tCors[tCorsI[fe]]["jb"] = "e"
@@ -113,17 +112,21 @@ class Templ:
         pltldx = pltx[:len(pltld)]
         pltasx = [x["fn"] for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
         pltaex = [x["fn"] for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
-        pltas = [1.002 for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
-        pltae = [1.002 for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
+        pltas = [1.004 for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
+        pltae = [1.004 for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
 
         pltlxbs = [x["fn"] for x in tCors[-window:] if  x.has_key("lb") and x["lb"] == "s"]
         pltlxbe = [x["fn"] for x in tCors[-window:] if  x.has_key("lb") and x["lb"] == "e"]
-        pltlbs = [1.001 for x in tCors[-window:]  if x.has_key("lb") and x["lb"] == "s"]
-        pltlbe = [1.001 for x in tCors[-window:]  if x.has_key("lb") and x["lb"] == "e"]
+        pltlbs = [1.002 for x in tCors[-window:]  if x.has_key("lb") and x["lb"] == "s"]
+        pltlbe = [1.002 for x in tCors[-window:]  if x.has_key("lb") and x["lb"] == "e"]
         pltrxbs = [x["fn"] for x in tCors[-window:] if  x.has_key("rb") and x["rb"] == "s"]
         pltrxbe = [x["fn"] for x in tCors[-window:] if  x.has_key("rb") and x["rb"] == "e"]
         pltrbs = [1.001 for x in tCors[-window:]  if x.has_key("rb") and x["rb"] == "s"]
         pltrbe = [1.001 for x in tCors[-window:]  if x.has_key("rb") and x["rb"] == "e"]
+        pltjxbs = [x["fn"] for x in tCors[-window:] if  x.has_key("jb") and x["jb"] == "s"]
+        pltjxbe = [x["fn"] for x in tCors[-window:] if  x.has_key("jb") and x["jb"] == "e"]
+        pltjbs = [1.003 for x in tCors[-window:]  if x.has_key("jb") and x["jb"] == "s"]
+        pltjbe = [1.003 for x in tCors[-window:]  if x.has_key("jb") and x["jb"] == "e"]
         
         lcor, rcor = [x["lcor"] for x in tCors[-window:]], [x["rcor"] for x in tCors[-window:]]
         la, ra = [x["la"] for x in tCors[-window:]], [x["ra"] for x in tCors[-window:]]
@@ -133,42 +136,61 @@ class Templ:
         mlsd1, mrsd1 = [x["ml1sd"] for x in tCors[-window:]], [x["mr1sd"] for x in tCors[-window:]]
         lsd2, rsd2 = [1-x["l2sd"] for x in tCors[-window:]], [1-x["r2sd"] for x in tCors[-window:]]
 
-        plt.figure(1)
-        #plt.subplot(211)
-        plt.plot(
-            pltx, [1 for x in xrange(len(pltx))], 'g--', # ones
-            pltx, lcor, 'ro-',
-            #pltx, la, 'ks-',
-            pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
-            pltlxbs, pltlbs, 'ro', pltlxbe, pltlbe, 'r^', # start & end of blinks
-            #pltx, lsd, 'y^-',
-            #pltx, lsd1, 'y^-',
-            pltx, lsd2, 'gs-',
-            )
-        plt.tight_layout()
+        figs = [4]
+        if 4 in figs:
+            plt.figure(4)
+            #plt.subplot(211)
+            plt.plot(
+                pltx, [1 for x in xrange(len(pltx))], 'g--', # ones
+                pltx, lcor, 'ro-',
+                pltx, rcor, 'bo-',
+                pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
+                pltlxbs, pltlbs, 'ro', pltlxbe, pltlbe, 'r^', # start & end of blinks
+                pltrxbs, pltrbs, 'bo', pltrxbe, pltrbe, 'b^', # start & end of blinks
+                pltjxbs, pltjbs, 'yo', pltjxbe, pltjbe, 'y^', # start & end of blinks
+                pltx, lsd2, 'gs-',
+                pltx, rsd2, 'bs-',
+                )
+            plt.tight_layout()
+        if 1 in figs:
+            plt.figure(1)
+            #plt.subplot(211)
+            plt.plot(
+                pltx, [1 for x in xrange(len(pltx))], 'g--', # ones
+                pltx, lcor, 'ro-',
+                #pltx, la, 'ks-',
+                pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
+                pltlxbs, pltlbs, 'ro', pltlxbe, pltlbe, 'r^', # start & end of blinks
+                #pltx, lsd, 'y^-',
+                #pltx, lsd1, 'y^-',
+                pltx, lsd2, 'gs-',
+                )
+            plt.tight_layout()
 
-        plt.figure(2)
-        plt.plot(
-            pltx, [1 for x in xrange(len(pltx))], 'g--', # ones
-            pltx, rcor, 'bo-',
-            #pltx, ra, 'ks-',
-            pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
-            pltrxbs, pltrbs, 'bo', pltrxbe, pltrbe, 'b^', # start & end of blinks
-            #pltx, rsd, 'y^-',
-            #pltx, rsd1, 'y^-',
-            pltx, rsd2, 'gs-',
-            )
-        plt.tight_layout()
-        plt.figure(3)
-        plt.plot(
-            pltx, lDiff, 'r--',
-            pltx, plsd1, 'y^-',
-            pltx, mlsd1, 'y^-',
-            pltx, rDiff, 'b--',
-            pltx, prsd1, 'y^-',
-            pltx, mrsd1, 'y^-',
-            )
-        plt.tight_layout()
+        if 2 in figs:
+            plt.figure(2)
+            plt.plot(
+                pltx, [1 for x in xrange(len(pltx))], 'g--', # ones
+                pltx, rcor, 'bo-',
+                #pltx, ra, 'ks-',
+                pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
+                pltrxbs, pltrbs, 'bo', pltrxbe, pltrbe, 'b^', # start & end of blinks
+                #pltx, rsd, 'y^-',
+                #pltx, rsd1, 'y^-',
+                pltx, rsd2, 'gs-',
+                )
+            plt.tight_layout()
+        if 3 in figs:
+            plt.figure(3)
+            plt.plot(
+                pltx, lDiff, 'r--',
+                pltx, plsd1, 'y^-',
+                pltx, mlsd1, 'y^-',
+                pltx, rDiff, 'b--',
+                pltx, prsd1, 'y^-',
+                pltx, mrsd1, 'y^-',
+                )
+            plt.tight_layout()
 
         #plt.subplot(212)
         #plt.plot(pltx, pltlYdiff, 'ro-', pltx, pltrYdiff, 'bo-')

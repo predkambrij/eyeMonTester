@@ -151,15 +151,15 @@ def prepareVideosList(cfg):
     #videoRange = [41] #templ lots of fp
     #videoRange = [19] #templ lots of missed
     #videoRange = [91] #templ lots of missed, fp
-    #videoRange = videoRange[-1:] #talking
+    videoRange = videoRange[-1:] #talking
     #videoRange = [4]
     #videoRange = videoRange[:6]
     return videos, videoRange
 
 def getConfigs():
-    method = "blackpixels"
+    #method = "blackpixels"
     #method = "templ"
-    #method = "farneback"
+    method = "farneback"
     return {
         "excel_export": False,
         "coverage":     False,

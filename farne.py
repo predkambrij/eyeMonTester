@@ -153,7 +153,6 @@ class Farne:
                 end /= 1000.
 
             blinkInfoDict = {"fs":fs, "fe":fe, "start":start, "end":end, "duration":duration}
-            print "adding %s" % repr(blinkInfoDict)
             jBlinks.append(blinkInfoDict)
             fFlows[fFlowsI[fs]]["jb"] = "s"
             fFlows[fFlowsI[fe]]["jb"] = "e"
@@ -178,6 +177,8 @@ class Farne:
         pltrx = [x["fn"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"]
         pltasx = [x["fn"] for x in fFlows[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
         pltaex = [x["fn"] for x in fFlows[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
+        pltjbsx = [x["fn"] for x in fFlows[-window:] if  x.has_key("jb") and x["jb"] == "s"]
+        pltjbex = [x["fn"] for x in fFlows[-window:] if  x.has_key("jb") and x["jb"] == "e"]
         pltlbsx = [x["fn"] for x in fFlows[-window:]  if x.has_key("lb") and x["lb"] == "s"]
         pltlbex = [x["fn"] for x in fFlows[-window:]  if x.has_key("lb") and x["lb"] == "e"]
         pltrbsx = [x["fn"] for x in fFlows[-window:]  if x.has_key("rb") and x["rb"] == "s"]
@@ -190,47 +191,56 @@ class Farne:
         prsd1, mrsd1 = [x["prsd1"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"], [x["mrsd1"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"]
         prsd2, mrsd2 = [x["prsd2"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"], [x["mrsd2"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"]
         prsdt, mrsdt = [x["prsdt"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"], [x["mrsdt"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"]
-        pltas = [1 for x in fFlows[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
-        pltae = [1 for x in fFlows[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
-        pltlbs = [1.1 for x in fFlows[-window:]  if x.has_key("lb") and x["lb"] == "s"]
-        pltlbe = [1.1 for x in fFlows[-window:]  if x.has_key("lb") and x["lb"] == "e"]
-        pltrbs = [1.2 for x in fFlows[-window:]  if x.has_key("rb") and x["rb"] == "s"]
-        pltrbe = [1.2 for x in fFlows[-window:]  if x.has_key("rb") and x["rb"] == "e"]
-        plt.figure(1)
+        pltas = [1.4 for x in fFlows[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
+        pltae = [1.4 for x in fFlows[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
+        pltjbs = [1.3 for x in fFlows[-window:]  if x.has_key("jb") and x["jb"] == "s"]
+        pltjbe = [1.3 for x in fFlows[-window:]  if x.has_key("jb") and x["jb"] == "e"]
+        pltlbs = [1.2 for x in fFlows[-window:]  if x.has_key("lb") and x["lb"] == "s"]
+        pltlbe = [1.2 for x in fFlows[-window:]  if x.has_key("lb") and x["lb"] == "e"]
+        pltrbs = [1.1 for x in fFlows[-window:]  if x.has_key("rb") and x["rb"] == "s"]
+        pltrbe = [1.1 for x in fFlows[-window:]  if x.has_key("rb") and x["rb"] == "e"]
         #plt.subplot(211)
         #plt.plot(pltx, pltlXdiff, 'ro-', pltx, pltrXdiff, 'bo-')
-
+        fig = [3]
         #plt.subplot(212)
-        #plt.plot(pltlx, lDiff, 'ro-', pltrx, rDiff, 'bo-',
-        #    pltax, [0 for x in xrange(len(pltax))], 'g--', # zero
-        #    pltlx, la, 'r--', pltrx, ra, 'b--', # average
-        #    #pltlx, plsd1, 'r^-', pltlx, mlsd1, 'r^-', pltrx, prsd1, 'b^-', pltrx, mrsd1, 'b^-',
-        #    #pltlx, plsd2, 'r^-', pltlx, mlsd2, 'r^-', pltrx, prsd2, 'b^-', pltrx, mrsd2, 'b^-',
-        #    pltlx, plsdt, 'ro-', pltlx, mlsdt, 'ro-', pltrx, prsdt, 'bo-', pltrx, mrsdt, 'bo-', # t SD
-        #    pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
-        #    pltlbsx, pltlbs, 'ro', pltlbex, pltlbe, 'r^', pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^' # start & end of blinks
-        #)
-        plt.plot(pltlx, lDiff, 'ro-',
-            pltax, [0 for x in xrange(len(pltax))], 'g--', # zero
-            pltlx, la, 'r--', # average
-            #pltlx, plsd1, 'r^-', pltlx, mlsd1, 'r^-', pltrx, prsd1, 'b^-', pltrx, mrsd1, 'b^-',
-            #pltlx, plsd2, 'r^-', pltlx, mlsd2, 'r^-', pltrx, prsd2, 'b^-', pltrx, mrsd2, 'b^-',
-            pltlx, plsdt, 'yo-', pltlx, mlsdt, 'yo-', # t SD
-            pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
-            pltlbsx, pltlbs, 'ro', pltlbex, pltlbe, 'r^', # start & end of blinks
-        )
-        plt.tight_layout()
-        plt.figure(2)
-        plt.plot(pltrx, rDiff, 'bo-',
-            pltax, [0 for x in xrange(len(pltax))], 'g--', # zero
-            pltrx, ra, 'b--', # average
-            #pltlx, plsd1, 'r^-', pltlx, mlsd1, 'r^-', pltrx, prsd1, 'b^-', pltrx, mrsd1, 'b^-',
-            #pltlx, plsd2, 'r^-', pltlx, mlsd2, 'r^-', pltrx, prsd2, 'b^-', pltrx, mrsd2, 'b^-',
-            pltrx, prsdt, 'yo-', pltrx, mrsdt, 'yo-', # t SD
-            pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
-            pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^' # start & end of blinks
-        )
-        plt.tight_layout()
+        if 3 in fig:
+            plt.plot(
+                pltlx, lDiff, 'ro-', pltrx, rDiff, 'bo-',
+                pltax, [0 for x in xrange(len(pltax))], 'g--', # zero
+                #pltlx, la, 'r--', pltrx, ra, 'b--', # average
+                #pltlx, plsd1, 'r^-', pltlx, mlsd1, 'r^-', pltrx, prsd1, 'b^-', pltrx, mrsd1, 'b^-',
+                #pltlx, plsd2, 'r^-', pltlx, mlsd2, 'r^-', pltrx, prsd2, 'b^-', pltrx, mrsd2, 'b^-',
+                pltlx, plsdt, 'ro-', pltlx, mlsdt, 'ro-', pltrx, prsdt, 'bo-', pltrx, mrsdt, 'bo-', # t SD
+                pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
+                pltlbsx, pltlbs, 'ro', pltlbex, pltlbe, 'r^', # start & end of lBlinks
+                pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^', # start & end of rBlinks
+                pltjbsx, pltjbs, 'yo', pltjbex, pltjbe, 'y^', # start & end of jBlinks
+            )
+            plt.tight_layout()
+        if 1 in fig:
+            plt.figure(1)
+            plt.plot(pltlx, lDiff, 'ro-',
+                pltax, [0 for x in xrange(len(pltax))], 'g--', # zero
+                pltlx, la, 'r--', # average
+                #pltlx, plsd1, 'r^-', pltlx, mlsd1, 'r^-', pltrx, prsd1, 'b^-', pltrx, mrsd1, 'b^-',
+                #pltlx, plsd2, 'r^-', pltlx, mlsd2, 'r^-', pltrx, prsd2, 'b^-', pltrx, mrsd2, 'b^-',
+                pltlx, plsdt, 'yo-', pltlx, mlsdt, 'yo-', # t SD
+                pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
+                pltlbsx, pltlbs, 'ro', pltlbex, pltlbe, 'r^', # start & end of blinks
+            )
+            plt.tight_layout()
+        if 2 in fig:
+            plt.figure(2)
+            plt.plot(pltrx, rDiff, 'bo-',
+                pltax, [0 for x in xrange(len(pltax))], 'g--', # zero
+                pltrx, ra, 'b--', # average
+                #pltlx, plsd1, 'r^-', pltlx, mlsd1, 'r^-', pltrx, prsd1, 'b^-', pltrx, mrsd1, 'b^-',
+                #pltlx, plsd2, 'r^-', pltlx, mlsd2, 'r^-', pltrx, prsd2, 'b^-', pltrx, mrsd2, 'b^-',
+                pltrx, prsdt, 'yo-', pltrx, mrsdt, 'yo-', # t SD
+                pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
+                pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^' # start & end of blinks
+            )
+            plt.tight_layout()
         plt.show()
         #plt.show(block=False)
 
