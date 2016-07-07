@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+import traceback
 from common import Common as Cmn
 
 # control flags
@@ -68,13 +69,16 @@ class Templ:
             #start = datetime.datetime.fromtimestamp(start)
             blinkInfoDict = {"fs":fs, "fe":fe, "start":start, "end":end, "duration":duration}
             lst.append(blinkInfoDict)
+
             try:
                 tCors[tCorsI[fs]][eye+"b"] = "s"
                 tCors[tCorsI[fe]][eye+"b"] = "e"
             except:
-                print repr(sorted(tCorsI.items()))
-                print len(tCors)
-                #raise ValueError("b")
+                # there was an interruption of face tracking
+                # blink was detected because we are not excluding if difference between frame is so long, that shortSize is too short
+                # fuck it for now, there are not many those
+                pass
+
         elif output.startswith("debug_blinks_d5:"):
             blinkInfo = output.split(" ")
             fs = int(blinkInfo[blinkInfo.index("fs")+1])
@@ -108,8 +112,6 @@ class Templ:
             window = 0
         pltx = [x["fn"] for x in tCors[-window:]]
         pltld = [(xm1["lcor"]-x["lcor"]) for xm1, x in zip((tCors[1:-1]), (tCors[0:]))]
-        #print repr(pltld)
-        pltldx = pltx[:len(pltld)]
         pltasx = [x["fn"] for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
         pltaex = [x["fn"] for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
         pltas = [1.004 for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
