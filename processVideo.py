@@ -21,7 +21,7 @@ def initListenLog(isWebcam):
         stdout  = subprocess.PIPE,
         bufsize = 0,
     )
-def listenLog(cfg, annots, fFlows, fFlowsI, tracking, tCors, tCorsI, bPixes, lBlinks, rBlinks):
+def listenLog(cfg, annots, fFlows, fFlowsI, tracking, tCors, tCorsI, bPixes, lBlinks, rBlinks, jBlinks):
     poll_obj = select.poll()
     poll_obj.register(proc.stdout, select.POLLIN)
     while True:
@@ -30,14 +30,14 @@ def listenLog(cfg, annots, fFlows, fFlowsI, tracking, tCors, tCorsI, bPixes, lBl
             output = proc.stdout.readline().strip()
             try:
                 if cfg["method"] == "templ":
-                    if Templ.processLogLine(output, annots, tCors, tCorsI, lBlinks, rBlinks):
+                    if Templ.processLogLine(output, annots, tCors, tCorsI, lBlinks, rBlinks, jBlinks):
                         break
                 elif cfg["method"] == "farneback":
-                    res = Farne.processLogLine(output, annots, fFlows, fFlowsI, tracking, lBlinks, rBlinks)
+                    res = Farne.processLogLine(output, annots, fFlows, fFlowsI, tracking, lBlinks, rBlinks, jBlinks)
                     if res:
                         break
                 elif cfg["method"] == "blackpixels":
-                    res = Blackpixels.processLogLine(output, bPixes, lBlinks, rBlinks)
+                    res = Blackpixels.processLogLine(output, bPixes, lBlinks, rBlinks, jBlinks)
                     if res:
                         break
             except StandardError,e:
@@ -76,7 +76,7 @@ def terminateRunVideo():
 def processVideo(cfg, isWebcam, annotFilename):
     global stopListenLog
 
-    lBlinks, rBlinks = [], []
+    lBlinks, rBlinks, jBlinks = [], [], []
     fFlows, fFlowsI, tracking = [], {}, {"detecting":[]}
     tCors, tCorsI, bPixes   = [], {}, []
 
@@ -94,7 +94,7 @@ def processVideo(cfg, isWebcam, annotFilename):
     else:
         annotsl, annots = [], ({}, {})
 
-    listenLogThread = threading.Thread(target=listenLog, args=[cfg, annots, fFlows, fFlowsI, tracking, tCors, tCorsI, bPixes, lBlinks, rBlinks])
+    listenLogThread = threading.Thread(target=listenLog, args=[cfg, annots, fFlows, fFlowsI, tracking, tCors, tCorsI, bPixes, lBlinks, rBlinks, jBlinks])
     listenLogThread.start()
     r = vid.wait()
     if r != 0:
@@ -110,22 +110,22 @@ def processVideo(cfg, isWebcam, annotFilename):
 
     if cfg["coverage"]:
         if cfg["method"] == "farneback":
-            l, r, o = Cmn.detectionCoverageF(annotsl, lBlinks, rBlinks)
+            l, r, o = Cmn.detectionCoverageF(annotsl, lBlinks, rBlinks, jBlinks)
             Cmn.displayDetectionCoverage(l, r, o)
         elif cfg["method"] == "templ":
             fnl = Templ.generateTCSV(vidPrefix, videoAnnot, tCors, lBlinks, rBlinks)[1]
-            res = Cmn.detectionCoverage(lBlinks, rBlinks, fnl)
+            res = Cmn.detectionCoverage(lBlinks, rBlinks, jBlinks, fnl)
             for r in res:
                 print r
     if cfg["end_hook"]:
         if cfg["method"] == "farneback":
-            Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, True)
+            Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, jBlinks, True)
         elif cfg["method"] == "templ":
-            Templ.postProcessLogLine(tCors, lBlinks, rBlinks, True)
+            Templ.postProcessLogLine(tCors, lBlinks, rBlinks, jBlinks, True)
 
     if cfg["method"] == "farneback":
-        return fFlows, lBlinks, rBlinks, tracking
+        return fFlows, lBlinks, rBlinks, jBlinks, tracking
     elif cfg["method"] == "templ":
-        return tCors, lBlinks, rBlinks, tracking
+        return tCors, lBlinks, rBlinks, jBlinks, tracking
     elif cfg["method"] == "blackpixels":
-        return bPixes, lBlinks, rBlinks, tracking
+        return bPixes, lBlinks, rBlinks, jBlinks, tracking

@@ -11,7 +11,7 @@ class Blackpixels:
         pass
 
     @staticmethod
-    def processLogLine(output, bPixes, lBlinks, rBlinks):
+    def processLogLine(output, bPixes, lBlinks, rBlinks, jBlinks):
         if output.startswith("debug_bp_log_pix:"):
             flowsInfo = [x for x in output.split(" ") if x != ""]
             if debugProcessLogLine:
@@ -21,13 +21,13 @@ class Blackpixels:
             lNum, rNum = float(flowsInfo[flowsInfo.index("lNum")+1]), float(flowsInfo[flowsInfo.index("rNum")+1])
 
             bPixes.append({"fn":fn, "ts":ts, "lNum":lNum, "rNum":rNum})
-            Blackpixels.postProcessLogLine(bPixes, lBlinks, rBlinks, False)
+            Blackpixels.postProcessLogLine(bPixes, lBlinks, rBlinks, jBlinks, False)
         elif output.startswith("exiting"):
             return True
         return False
 
     @staticmethod
-    def postProcessLogLine(bPixes, lBlinks, rBlinks, isEnd):
+    def postProcessLogLine(bPixes, lBlinks, rBlinks, jBlinks, isEnd):
         if not isEnd:
             window = 600
         else:

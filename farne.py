@@ -11,7 +11,7 @@ class Farne:
         pass
 
     @staticmethod
-    def processLogLine(output, annots, fFlows, fFlowsI, tracking, lBlinks, rBlinks):
+    def processLogLine(output, annots, fFlows, fFlowsI, tracking, lBlinks, rBlinks, jBlinks):
         # if output.startswith("debug_fb_log_flow:"):
         #     flowsInfo = [x for x in output.split(" ") if x != ""]
         #     if debugProcessLogLine:
@@ -30,7 +30,7 @@ class Farne:
         #         "lbtotalX":lbtotalX, "lbtotalY":lbtotalY, "rbtotalX":rbtotalX, "rbtotalY":rbtotalY,
         #         "lDiffX":lDiffX, "lDiffY":lDiffY, "rDiffX":rDiffX, "rDiffY":rDiffY,
         #     })
-        #     #Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, False)
+        #     #Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, jBlinks, False)
         if output.startswith("debug_fb_log_reinit:") or output.startswith("debug_fb_log_repupil:"):
             pass
             #print output
@@ -118,7 +118,7 @@ class Farne:
             if annots[1].has_key(fn):
                 fFlows[-1].update(annots[1][fn])
                 fFlows[-1]["annotEvent"] = "e"
-            #Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, False)
+            #Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, jBlinks, False)
         elif output.startswith("debug_blinks_d4:"):
             blinkInfo = output.split(" ")
             if blinkInfo[1] == "adding_lBlinkChunksf":
@@ -141,12 +141,28 @@ class Farne:
             lst.append(blinkInfoDict)
             fFlows[fFlowsI[fs]][eye+"b"] = "s"
             fFlows[fFlowsI[fe]][eye+"b"] = "e"
+        elif output.startswith("debug_blinks_d5:"):
+            blinkInfo = output.split(" ")
+            fs = int(blinkInfo[blinkInfo.index("fs")+1])
+            fe = int(blinkInfo[blinkInfo.index("fe")+1])
+            start     = float(blinkInfo[blinkInfo.index("start")+1])
+            end       = float(blinkInfo[blinkInfo.index("end")+1])
+            duration  = float(blinkInfo[blinkInfo.index("duration")+1])
+            if start > 1000000000:
+                start /= 1000.
+                end /= 1000.
+
+            blinkInfoDict = {"fs":fs, "fe":fe, "start":start, "end":end, "duration":duration}
+            print "adding %s" % repr(blinkInfoDict)
+            jBlinks.append(blinkInfoDict)
+            fFlows[fFlowsI[fs]]["jb"] = "s"
+            fFlows[fFlowsI[fe]]["jb"] = "e"
         elif output.startswith("exiting"):
             return True
         return False
 
     @staticmethod
-    def postProcessLogLine(fFlows, lBlinks, rBlinks, isEnd):
+    def postProcessLogLine(fFlows, lBlinks, rBlinks, jBlinks, isEnd):
         if not isEnd:
             window = 300
         else:

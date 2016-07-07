@@ -11,7 +11,7 @@ class Templ:
         pass
 
     @staticmethod
-    def processLogLine(output, annots, tCors, tCorsI, lBlinks, rBlinks):
+    def processLogLine(output, annots, tCors, tCorsI, lBlinks, rBlinks, jBlinks):
         if output.startswith("debug_blinks_d1:"):
             corsInfo = output.split(" ")
             if debugProcessLogLine:
@@ -47,7 +47,7 @@ class Templ:
             if annots[1].has_key(fn):
                 tCors[-1].update(annots[1][fn])
                 tCors[-1]["annotEvent"] = "e"
-            #Templ.postProcessLogLine(tCors, lBlinks, rBlinks, False)
+            #Templ.postProcessLogLine(tCors, lBlinks, rBlinks, jBlinks, False)
         elif output.startswith("debug_blinks_d4:"):
             blinkInfo = output.split(" ")
             if blinkInfo[1] == "adding_lBlinkChunks":
@@ -75,12 +75,28 @@ class Templ:
                 print repr(sorted(tCorsI.items()))
                 print len(tCors)
                 #raise ValueError("b")
+        elif output.startswith("debug_blinks_d5:"):
+            blinkInfo = output.split(" ")
+            fs = int(blinkInfo[blinkInfo.index("fs")+1])
+            fe = int(blinkInfo[blinkInfo.index("fe")+1])
+            start     = float(blinkInfo[blinkInfo.index("start")+1])
+            end       = float(blinkInfo[blinkInfo.index("end")+1])
+            duration  = float(blinkInfo[blinkInfo.index("duration")+1])
+            if start > 1000000000:
+                start /= 1000.
+                end /= 1000.
+
+            blinkInfoDict = {"fs":fs, "fe":fe, "start":start, "end":end, "duration":duration}
+            print "adding %s" % repr(blinkInfoDict)
+            jBlinks.append(blinkInfoDict)
+            tCors[tCorsI[fs]]["jb"] = "s"
+            tCors[tCorsI[fe]]["jb"] = "e"
         elif output.startswith("exiting"):
             return True
         return False
 
     @staticmethod
-    def postProcessLogLine(tCors, lBlinks, rBlinks, isEnd):
+    def postProcessLogLine(tCors, lBlinks, rBlinks, jBlinks, isEnd):
         if not isEnd:
             window = 300
         else:

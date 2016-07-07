@@ -233,7 +233,7 @@ class Common:
         print "aMissed (%i) %s" % (len(o[2]), o[2])
 
     @staticmethod
-    def detectionCoverageF(annotsl, lBlinks, rBlinks):
+    def detectionCoverageF(annotsl, lBlinks, rBlinks, jBlinks):
         """
         lBlinks/rBlinks "fs", "fe", "start", "end", "duration"
         annots bs, be, bi

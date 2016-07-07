@@ -21,11 +21,12 @@ class VideoQueue:
         return outputFileName
 
     @staticmethod
-    def writeVideoResults(outputFileName, methodVar, lBlinks, rBlinks, tracking):
+    def writeVideoResults(outputFileName, methodVar, lBlinks, rBlinks, jBlinks, tracking):
         f = file(outputFileName, "wb")
         f.write(repr(methodVar)+"\n")
         f.write(repr(lBlinks)+"\n")
         f.write(repr(rBlinks)+"\n")
+        f.write(repr(jBlinks)+"\n")
         f.write(repr(tracking)+"\n")
         f.close()
         return
@@ -34,7 +35,7 @@ class VideoQueue:
     def processVideoQueue(cfg, videos, videoRange):
         isWebcam = False
         if isWebcam == True:
-            fFlows, lBlinks, rBlinks, tracking = processVideo.processVideo(cfg, isWebcam, None)
+            fFlows, lBlinks, rBlinks, jBlinks, tracking = processVideo.processVideo(cfg, isWebcam, None)
             return
 
         for vi in videoRange:
@@ -54,20 +55,20 @@ class VideoQueue:
                 annotFilename = None
 
             if cfg["method"] == "farneback":
-                fFlows, lBlinks, rBlinks, tracking = processVideo.processVideo(cfg, isWebcam, annotFilename)
+                fFlows, lBlinks, rBlinks, jBlinks, tracking = processVideo.processVideo(cfg, isWebcam, annotFilename)
             elif cfg["method"] == "templ":
-                tCors, lBlinks, rBlinks, tracking = processVideo.processVideo(cfg, isWebcam, annotFilename)
+                tCors, lBlinks, rBlinks, jBlinks, tracking = processVideo.processVideo(cfg, isWebcam, annotFilename)
             elif cfg["method"] == "blackpixels":
-                bPixes, lBlinks, rBlinks, tracking = processVideo.processVideo(cfg, isWebcam, annotFilename)
+                bPixes, lBlinks, rBlinks, jBlinks, tracking = processVideo.processVideo(cfg, isWebcam, annotFilename)
             # reset processVideo's global variables
             reload(processVideo)
             outputFileName = VideoQueue.prepareOutputFileName(cfg["othr"]["codeDirectory"], cfg["othr"]["outputsPref"], videoName)
             if cfg["method"] == "farneback":
-                VideoQueue.writeVideoResults(outputFileName, fFlows, lBlinks, rBlinks, tracking)
+                VideoQueue.writeVideoResults(outputFileName, fFlows, lBlinks, rBlinks, jBlinks, tracking)
             elif cfg["method"] == "templ":
-                VideoQueue.writeVideoResults(outputFileName, tCors, lBlinks, rBlinks, tracking)
+                VideoQueue.writeVideoResults(outputFileName, tCors, lBlinks, rBlinks, jBlinks, tracking)
             elif cfg["method"] == "blackpixels":
-                VideoQueue.writeVideoResults(outputFileName, bPixes, lBlinks, rBlinks, tracking)
+                VideoQueue.writeVideoResults(outputFileName, bPixes, lBlinks, rBlinks, jBlinks, tracking)
         return
 
     @staticmethod
@@ -79,7 +80,7 @@ class VideoQueue:
         elif cfg["method"] == "blackpixels":
             methodVar = "bPixes"
 
-        variablesMap = {0:methodVar, 1:"lBlinks", 2:"rBlinks", 3:"tracking"}
+        variablesMap = {0:methodVar, 1:"lBlinks", 2:"rBlinks", 3:"jBlinks", 4:"tracking"}
         varsDict = {}
 
         f = file(outputFileName, "rb")
@@ -116,7 +117,7 @@ class VideoQueue:
 
     @staticmethod
     def writeOverallReport(fileName, videoDescription, videoName, vi, annotsl, annots, varsDict):
-        dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"])
+        dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
 
         isChallenging = "U"
         hasGlasses = "U"
@@ -238,11 +239,11 @@ class VideoQueue:
                     annotFilename1 = os.path.splitext(videoName)[0]+".v1"
                     if os.path.isfile(annotFilename):
                         annotsl, annots = Cmn.parseAnnotations(file(annotFilename), None, "farne")
-                        dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"])
+                        dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
                         Cmn.displayDetectionCoverageF1(dc, annotsl)
                     elif os.path.isfile(annotFilename1):
                         annotsl, annots = Cmn.parseAnnotationsMy(file(annotFilename1), None, "farne")
-                        dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"])
+                        dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
                         Cmn.displayDetectionCoverageF1(dc, annotsl)
                     pass
                     #Cmn.displayDetectionCoverage(varsDict["l"], varsDict["r"], varsDict["o"])
@@ -272,10 +273,10 @@ class VideoQueue:
                     VideoQueue.writeOverallReport(reportFileName, videoDescription, videoName, vi, annotsl, annots, varsDict)
             if "postProcessLogLine" in actions:
                 if cfg["method"] == "farneback":
-                    Farne.postProcessLogLine(varsDict["fFlows"], varsDict["lBlinks"], varsDict["rBlinks"], True)
+                    Farne.postProcessLogLine(varsDict["fFlows"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True)
                 elif cfg["method"] == "templ":
-                    Templ.postProcessLogLine(varsDict["tCors"], varsDict["lBlinks"], varsDict["rBlinks"], True)
+                    Templ.postProcessLogLine(varsDict["tCors"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True)
                 elif cfg["method"] == "blackpixels":
-                    Blackpixels.postProcessLogLine(varsDict["bPixes"], varsDict["lBlinks"], varsDict["rBlinks"], True)
+                    Blackpixels.postProcessLogLine(varsDict["bPixes"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True)
         return
 
