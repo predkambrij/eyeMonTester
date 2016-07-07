@@ -136,10 +136,11 @@ def prepareVideosList(cfg):
         ("knjiznica", vidPrefix+"o4_89.mp4"),
         ("knjiznica luc, premikal glavo", vidPrefix+"o4_90.mp4"),
         ("iso noise", vidPrefix+"o4_101.mp4"),
+        ("phone1", vidPrefix+"phone1.mp4"),
     ]
-    #videos = nightOfResearchers15+nightOfResearchers30+eyeblink8HandInTheFirstFrames+eyeblink8+others
+    videos = nightOfResearchers15+nightOfResearchers30+eyeblink8HandInTheFirstFrames+eyeblink8+others
     #videos = eyeblink8HandInTheFirstFrames+eyeblink8+others
-    videos = myAnnots
+    #videos = myAnnots
     #videos = others
     videoRange = range(len(videos))
     #videoRange = [4] # punca od dalec
@@ -151,7 +152,8 @@ def prepareVideosList(cfg):
     #videoRange = [19] #templ lots of missed
     #videoRange = [91] #templ lots of missed, fp
     #videoRange = videoRange[-1:] #talking
-    videoRange = [3]
+    #videoRange = [4]
+    #videoRange = videoRange[:6]
     return videos, videoRange
 
 def getConfigs():
@@ -170,8 +172,9 @@ def getConfigs():
 
             #"outputsPref":"/vidProcOutputs",
             #"outputsPref":"/vidProcOutputs/ver1",
-            "outputsPref":"/vidProcOutputs/ver2"+method,
+            #"outputsPref":"/vidProcOutputs/ver2"+method,
             #"outputsPref":"/vidProcOutputs/verTest"+method,
+            "outputsPref":"/vidProcOutputs/ver3"+method, # dokoncan template, mckn potunan farneback (bounding box, fb region povecan vertikalno)
         }
     }
 
