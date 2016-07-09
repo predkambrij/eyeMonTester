@@ -74,10 +74,7 @@ class Templ:
                 tCors[tCorsI[fs]][eye+"b"] = "s"
                 tCors[tCorsI[fe]][eye+"b"] = "e"
             except:
-                # there was an interruption of face tracking
-                # blink was detected because we are not excluding if difference between frame is so long, that shortSize is too short
-                # fuck it for now, there are not many those
-                pass
+                print "not graphing blink %s %d-%d" % (eye, fs, fe)
 
         elif output.startswith("debug_blinks_d5:"):
             blinkInfo = output.split(" ")
@@ -92,8 +89,11 @@ class Templ:
 
             blinkInfoDict = {"fs":fs, "fe":fe, "start":start, "end":end, "duration":duration}
             jBlinks.append(blinkInfoDict)
-            tCors[tCorsI[fs]]["jb"] = "s"
-            tCors[tCorsI[fe]]["jb"] = "e"
+            try:
+                tCors[tCorsI[fs]]["jb"] = "s"
+                tCors[tCorsI[fe]]["jb"] = "e"
+            except:
+                print "not graphing blink j %d-%d" % (eye, fs, fe)
         elif output.startswith("exiting"):
             return True
         return False

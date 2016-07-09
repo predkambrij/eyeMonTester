@@ -131,7 +131,7 @@ class VideoQueue:
             hasGlasses = "N"
         if isChallenging == "Y":
             pass
-            return
+            #return
         if hasGlasses == "Y":
             pass
             #return

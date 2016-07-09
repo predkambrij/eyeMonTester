@@ -35,31 +35,32 @@ class Farne:
             pass
             #print output
         elif output.startswith("debug_fb_log_tracking:"):
-            statusInfo = [x for x in output.split(" ") if x != ""]
+            pass # not using it
+            # statusInfo = [x for x in output.split(" ") if x != ""]
 
-            fn     = int(statusInfo[statusInfo.index("F")+1])
-            ts     = float(statusInfo[statusInfo.index("T")+1])
-            if statusInfo.count("status") == 1:
-                status = statusInfo[statusInfo.index("status")+1]
+            # fn     = int(statusInfo[statusInfo.index("F")+1])
+            # ts     = float(statusInfo[statusInfo.index("T")+1])
+            # if statusInfo.count("status") == 1:
+            #     status = statusInfo[statusInfo.index("status")+1]
 
-                if status == "start":
-                    if len(tracking["detecting"]) > 0:
-                        if len(tracking["detecting"][-1]) != 2:
-                            print "error: tracking start: previous entry is not finished yet %s (%s)" % (repr(tracking["detecting"][-1]), statusInfo)
-                    tracking["detecting"].append([(status, fn, ts)])
-                elif status == "stop":
-                    if len(tracking["detecting"]) > 0:
-                        if len(tracking["detecting"][-1]) == 1:
-                            tracking["detecting"][-1].append((status, fn, ts))
-                        else:
-                            print "error: tracking stop: detecting[-1] is not len of 1 %s (%s)" % (repr(tracking["detecting"][-1]), statusInfo)
-                    else:
-                        print "error: tracking stop: len(detecting) is zero (%s)" % statusInfo
-                else:
-                    print "error: unknown tracking status (%s)" % statusInfo
-            else:
-                pass
-                #print statusInfo
+            #     if status == "start":
+            #         if len(tracking["detecting"]) > 0:
+            #             if len(tracking["detecting"][-1]) != 2:
+            #                 print "error: tracking start: previous entry is not finished yet %s (%s)" % (repr(tracking["detecting"][-1]), statusInfo)
+            #         tracking["detecting"].append([(status, fn, ts)])
+            #     elif status == "stop":
+            #         if len(tracking["detecting"]) > 0:
+            #             if len(tracking["detecting"][-1]) == 1:
+            #                 tracking["detecting"][-1].append((status, fn, ts))
+            #             else:
+            #                 print "error: tracking stop: detecting[-1] is not len of 1 %s (%s)" % (repr(tracking["detecting"][-1]), statusInfo)
+            #         else:
+            #             print "error: tracking stop: len(detecting) is zero (%s)" % statusInfo
+            #     else:
+            #         print "error: unknown tracking status (%s)" % statusInfo
+            # else:
+            #     pass
+            #     #print statusInfo
         elif output.startswith("debug_blinks_d1:"):
             flowsInfo = [x for x in output.split(" ") if x != ""]
             if debugProcessLogLine:
@@ -139,8 +140,11 @@ class Farne:
             #start = datetime.datetime.fromtimestamp(start)
             blinkInfoDict = {"fs":fs, "fe":fe, "start":start, "end":end, "duration":duration}
             lst.append(blinkInfoDict)
-            fFlows[fFlowsI[fs]][eye+"b"] = "s"
-            fFlows[fFlowsI[fe]][eye+"b"] = "e"
+            try:
+                fFlows[fFlowsI[fs]][eye+"b"] = "s"
+                fFlows[fFlowsI[fe]][eye+"b"] = "e"
+            except:
+                print "not graphing blink %s %d-%d" % (eye, fs, fe)
         elif output.startswith("debug_blinks_d5:"):
             blinkInfo = output.split(" ")
             fs = int(blinkInfo[blinkInfo.index("fs")+1])
@@ -154,8 +158,11 @@ class Farne:
 
             blinkInfoDict = {"fs":fs, "fe":fe, "start":start, "end":end, "duration":duration}
             jBlinks.append(blinkInfoDict)
-            fFlows[fFlowsI[fs]]["jb"] = "s"
-            fFlows[fFlowsI[fe]]["jb"] = "e"
+            try:
+                fFlows[fFlowsI[fs]]["jb"] = "s"
+                fFlows[fFlowsI[fe]]["jb"] = "e"
+            except:
+                print "not graphing blink j %d-%d" % (eye, fs, fe)
         elif output.startswith("exiting"):
             return True
         return False

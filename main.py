@@ -137,6 +137,8 @@ def prepareVideosList(cfg):
         ("knjiznica luc, premikal glavo", vidPrefix+"o4_90.mp4"),
         ("iso noise", vidPrefix+"o4_101.mp4"),
         ("phone1", vidPrefix+"phone1.mp4"),
+        # no annot
+        ("look away", vidPrefix+"o4_102.mp4"),
     ]
     videos = nightOfResearchers15+nightOfResearchers30+eyeblink8HandInTheFirstFrames+eyeblink8+others
     #videos = eyeblink8HandInTheFirstFrames+eyeblink8+others
@@ -151,8 +153,8 @@ def prepareVideosList(cfg):
     #videoRange = [41] #templ lots of fp
     #videoRange = [19] #templ lots of missed
     #videoRange = [91] #templ lots of missed, fp
-    videoRange = videoRange[-1:] #talking
-    #videoRange = [4]
+    #videoRange = videoRange[-1:] #talking
+    #videoRange = [63, 66]
     #videoRange = videoRange[:6]
     return videos, videoRange
 
@@ -174,7 +176,9 @@ def getConfigs():
             #"outputsPref":"/vidProcOutputs/ver1",
             #"outputsPref":"/vidProcOutputs/ver2"+method,
             #"outputsPref":"/vidProcOutputs/verTest"+method,
-            "outputsPref":"/vidProcOutputs/ver3"+method, # dokoncan template, mckn potunan farneback (bounding box, fb region povecan vertikalno)
+            #"outputsPref":"/vidProcOutputs/ver3"+method, # dokoncan template, mckn potunan farneback (bounding box, fb region povecan vertikalno)
+            #"outputsPref":"/vidProcOutputs/ver4"+method, # jBlink
+            "outputsPref":"/vidProcOutputs/ver5"+method, # full blink measure
         }
     }
 
