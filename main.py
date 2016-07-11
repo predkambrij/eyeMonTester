@@ -5,6 +5,88 @@ def prepareVideosList(cfg):
     #videoName = "o89" # knjiznica 40s
     #videoName = "o90" # premikal glavo, zadej luc
     vidPrefix = cfg["othr"]["vidPrefix"]
+    zju = [
+        ("", vidPrefix+"sk/zju/1/000001M_FBN.avi"),
+        ("", vidPrefix+"sk/zju/2/000001M_FNN.avi"),
+        ("", vidPrefix+"sk/zju/3/000001M_FTN.avi"),
+        ("", vidPrefix+"sk/zju/4/000001M_UNN.avi"),
+        ("", vidPrefix+"sk/zju/5/000002M_FBN.avi"),
+        ("", vidPrefix+"sk/zju/6/000002M_FNN.avi"),
+        ("", vidPrefix+"sk/zju/7/000002M_FTN.avi"),
+        ("", vidPrefix+"sk/zju/8/000002M_UNN.avi"),
+        ("", vidPrefix+"sk/zju/9/000003M_FBN.avi"),
+        ("", vidPrefix+"sk/zju/10/000003M_FNN.avi"),
+        ("", vidPrefix+"sk/zju/11/000003M_FTN.avi"),
+        ("", vidPrefix+"sk/zju/12/000003M_UNN.avi"),
+        ("", vidPrefix+"sk/zju/13/000004M_FBN.avi"),
+        ("", vidPrefix+"sk/zju/14/000004M_FNN.avi"),
+        ("", vidPrefix+"sk/zju/15/000004M_FTN.avi"),
+        ("", vidPrefix+"sk/zju/16/000004M_UNN.avi"),
+        ("", vidPrefix+"sk/zju/17/000005M_FBN.avi"),
+        ("", vidPrefix+"sk/zju/18/000005M_FNN.avi"),
+        ("", vidPrefix+"sk/zju/19/000005M_FTN.avi"),
+        ("", vidPrefix+"sk/zju/20/000005M_UNN.avi"),
+        ("", vidPrefix+"sk/zju/21/000006M_FBN.avi"),
+        ("", vidPrefix+"sk/zju/22/000006M_FTN.avi"),
+        ("", vidPrefix+"sk/zju/23/000006M_UNN.avi"),
+        ("", vidPrefix+"sk/zju/24/000007M_FBN.avi"),
+        ("", vidPrefix+"sk/zju/25/000007M_FNN.avi"),
+        ("", vidPrefix+"sk/zju/26/000007M_FTN.avi"),
+        ("", vidPrefix+"sk/zju/27/000007M_UNN.avi"),
+        ("", vidPrefix+"sk/zju/28/000008M_FBN.avi"),
+        ("", vidPrefix+"sk/zju/29/000008M_FNN.avi"),
+        ("", vidPrefix+"sk/zju/30/000008M_FTN.avi"),
+        ("", vidPrefix+"sk/zju/31/000008M_UNN.avi"),
+        ("", vidPrefix+"sk/zju/32/000009M_FBN.avi"),
+        ("", vidPrefix+"sk/zju/33/000009M_FNN.avi"),
+        ("", vidPrefix+"sk/zju/34/000009M_FTN.avi"),
+        ("", vidPrefix+"sk/zju/35/000009M_UNN.avi"),
+        ("", vidPrefix+"sk/zju/36/000010M_FBN.avi"),
+        ("", vidPrefix+"sk/zju/37/000010M_FNN.avi"),
+        ("", vidPrefix+"sk/zju/38/000010M_FTN.avi"),
+        ("", vidPrefix+"sk/zju/39/000010M_UNN.avi"),
+        ("", vidPrefix+"sk/zju/40/000011M_FBN.avi"),
+        ("", vidPrefix+"sk/zju/41/000011M_FNN.avi"),
+        ("", vidPrefix+"sk/zju/42/000011M_FTN.avi"),
+        ("", vidPrefix+"sk/zju/43/000011M_UNN.avi"),
+        ("", vidPrefix+"sk/zju/44/000012M_FBN.avi"),
+        ("", vidPrefix+"sk/zju/45/000012M_FNN.avi"),
+        ("", vidPrefix+"sk/zju/46/000012M_FTN.avi"),
+        ("", vidPrefix+"sk/zju/47/000012M_UNN.avi"),
+        ("", vidPrefix+"sk/zju/48/000013F_FBN.avi"),
+        ("", vidPrefix+"sk/zju/49/000013F_FNN.avi"),
+        ("", vidPrefix+"sk/zju/50/000013F_FTN.avi"),
+        ("", vidPrefix+"sk/zju/51/000013F_UNN.avi"),
+        ("", vidPrefix+"sk/zju/52/000014F_FBN.avi"),
+        ("", vidPrefix+"sk/zju/53/000014F_FNN.avi"),
+        ("", vidPrefix+"sk/zju/54/000014F_FTN.avi"),
+        ("", vidPrefix+"sk/zju/55/000014F_UNN.avi"),
+        ("", vidPrefix+"sk/zju/56/000015F_FBN.avi"),
+        ("", vidPrefix+"sk/zju/57/000015F_FNN.avi"),
+        ("", vidPrefix+"sk/zju/58/000015F_FTN.avi"),
+        ("", vidPrefix+"sk/zju/59/000015F_UNN.avi"),
+        ("", vidPrefix+"sk/zju/60/000016F_FBN.avi"),
+        ("", vidPrefix+"sk/zju/61/000016F_FNN.avi"),
+        ("", vidPrefix+"sk/zju/62/000016F_FTN.avi"),
+        ("", vidPrefix+"sk/zju/63/000016F_UNN.avi"),
+        ("", vidPrefix+"sk/zju/64/000017F_FBN.avi"),
+        ("", vidPrefix+"sk/zju/65/000017F_FNN.avi"),
+        ("", vidPrefix+"sk/zju/66/000017F_FTN.avi"),
+        ("", vidPrefix+"sk/zju/67/000017F_UNN.avi"),
+        ("", vidPrefix+"sk/zju/68/000018M_FBN.avi"),
+        ("", vidPrefix+"sk/zju/69/000018M_FNN.avi"),
+        ("", vidPrefix+"sk/zju/70/000018M_FTN.avi"),
+        ("", vidPrefix+"sk/zju/71/000018M_UNN.avi"),
+        ("", vidPrefix+"sk/zju/72/000019F_FBN.avi"),
+        ("", vidPrefix+"sk/zju/73/000019F_FNN.avi"),
+        ("", vidPrefix+"sk/zju/74/000019F_FTN.avi"),
+        ("", vidPrefix+"sk/zju/75/000019F_UNN.avi"),
+        ("", vidPrefix+"sk/zju/76/000020F_FBN.avi"),
+        ("", vidPrefix+"sk/zju/77/000020F_FNN.avi"),
+        ("", vidPrefix+"sk/zju/78/000020F_FTN.avi"),
+        ("", vidPrefix+"sk/zju/79/000020F_UNN.avi"),
+        ("", vidPrefix+"sk/zju/80/000006M_FNN.avi"),
+    ]
     eyeblink8 = [
         ("punca od dalec", vidPrefix+"sk/eyeblink8/1/26122013_223310_cam.avi"),
         ("fant gleda neki", vidPrefix+"sk/eyeblink8/3/26122013_230103_cam.avi"),
@@ -140,8 +222,10 @@ def prepareVideosList(cfg):
         # no annot
         ("look away", vidPrefix+"o4_102.mp4"),
     ]
-    videos = nightOfResearchers15+nightOfResearchers30+eyeblink8HandInTheFirstFrames+eyeblink8+others
+    #videos = nightOfResearchers15+nightOfResearchers30+eyeblink8HandInTheFirstFrames+eyeblink8+others
     #videos = eyeblink8HandInTheFirstFrames+eyeblink8+others
+    videos = eyeblink8HandInTheFirstFrames+eyeblink8+others+nightOfResearchers15+nightOfResearchers30
+    videos = zju
     #videos = myAnnots
     #videos = others
     videoRange = range(len(videos))
@@ -154,8 +238,8 @@ def prepareVideosList(cfg):
     #videoRange = [19] #templ lots of missed
     #videoRange = [91] #templ lots of missed, fp
     #videoRange = videoRange[-1:] #talking
-    #videoRange = [63, 66]
-    #videoRange = videoRange[:6]
+    videoRange = [1]
+    #videoRange = videoRange[:10]
     return videos, videoRange
 
 def getConfigs():
@@ -178,7 +262,8 @@ def getConfigs():
             #"outputsPref":"/vidProcOutputs/verTest"+method,
             #"outputsPref":"/vidProcOutputs/ver3"+method, # dokoncan template, mckn potunan farneback (bounding box, fb region povecan vertikalno)
             #"outputsPref":"/vidProcOutputs/ver4"+method, # jBlink
-            "outputsPref":"/vidProcOutputs/ver5"+method, # full blink measure
+            #"outputsPref":"/vidProcOutputs/ver5"+method, # full blink measure
+            "outputsPref":"/vidProcOutputs/ver6"+method, # templ increased window size
         }
     }
 

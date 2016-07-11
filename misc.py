@@ -37,9 +37,9 @@ def testMain():
     cfg = main.getConfigs()
     videos, videoRange = main.prepareVideosList(cfg)
     actions = [
-        "writeOverallReport",
+        #"writeOverallReport",
         #"displayDetectionCoverage",
-        #"postProcessLogLine",
+        "postProcessLogLine",
         #"signalProcessing",
     ]
     VideoQueue.processOutputs(cfg, videos, videoRange, actions)

@@ -21,7 +21,7 @@ class Templ:
                 or corsInfo[3:7] == ['shortBmSize', 'is', 'less', 'than']
                 or corsInfo[3:7] == ['fps', 'of', 'the', 'first']
                 or corsInfo[3:-1] == ['shortBmSize', 'is', 'big', 'enough']
-                or corsInfo[1:3] == ['updated', 'maxFramesShortList']
+                or corsInfo[3:5] == ['updated', 'maxFramesShortList']
                 ):
                 return False
             fn   = int(corsInfo[corsInfo.index("lastF")+1])

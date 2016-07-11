@@ -162,7 +162,7 @@ class Farne:
                 fFlows[fFlowsI[fs]]["jb"] = "s"
                 fFlows[fFlowsI[fe]]["jb"] = "e"
             except:
-                print "not graphing blink j %d-%d" % (eye, fs, fe)
+                print "not graphing blink j %d-%d" % (fs, fe)
         elif output.startswith("exiting"):
             return True
         return False
