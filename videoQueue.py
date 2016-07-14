@@ -90,14 +90,18 @@ class VideoQueue:
 
         return varsDict
     rep = [
-        "tany",
+        "tannot",
         "tlr",
         #"tpany",
         "tpboth",
         "tploro",
         #"many",
-        "mboth",
-        "mloro",
+        #"mboth",
+        "mbothd",
+        "mbothr",
+        #"mloro",
+        "mlorod",
+        "mloror",
         #"fpany",
         "fpboth",
         "fploro",
@@ -121,7 +125,7 @@ class VideoQueue:
         #title += "R tot\tR TP\tR mis\t"
 
         title += "T:"
-        if "tany" in VideoQueue.rep:
+        if "tannot" in VideoQueue.rep:
             title += "A\t"
         if "tlr" in VideoQueue.rep:
             title += "L\tR\t"
@@ -138,8 +142,16 @@ class VideoQueue:
             title += "A\t"
         if "mboth" in VideoQueue.rep:
             title += "B\t"
+        if "mbothd" in VideoQueue.rep:
+            title += "Bd\t"
+        if "mbothr" in VideoQueue.rep:
+            title += "Br\t"
         if "mloro" in VideoQueue.rep:
             title += "LO\tRO\t"
+        if "mlorod" in VideoQueue.rep:
+            title += "LOd\tROd\t"
+        if "mloror" in VideoQueue.rep:
+            title += "LOr\tROr\t"
         title += "FP:"
         if "fpany" in VideoQueue.rep:
             title += "A\t"
@@ -175,7 +187,7 @@ class VideoQueue:
         return fileName
 
     @staticmethod
-    def writeOverallReport(fileName, videoDescription, videoName, vi, annotsl, annots, varsDict):
+    def writeOverallReport(fileName, videoDescription, videoName, vi, annotsl, annots, varsDict, ppd):
         dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
 
         isChallenging = "U"
@@ -199,7 +211,7 @@ class VideoQueue:
         line = "%d\t%s\t%s\t%s\t%s\t" % (vi, isChallenging, hasGlasses, videoDescription, videoName.split("/posnetki/")[1])
 
         # total annot, left, right
-        if "tany" in VideoQueue.rep:
+        if "tannot" in VideoQueue.rep:
             line += "%i\t" % len(annotsl)
         if "tlr" in VideoQueue.rep:
             line += "%i\t%i\t" % (len(varsDict["lBlinks"]), len(varsDict["rBlinks"]))
@@ -216,8 +228,17 @@ class VideoQueue:
             line += "%i\t" % len(dc["aMissed"])
         if "mboth" in VideoQueue.rep:
             line += "%i\t" % len(dc["bMissed"])
+        if "mbothd" in VideoQueue.rep:
+            line += "%i\t" % len(ppd["bMissedByDisplacement"])
+        if "mbothr" in VideoQueue.rep:
+            line += "%i\t" % len([x for x in dc["bMissed"] if not x in ppd["bMissedByDisplacement"]])
         if "mloro" in VideoQueue.rep:
             line += "%i\t%i\t" % (len(dc["loMissed"]), len(dc["roMissed"]))
+        if "mlorod" in VideoQueue.rep:
+            line += "%i\t%i\t" % (len(ppd["loMissedByDisplacement"]), len(ppd["roMissedByDisplacement"]))
+        if "mloror" in VideoQueue.rep:
+            line += "%i\t%i\t" % (len([x for x in dc["loMissed"] if not x in ppd["loMissedByDisplacement"]]),
+                                  len([x for x in dc["roMissed"] if not x in ppd["roMissedByDisplacement"]]))
         # fp (a, b, lo, ro)
         anyFp = len(dc["fpByOnlyL"])+len(dc["fpByOnlyR"])+len(dc["fpByBothEyes"])
         if "fpany" in VideoQueue.rep:
@@ -324,7 +345,7 @@ class VideoQueue:
                 print "breaking"
                 print traceback.format_exc()
                 break
-            if "displayDetectionCoverage" in actions or "writeOverallReport" in actions or "displayPupilDisplacement" in actions or "postProcessTracking" in actions:
+            if "postProcessLogLine" in actions or "displayDetectionCoverage" in actions or "writeOverallReport" in actions or "displayPupilDisplacement" in actions or "postProcessTracking" in actions:
                 if cfg["method"] == "farneback":
                     annotFilename = os.path.splitext(videoName)[0]+".tag"
                     annotFilename1 = os.path.splitext(videoName)[0]+".v1"
@@ -353,10 +374,13 @@ class VideoQueue:
                 print repr([x["rcor"] for x in varsDict["tCors"]])
                 pass
             if "writeOverallReport" in actions:
-                VideoQueue.writeOverallReport(reportFileName, videoDescription, videoName, vi, annotsl, annots, varsDict)
+                dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
+                ppd = Farne.processPupilDisplacement(varsDict["tracking"], dc, annotsl, annots)
+                VideoQueue.writeOverallReport(reportFileName, videoDescription, videoName, vi, annotsl, annots, varsDict, ppd)
             if "postProcessLogLine" in actions:
                 if cfg["method"] == "farneback":
-                    Farne.postProcessLogLine(varsDict["fFlows"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True)
+                    dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
+                    Farne.postProcessLogLine(varsDict["fFlows"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True, dc)
                 elif cfg["method"] == "templ":
                     Templ.postProcessLogLine(varsDict["tCors"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True)
                 elif cfg["method"] == "blackpixels":
