@@ -258,7 +258,7 @@ class Common:
 
         dc = {
             "lCaught":lCaught, "rCaught":rCaught, "loCaught":loCaught, "roCaught":roCaught, "bCaught":bCaught, "aCaught":aCaught,
-            "lMissed":lMissed, "roMissed":roMissed, "loMissed":loMissed, "rMissed":rMissed, "bMissed":bMissed, "aMissed":aMissed,
+            "lMissed":lMissed, "rMissed":rMissed, "roMissed":roMissed, "loMissed":loMissed, "bMissed":bMissed, "aMissed":aMissed,
             "lFp":lFp, "rFp":rFp, "fpByBothEyes":fpByBothEyes, "fpByOnlyL":fpByOnlyL, "fpByOnlyR":fpByOnlyR
         }
         return dc

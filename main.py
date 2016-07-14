@@ -210,6 +210,13 @@ def prepareVideosList(cfg):
         ("", vidPrefix+"sk/NightOfResearchers15/trainval/val/8/26092014_205352_cam.avi"),
         ("", vidPrefix+"sk/NightOfResearchers15/trainval/val/9/26092014_175359_cam.avi"),
     ]
+    basler5 = [
+        ("", vidPrefix+"sk/basler/poli1person2/poli1person2_x263.avi"),
+        ("", vidPrefix+"sk/basler/poli1person6/poli1person6_x263.avi"),
+        ("", vidPrefix+"sk/basler/poli1person10/poli1person10_x263.avi"),
+        ("", vidPrefix+"sk/basler/poli1person26/poli1person26_x263.avi"),
+        ("", vidPrefix+"sk/basler/poli1person21/poli1person21_x263.avi"),
+    ]
     others = [
         ("talking", vidPrefix+"talking.avi"),
     ]
@@ -225,8 +232,9 @@ def prepareVideosList(cfg):
     #videos = nightOfResearchers15+nightOfResearchers30+eyeblink8HandInTheFirstFrames+eyeblink8+others
     #videos = eyeblink8HandInTheFirstFrames+eyeblink8+others
     videos = eyeblink8HandInTheFirstFrames+eyeblink8+others+nightOfResearchers15+nightOfResearchers30
-    videos = zju
+    #videos = zju
     #videos = myAnnots
+    #videos = basler5
     #videos = others
     videoRange = range(len(videos))
     #videoRange = [4] # punca od dalec
@@ -238,7 +246,7 @@ def prepareVideosList(cfg):
     #videoRange = [19] #templ lots of missed
     #videoRange = [91] #templ lots of missed, fp
     #videoRange = videoRange[-1:] #talking
-    videoRange = [1]
+    videoRange = [2]
     #videoRange = videoRange[:10]
     return videos, videoRange
 

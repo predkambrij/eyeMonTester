@@ -85,8 +85,6 @@ class VideoQueue:
 
         f = file(outputFileName, "rb")
         for index in sorted(variablesMap.keys()):
-            if index == 4: # TODO remove once rerun
-                break
             line = f.readline()
             varsDict[variablesMap[index]] = eval(line)
 
@@ -232,19 +230,18 @@ class VideoQueue:
                 print "breaking"
                 print traceback.format_exc()
                 break
-
-            if "displayDetectionCoverage" in actions:
+            if "displayDetectionCoverage" in actions or "writeOverallReport" in actions or "displayPupilDisplacement" in actions or "postProcessTracking" in actions:
                 if cfg["method"] == "farneback":
                     annotFilename = os.path.splitext(videoName)[0]+".tag"
                     annotFilename1 = os.path.splitext(videoName)[0]+".v1"
                     if os.path.isfile(annotFilename):
                         annotsl, annots = Cmn.parseAnnotations(file(annotFilename), None, "farne")
-                        dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
-                        Cmn.displayDetectionCoverageF1(dc, annotsl)
                     elif os.path.isfile(annotFilename1):
                         annotsl, annots = Cmn.parseAnnotationsMy(file(annotFilename1), None, "farne")
-                        dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
-                        Cmn.displayDetectionCoverageF1(dc, annotsl)
+            if "displayDetectionCoverage" in actions:
+                if cfg["method"] == "farneback":
+                    dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
+                    Cmn.displayDetectionCoverageF1(dc, annotsl)
                     pass
                     #Cmn.displayDetectionCoverage(varsDict["l"], varsDict["r"], varsDict["o"])
                 elif cfg["method"] == "templ":
@@ -262,15 +259,7 @@ class VideoQueue:
                 print repr([x["rcor"] for x in varsDict["tCors"]])
                 pass
             if "writeOverallReport" in actions:
-                annotFilename = os.path.splitext(videoName)[0]+".tag"
-                annotFilename1 = os.path.splitext(videoName)[0]+".v1"
-                if os.path.isfile(annotFilename):
-                    annotsl, annots = Cmn.parseAnnotations(file(annotFilename), None, "farne")
-                    #VideoQueue.calculateTrackingCoverage(varsDict["tracking"], annots[2])
-                    VideoQueue.writeOverallReport(reportFileName, videoDescription, videoName, vi, annotsl, annots, varsDict)
-                elif os.path.isfile(annotFilename1):
-                    annotsl, annots = Cmn.parseAnnotationsMy(file(annotFilename1), None, "farne")
-                    VideoQueue.writeOverallReport(reportFileName, videoDescription, videoName, vi, annotsl, annots, varsDict)
+                VideoQueue.writeOverallReport(reportFileName, videoDescription, videoName, vi, annotsl, annots, varsDict)
             if "postProcessLogLine" in actions:
                 if cfg["method"] == "farneback":
                     Farne.postProcessLogLine(varsDict["fFlows"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True)
@@ -278,5 +267,14 @@ class VideoQueue:
                     Templ.postProcessLogLine(varsDict["tCors"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True)
                 elif cfg["method"] == "blackpixels":
                     Blackpixels.postProcessLogLine(varsDict["bPixes"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True)
+            if "postProcessTracking" in actions:
+                if cfg["method"] == "farneback":
+                    dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
+                    Farne.postProcessTracking(varsDict["tracking"], varsDict["fFlows"], dc)
+            if "displayPupilDisplacement" in actions:
+                if cfg["method"] == "farneback":
+                    dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
+                    ppd = Farne.processPupilDisplacement(varsDict["tracking"], dc, annotsl, annots)
+                    Farne.displayPupilDisplacement(ppd)
         return
 

@@ -120,6 +120,12 @@ class Farne:
                 fFlows[-1].update(annots[1][fn])
                 fFlows[-1]["annotEvent"] = "e"
             #Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, jBlinks, False)
+        elif output.startswith("debug_fb_log_pupil_coverage:"):
+            flowsInfo = [x for x in output.split(" ") if x != ""]
+            fn   = int(flowsInfo[flowsInfo.index("F")+1])
+            ts   = float(flowsInfo[flowsInfo.index("T")+1])
+            lDiff, rDiff = int(flowsInfo[flowsInfo.index("L")+1]), int(flowsInfo[flowsInfo.index("R")+1])
+            tracking["pupilDisplacement"].append({"fn":fn, "ts":ts, "lDiff":lDiff, "rDiff":rDiff})
         elif output.startswith("debug_blinks_d4:"):
             blinkInfo = output.split(" ")
             if blinkInfo[1] == "adding_lBlinkChunksf":
@@ -168,6 +174,121 @@ class Farne:
         return False
 
     @staticmethod
+    def processPupilDisplacement(tracking, dc, annotsl, annots):
+        lDiff, rDiff = [x["lDiff"] for x in tracking["pupilDisplacement"]], [x["rDiff"] for x in tracking["pupilDisplacement"]]
+
+        annotsD = Cmn._annotsById(annotsl)
+        fnLDiff, fnRDiff = {}, {}
+        for e in tracking["pupilDisplacement"]:
+            fnLDiff[e["fn"]] = e["lDiff"]
+            fnRDiff[e["fn"]] = e["rDiff"]
+
+        lbCaught, rbCaught, lMissed, rMissed = [], [], [], []
+        for diff, resList, checkRefs in [(fnLDiff, lbCaught, dc["bCaught"]), (fnRDiff, rbCaught, dc["bCaught"]),
+                                        (fnLDiff, lMissed, dc["lMissed"]), (fnRDiff, rMissed, dc["rMissed"]), ]:
+            for checkRef in checkRefs:
+                bs, be = annotsD[checkRef]["bs"], annotsD[checkRef]["be"]
+                s = sum(diff[c] for c in xrange(bs, be+1) if diff.has_key(c))/float(be-bs)
+                resList.append((checkRef, s, (bs, be)))
+
+        fpByOnlyL, fpByOnlyR = [], []
+        for diff, resList, checkRefs in [(fnLDiff, fpByOnlyL, dc["fpByOnlyL"]), (fnRDiff, fpByOnlyR, dc["fpByOnlyR"]), ]:
+            for checkRef in checkRefs:
+                bs, be = checkRef[1]["fs"], checkRef[1]["fe"]
+                s = sum(diff[c] for c in xrange(bs, be+1) if diff.has_key(c))/float(be-bs)
+                resList.append((checkRef, s, (bs, be)))
+
+        fpByBothEyesLR = []
+        for resList, checkRefs in [(fpByBothEyesLR, dc["fpByBothEyes"]), ]:
+            for checkRef in checkRefs:
+                ls, rs = 0, 0
+                l, r = checkRef[0], checkRef[1]
+                lbs, lbe, rbs, rbe = l[1]["fs"], l[1]["fe"], r[1]["fs"], r[1]["fe"]
+
+                ls = sum(fnLDiff[c] for c in xrange(lbs, lbe+1) if fnLDiff.has_key(c))/float(lbe-lbs)
+                rs = sum(fnRDiff[c] for c in xrange(rbs, rbe+1) if fnRDiff.has_key(c))/float(rbe-rbs)
+                resList.append((checkRef, ls, rs, (lbs, lbe), (rbs, rbe)))
+
+        lMissedByDisplacement = sorted([x[0] for x in lMissed if x[1] > 13])
+        rMissedByDisplacement = sorted([x[0] for x in rMissed if x[1] > 13])
+        bMissedByDisplacement = sorted(list(set([x[0] for x in lMissed if x[1] > 13]
+                                               +[x[0] for x in rMissed if x[1] > 13])))
+
+        lOnlyFpByDisplacement = sorted([x for x in fpByOnlyL], key=lambda x:x[1])
+        rOnlyFpByDisplacement = sorted([x for x in fpByOnlyR], key=lambda x:x[1])
+        bothFpByDisplacement = sorted(fpByBothEyesLR, key=lambda y:(y[1]+y[2]))
+
+        lOutliers = [(x["fn"], x["lDiff"]) for x in tracking["pupilDisplacement"] if x["lDiff"] > 12]
+        rOutliers = [(x["fn"], x["rDiff"]) for x in tracking["pupilDisplacement"] if x["rDiff"] > 12]
+        lPercent = len(lOutliers)/float(len(tracking["pupilDisplacement"]))*100
+        rPercent = len(rOutliers)/float(len(tracking["pupilDisplacement"]))*100
+
+        return {
+            "lMissed":lMissed, "rMissed":rMissed,
+
+            "lMissedByDisplacement":lMissedByDisplacement, "rMissedByDisplacement":rMissedByDisplacement,
+                "bMissedByDisplacement":bMissedByDisplacement,
+
+            "lOnlyFpByDisplacement":lOnlyFpByDisplacement, "rOnlyFpByDisplacement":rOnlyFpByDisplacement,
+            "bothFpByDisplacement":bothFpByDisplacement,
+
+            "lOutliers":lOutliers, "rOutliers":rOutliers, "lPercent":lPercent, "rPercent":rPercent,
+        }
+    @staticmethod
+    def displayPupilDisplacement(ppd):
+        d = [
+            "percent",
+            "missed",
+            "missedByDisplacement",
+            "fps"
+        ]
+        if "percent" in d:
+            print "lPercent %.2f rPercent %.2f" % (ppd["lPercent"], ppd["rPercent"])
+        if "missed" in d:
+            # bID, displacementPerFrame, (fs, fe)
+            print "lMissed"
+            print "\n".join(["%d %.2f (%d, %d)" % (x[0], x[1], x[2][0], x[2][1]) for x in sorted(ppd["lMissed"], key=lambda x:x[1])])
+            print "rMissed"
+            print "\n".join(["%d %.2f (%d, %d)" % (x[0], x[1], x[2][0], x[2][1]) for x in sorted(ppd["rMissed"], key=lambda x:x[1])])
+        if "missedByDisplacement" in d:
+            print "lMissedByDisplacement: %d %s" % (len(ppd["lMissedByDisplacement"]), ppd["lMissedByDisplacement"])
+            print "rMissedByDisplacement: %d %s" % (len(ppd["rMissedByDisplacement"]), ppd["rMissedByDisplacement"])
+            print "bMissedByDisplacement: %d %s" % (len(ppd["bMissedByDisplacement"]), ppd["bMissedByDisplacement"])
+        if "fps" in d:
+            print "lOnlyFpByDisplacement"
+            print "\n".join(["%.2f (%d, %d)" % (x[1], x[2][0], x[2][1]) for x in ppd["lOnlyFpByDisplacement"]])
+            print "rOnlyFpByDisplacement"
+            print "\n".join(["%.2f (%d, %d)" % (x[1], x[2][0], x[2][1]) for x in ppd["rOnlyFpByDisplacement"]])
+            print "bothFpByDisplacement"
+            print "\n".join(["%.2f %.2f (%d, %d) (%d, %d)" % (x[1], x[2], x[3][0], x[3][1], x[4][0], x[4][1]) for x in ppd["bothFpByDisplacement"]])
+        return
+
+    @staticmethod
+    def postProcessTracking(tracking, fFlows, dc):
+        lm, rm = dc["lMissed"], dc["rMissed"]
+        pltx = [x["fn"] for x in tracking["pupilDisplacement"]]
+        pltasx = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "s"]
+        pltaex = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e"]
+        pltas = [70 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
+        pltae = [70 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
+        pltasxlm = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in lm]
+        pltaexlm = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in lm]
+        pltaslm = [67 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in lm]
+        pltaelm = [67 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in lm]
+        pltasxrm = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in rm]
+        pltaexrm = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in rm]
+        pltasrm = [65 for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in rm]
+        pltaerm = [65 for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in rm]
+        lDiff, rDiff = [x["lDiff"] for x in tracking["pupilDisplacement"]], [x["rDiff"] for x in tracking["pupilDisplacement"]]
+        plt.plot(
+            pltx, lDiff, 'ro-', pltx, rDiff, 'bo-',
+            pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
+            pltasxlm, pltaslm, 'ro', pltaexlm, pltaelm, 'r^', # left missed
+            pltasxrm, pltasrm, 'bo', pltaexrm, pltaerm, 'b^', # right missed
+        )
+        plt.tight_layout()
+        plt.show()
+        return
     def postProcessLogLine(fFlows, lBlinks, rBlinks, jBlinks, isEnd):
         if not isEnd:
             window = 300

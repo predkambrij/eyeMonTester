@@ -39,7 +39,9 @@ def testMain():
     actions = [
         #"writeOverallReport",
         #"displayDetectionCoverage",
-        "postProcessLogLine",
+        #"postProcessLogLine",
+        #"postProcessTracking",
+        "displayPupilDisplacement",
         #"signalProcessing",
     ]
     VideoQueue.processOutputs(cfg, videos, videoRange, actions)
