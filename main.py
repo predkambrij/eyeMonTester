@@ -229,24 +229,12 @@ def prepareVideosList(cfg):
         # no annot
         ("look away", vidPrefix+"o4_102.mp4"),
     ]
-    #videos = nightOfResearchers15+nightOfResearchers30+eyeblink8HandInTheFirstFrames+eyeblink8+others
-    #videos = eyeblink8HandInTheFirstFrames+eyeblink8+others
-    videos = eyeblink8HandInTheFirstFrames+eyeblink8+others+nightOfResearchers15+nightOfResearchers30
-    #videos = zju
+    videos = eyeblink8HandInTheFirstFrames+eyeblink8+basler5+others+zju+nightOfResearchers15+nightOfResearchers30
     #videos = myAnnots
-    #videos = basler5
     #videos = others
     videoRange = range(len(videos))
-    #videoRange = [4] # punca od dalec
-    #videoRange = [8] # dobra slika
-    #videoRange = [5] # full partial
-    #videoRange = [23, 24, 26, 32, 39] # out of borders
-    #videoRange = [28] #templ winner
-    #videoRange = [41] #templ lots of fp
-    #videoRange = [19] #templ lots of missed
-    #videoRange = [91] #templ lots of missed, fp
-    #videoRange = videoRange[-1:] #talking
-    videoRange = [2]
+    #videoRange = videoRange[-1:]
+    #videoRange = [2]
     #videoRange = videoRange[:10]
     return videos, videoRange
 
@@ -271,7 +259,8 @@ def getConfigs():
             #"outputsPref":"/vidProcOutputs/ver3"+method, # dokoncan template, mckn potunan farneback (bounding box, fb region povecan vertikalno)
             #"outputsPref":"/vidProcOutputs/ver4"+method, # jBlink
             #"outputsPref":"/vidProcOutputs/ver5"+method, # full blink measure
-            "outputsPref":"/vidProcOutputs/ver6"+method, # templ increased window size
+            #"outputsPref":"/vidProcOutputs/ver6"+method, # templ increased window size
+            "outputsPref":"/vidProcOutputs/ver15"+method, # templ increased window size
         }
     }
 

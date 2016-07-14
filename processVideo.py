@@ -77,7 +77,7 @@ def processVideo(cfg, isWebcam, annotFilename):
     global stopListenLog
 
     lBlinks, rBlinks, jBlinks = [], [], []
-    fFlows, fFlowsI, tracking = [], {}, {"detecting":[], "pupilDisplacement":[]}
+    fFlows, fFlowsI, tracking = [], {}, {"detecting":[], "pupilDisplacement":[], "upperLowerL":[], "upperLowerR":[]}
     tCors, tCorsI, bPixes   = [], {}, []
 
     initListenLog(isWebcam)
