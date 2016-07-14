@@ -89,25 +89,86 @@ class VideoQueue:
             varsDict[variablesMap[index]] = eval(line)
 
         return varsDict
-
+    rep = [
+        "tany",
+        "tlr",
+        #"tpany",
+        "tpboth",
+        "tploro",
+        #"many",
+        "mboth",
+        "mloro",
+        #"fpany",
+        "fpboth",
+        "fploro",
+        #"tprany",
+        "tprboth",
+        "tprloro",
+        #"fprany",
+        "fprboth",
+        "fprloro",
+        #"sa",
+        "sb",
+    ]
+    #rep = []
     @staticmethod
     def initOverallReport(cfg):
         fileName = cfg["othr"]["codeDirectory"] + cfg["othr"]["outputsPref"] + "/overall.tsv"
         # truncate the file or create it, if it doesn't exist yet
-        title = "I\tC\tG\tDesc\tFile path\t"
+        title = "I\tC\tG\tDesc\tFile path\t" # TODO total frames last time
         #title += "Ann\t"
         #title += "L tot\tL TP\tL mis\t"
         #title += "R tot\tR TP\tR mis\t"
 
-        title += "T:A\tL\tR\t"
-        title += "TP:A\tB\tLO\tRO\t"
-        title += "M:A\tB\tLO\tRO\t"
-        title += "FP:A\tB\tLO\tRO\t"
+        title += "T:"
+        if "tany" in VideoQueue.rep:
+            title += "A\t"
+        if "tlr" in VideoQueue.rep:
+            title += "L\tR\t"
 
-        title += "TP/:A\tB\tL\tR\t"
-        title += "FP/:A\tB\tLO\tRO\t"
+        title += "TP:"
+        if "tpany" in VideoQueue.rep:
+            title += "A\t"
+        if "tpboth" in VideoQueue.rep:
+            title += "B\t"
+        if "tploro" in VideoQueue.rep:
+            title += "LO\tRO\t"
+        title += "M:"
+        if "many" in VideoQueue.rep:
+            title += "A\t"
+        if "mboth" in VideoQueue.rep:
+            title += "B\t"
+        if "mloro" in VideoQueue.rep:
+            title += "LO\tRO\t"
+        title += "FP:"
+        if "fpany" in VideoQueue.rep:
+            title += "A\t"
+        if "fpboth" in VideoQueue.rep:
+            title += "B\t"
+        if "fploro" in VideoQueue.rep:
+            title += "LO\tRO\t"
 
-        title += "S:A\tB\t"
+        title += "TP/:"
+        if "tprany" in VideoQueue.rep:
+            title += "A\t"
+        if "tprboth" in VideoQueue.rep:
+            title += "B\t"
+        if "tprlr" in VideoQueue.rep:
+            title += "L\tR\t"
+        title += "FP/:"
+        if "fprany" in VideoQueue.rep:
+            title += "A\t"
+        if "fprboth" in VideoQueue.rep:
+            title += "B\t"
+        if "fprloro" in VideoQueue.rep:
+            title += "LO\tRO\t"
+        #title += "M:L\tR\tB\tFL\tFR\tFB\t"
+
+        title += "S:"
+        if "sa" in VideoQueue.rep:
+            title += "A\t"
+        if "sb" in VideoQueue.rep:
+            title += "B\t"
 
         title += "\n"
         file(fileName, "wb").write(title)
@@ -136,31 +197,64 @@ class VideoQueue:
 
         # video desc, filepath
         line = "%d\t%s\t%s\t%s\t%s\t" % (vi, isChallenging, hasGlasses, videoDescription, videoName.split("/posnetki/")[1])
+
         # total annot, left, right
-        line += "%i\t%i\t%i\t" % (len(annotsl), len(varsDict["lBlinks"]), len(varsDict["rBlinks"]))
+        if "tany" in VideoQueue.rep:
+            line += "%i\t" % len(annotsl)
+        if "tlr" in VideoQueue.rep:
+            line += "%i\t%i\t" % (len(varsDict["lBlinks"]), len(varsDict["rBlinks"]))
+
         # tp a, b, lo, ro
-        line += "%i\t%i\t%i\t%i\t" % (len(dc["aCaught"]), len(dc["bCaught"]), len(dc["loCaught"]), len(dc["roCaught"]))
+        if "tpany" in VideoQueue.rep:
+            line += "%i\t" % len(dc["aCaught"])
+        if "tpboth" in VideoQueue.rep:
+            line += "%i\t" % len(dc["bCaught"])
+        if "tploro" in VideoQueue.rep:
+            line += "%i\t%i\t" % (len(dc["loCaught"]), len(dc["roCaught"]))
         # miss a, b, lo, ro
-        line += "%i\t%i\t%i\t%i\t" % (len(dc["aMissed"]), len(dc["bMissed"]), len(dc["loMissed"]), len(dc["roMissed"]))
+        if "many" in VideoQueue.rep:
+            line += "%i\t" % len(dc["aMissed"])
+        if "mboth" in VideoQueue.rep:
+            line += "%i\t" % len(dc["bMissed"])
+        if "mloro" in VideoQueue.rep:
+            line += "%i\t%i\t" % (len(dc["loMissed"]), len(dc["roMissed"]))
         # fp (a, b, lo, ro)
         anyFp = len(dc["fpByOnlyL"])+len(dc["fpByOnlyR"])+len(dc["fpByBothEyes"])
-        line += "%i\t%i\t%i\t%i\t" % (anyFp, len(dc["fpByBothEyes"]), len(dc["fpByOnlyL"]), len(dc["fpByOnlyR"]))
+        if "fpany" in VideoQueue.rep:
+            line += "%i\t" % anyFp
+        if "fpboth" in VideoQueue.rep:
+            line += "%i\t" % len(dc["fpByBothEyes"])
+        if "fploro" in VideoQueue.rep:
+            line += "%i\t%i\t" % (len(dc["fpByOnlyL"]), len(dc["fpByOnlyR"]))
 
         # tp ratio a, b, l, r
         aTPRatio = 0 if len(annotsl) == 0 else len(dc["aCaught"])/float(len(annotsl))*100
         bTPRatio = 0 if len(annotsl) == 0 else len(dc["bCaught"])/float(len(annotsl))*100
         lTPRatio = 0 if len(annotsl) == 0 else len(dc["lCaught"])/float(len(annotsl))*100
         rTPRatio = 0 if len(annotsl) == 0 else len(dc["rCaught"])/float(len(annotsl))*100
-        line += "%.1f\t%.1f\t%.1f\t%.1f\t" % (aTPRatio, bTPRatio, lTPRatio, rTPRatio)
+        if "tprany" in VideoQueue.rep:
+            line += "%.1f\t" % aTPRatio
+        if "tprboth" in VideoQueue.rep:
+            line += "%.1f\t" % bTPRatio
+        if "tprlr" in VideoQueue.rep:
+            line += "%.1f\t%.1f\t" % (lTPRatio, rTPRatio)
 
         # fp ratio a, b, l, r
         aFPRatio = anyFp if len(annotsl) == 0 else anyFp/float(len(annotsl))*100
         bFPRatio = len(dc["fpByBothEyes"]) if len(annotsl) == 0 else len(dc["fpByBothEyes"])/float(len(annotsl))*100
         loFPRatio = len(dc["fpByOnlyL"]) if len(annotsl) == 0 else len(dc["fpByOnlyL"])/float(len(annotsl))*100
         roFPRatio = len(dc["fpByOnlyR"]) if len(annotsl) == 0 else len(dc["fpByOnlyR"])/float(len(annotsl))*100
-        line += "%.2f\t%.2f\t%.2f\t%.2f\t" % (aFPRatio, bFPRatio, loFPRatio, roFPRatio)
+        if "fprany" in VideoQueue.rep:
+            line += "%.2f\t" % aFPRatio
+        if "fprboth" in VideoQueue.rep:
+            line += "%.2f\t" % bFPRatio
+        if "fprloro" in VideoQueue.rep:
+            line += "%.2f\t%.2f\t" % (loFPRatio, roFPRatio)
 
-        line += "%.2f\t%.2f\t" % (100-(100-aTPRatio)-aFPRatio, 100-(100-bTPRatio)-bFPRatio)
+        if "sa" in VideoQueue.rep:
+            line += "%.2f\t" % (100-(100-aTPRatio)-aFPRatio)
+        if "sb" in VideoQueue.rep:
+            line += "%.2f\t" % (100-(100-bTPRatio)-bFPRatio)
 
         line += "\n"
         file(fileName, "ab").write(line)
