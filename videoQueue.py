@@ -355,7 +355,7 @@ class VideoQueue:
                 print "breaking"
                 print traceback.format_exc()
                 break
-            if "postProcessUpperLower" in actions or "postProcessLogLine" in actions or "displayDetectionCoverage" in actions or "writeOverallReport" in actions or "displayPupilDisplacement" in actions or "postProcessTracking" in actions:
+            if "postProcessLogLine" in actions or "displayDetectionCoverage" in actions or "writeOverallReport" in actions or "displayPupilDisplacement" in actions or "postProcessTracking" in actions:
                 #if cfg["method"] == "farneback":
                     annotFilename = os.path.splitext(videoName)[0]+".tag"
                     annotFilename1 = os.path.splitext(videoName)[0]+".v1"
@@ -390,19 +390,11 @@ class VideoQueue:
             if "postProcessLogLine" in actions:
                 if cfg["method"] == "farneback":
                     dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
-                    Farne.postProcessLogLine(varsDict["fFlows"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True, dc)
+                    Farne.postProcessLogLine(varsDict["fFlows"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True, dc, varsDict["tracking"])
                 elif cfg["method"] == "templ":
                     Templ.postProcessLogLine(varsDict["tCors"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True)
                 elif cfg["method"] == "blackpixels":
                     Blackpixels.postProcessLogLine(varsDict["bPixes"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True)
-            if "postProcessTracking" in actions:
-                if cfg["method"] == "farneback":
-                    dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
-                    Farne.postProcessTracking(varsDict["tracking"], varsDict["fFlows"], dc)
-            if "postProcessUpperLower" in actions:
-                if cfg["method"] == "farneback":
-                    dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
-                    Farne.postProcessUpperLower(varsDict["tracking"], varsDict["fFlows"], dc)
             if "displayPupilDisplacement" in actions:
                 if cfg["method"] == "farneback":
                     dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])

@@ -40,8 +40,6 @@ def testMain():
         #"writeOverallReport",
         #"displayDetectionCoverage",
         "postProcessLogLine",
-        #"postProcessTracking",
-        #"postProcessUpperLower",
         #"displayPupilDisplacement",
         #"signalProcessing",
     ]
