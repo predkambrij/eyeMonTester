@@ -90,6 +90,7 @@ class VideoQueue:
 
         return varsDict
     rep = [
+        "lprp",
         "tannot",
         "tlr",
         #"tpany",
@@ -107,12 +108,12 @@ class VideoQueue:
         #"fpany",
         "fpboth",
         "fploro",
-        #"tprany",
-        "tprboth",
-        "tprloro",
-        #"fprany",
-        "fprboth",
-        "fprloro",
+        # #"tprany",
+        # "tprboth",
+        # "tprloro",
+        # #"fprany",
+        # "fprboth",
+        # "fprloro",
         #"sa",
         "sb",
     ]
@@ -121,11 +122,14 @@ class VideoQueue:
     def initOverallReport(cfg):
         fileName = cfg["othr"]["codeDirectory"] + cfg["othr"]["outputsPref"] + "/overall.tsv"
         # truncate the file or create it, if it doesn't exist yet
-        title = "I\tC\tG\tDesc\tFile path\t" # TODO total frames last time
+        title = "I\tC\tG\tL\tDesc\tFile path\t" # TODO total frames last time
         #title += "Ann\t"
         #title += "L tot\tL TP\tL mis\t"
         #title += "R tot\tR TP\tR mis\t"
 
+        title += "I:"
+        if "lprp" in VideoQueue.rep:
+            title += "L%\tR%\t"
         title += "T:"
         if "tannot" in VideoQueue.rep:
             title += "A\t"
@@ -212,9 +216,17 @@ class VideoQueue:
         if hasGlasses == "Y":
             pass
             #return
-
+        if (annots[3].has_key("length")):
+            m, s = annots[3]["length"]/60, annots[3]["length"]%60
+            #vLen = "%.0f %d:%2d" % (annots[3]["length"], m, s)
+            vLen = "%d:%02d" % (m, s)
+        else:
+            vLen = ""
         # video desc, filepath
-        line = "%d\t%s\t%s\t%s\t%s\t" % (vi, isChallenging, hasGlasses, videoDescription, videoName.split("/posnetki/")[1])
+        line = "%d\t%s\t%s\t%s\t%s\t%s\t" % (vi, isChallenging, hasGlasses, vLen, videoDescription, videoName.split("/posnetki/")[1])
+
+        if "lprp" in VideoQueue.rep:
+            line += "%.2f\t%.2f\t" % (ppd["lPercent"], ppd["rPercent"])
 
         # total annot, left, right
         if "tannot" in VideoQueue.rep:
@@ -358,9 +370,15 @@ class VideoQueue:
             if "postProcessLogLine" in actions or "displayDetectionCoverage" in actions or "writeOverallReport" in actions or "displayPupilDisplacement" in actions or "postProcessTracking" in actions:
                 #if cfg["method"] == "farneback":
                     annotFilename = os.path.splitext(videoName)[0]+".tag"
+                    annotFilenameL = os.path.splitext(videoName)[0]+".txt"
                     annotFilename1 = os.path.splitext(videoName)[0]+".v1"
                     if os.path.isfile(annotFilename):
                         annotsl, annots = Cmn.parseAnnotations(file(annotFilename), None, "farne")
+                        if os.path.isfile(annotFilenameL):
+                            videoLen = float(file(annotFilenameL, "rb").read().strip().split("\n")[-1].split(" ")[1])
+                            annots[-1]["length"] = videoLen
+                        else:
+                            annots[-1]["length"] = -1
                     elif os.path.isfile(annotFilename1):
                         annotsl, annots = Cmn.parseAnnotationsMy(file(annotFilename1), None, "farne")
             if "displayDetectionCoverage" in actions:

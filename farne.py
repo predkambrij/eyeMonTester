@@ -295,46 +295,63 @@ class Farne:
 
         options = [
             "postProcessUpperLower",
-            "postProcessLogLine",
             "postProcessTracking",
+            "postProcessLogLine",
         ]
         if "postProcessUpperLower" in options and isEnd == True:
+            # missed
+            lm, rm = dc["lMissed"], dc["rMissed"]
             lfpfs, lfpfe = [x[1]["fs"] for x in dc["lFp"]], [x[1]["fe"] for x in dc["lFp"]]
             rfpfs, rfpfe = [x[1]["fs"] for x in dc["rFp"]], [x[1]["fe"] for x in dc["rFp"]]
             bfpfs, bfpfe = [min(x[0][1]["fs"], x[1][1]["fs"]) for x in dc["fpByBothEyes"]], [max(x[0][1]["fe"], x[1][1]["fe"]) for x in dc["fpByBothEyes"]]
+
+            pltasxlm = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in lm]
+            pltaexlm = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in lm]
+            pltaslm = [1.9 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in lm]
+            pltaelm = [1.9 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in lm]
+            pltasxrm = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in rm]
+            pltaexrm = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in rm]
+            pltasrm = [1.85 for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in rm]
+            pltaerm = [1.85 for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in rm]
+
             #fps
+            lfpfs, lfpfe = [x[1]["fs"] for x in dc["lFp"]], [x[1]["fe"] for x in dc["lFp"]]
+            rfpfs, rfpfe = [x[1]["fs"] for x in dc["rFp"]], [x[1]["fe"] for x in dc["rFp"]]
+            bfpfs, bfpfe = [min(x[0][1]["fs"], x[1][1]["fs"]) for x in dc["fpByBothEyes"]], [max(x[0][1]["fe"], x[1][1]["fe"]) for x in dc["fpByBothEyes"]]
+
             pltjbsx = [x["fn"] for x in fFlows if  x.has_key("jb") and x["jb"] == "s" and x["fn"] in bfpfs]
             pltjbex = [x["fn"] for x in fFlows if  x.has_key("jb") and x["jb"] == "e" and x["fn"] in bfpfe]
             pltlbsx = [x["fn"] for x in fFlows if x.has_key("lb") and x["lb"] == "s" and x["fn"] in lfpfs]
             pltlbex = [x["fn"] for x in fFlows if x.has_key("lb") and x["lb"] == "e" and x["fn"] in lfpfe]
             pltrbsx = [x["fn"] for x in fFlows if x.has_key("rb") and x["rb"] == "s" and x["fn"] in rfpfs]
             pltrbex = [x["fn"] for x in fFlows if x.has_key("rb") and x["rb"] == "e" and x["fn"] in rfpfe]
-            pltjbs = [1.15 for x in fFlows if x.has_key("jb") and x["jb"] == "s" and x["fn"] in bfpfs]
-            pltjbe = [1.15 for x in fFlows if x.has_key("jb") and x["jb"] == "e" and x["fn"] in bfpfe]
-            pltlbs = [1.10 for x in fFlows if x.has_key("lb") and x["lb"] == "s" and x["fn"] in lfpfs]
-            pltlbe = [1.10 for x in fFlows if x.has_key("lb") and x["lb"] == "e" and x["fn"] in lfpfe]
-            pltrbs = [1.05 for x in fFlows if x.has_key("rb") and x["rb"] == "s" and x["fn"] in rfpfs]
-            pltrbe = [1.05 for x in fFlows if x.has_key("rb") and x["rb"] == "e" and x["fn"] in rfpfe]
+            pltjbs = [2.15 for x in fFlows if x.has_key("jb") and x["jb"] == "s" and x["fn"] in bfpfs]
+            pltjbe = [2.15 for x in fFlows if x.has_key("jb") and x["jb"] == "e" and x["fn"] in bfpfe]
+            pltlbs = [2.10 for x in fFlows if x.has_key("lb") and x["lb"] == "s" and x["fn"] in lfpfs]
+            pltlbe = [2.10 for x in fFlows if x.has_key("lb") and x["lb"] == "e" and x["fn"] in lfpfe]
+            pltrbs = [2.05 for x in fFlows if x.has_key("rb") and x["rb"] == "s" and x["fn"] in rfpfs]
+            pltrbe = [2.05 for x in fFlows if x.has_key("rb") and x["rb"] == "e" and x["fn"] in rfpfe]
             # not fps
-            pltjbsxn = [x["fn"] for x in fFlows if  x.has_key("jb") and x["jb"] == "s" and (not x["fn"] in bfpfs)]
-            pltjbexn = [x["fn"] for x in fFlows if  x.has_key("jb") and x["jb"] == "e" and (not x["fn"] in bfpfe)]
-            pltlbsxn = [x["fn"] for x in fFlows if x.has_key("lb") and x["lb"] == "s" and (not x["fn"] in lfpfs)]
-            pltlbexn = [x["fn"] for x in fFlows if x.has_key("lb") and x["lb"] == "e" and (not x["fn"] in lfpfe)]
-            pltrbsxn = [x["fn"] for x in fFlows if x.has_key("rb") and x["rb"] == "s" and (not x["fn"] in rfpfs)]
-            pltrbexn = [x["fn"] for x in fFlows if x.has_key("rb") and x["rb"] == "e" and (not x["fn"] in rfpfe)]
-            pltjbsn = [1.3 for x in fFlows if x.has_key("jb") and x["jb"] == "s" and (not x["fn"] in bfpfs)]
-            pltjben = [1.3 for x in fFlows if x.has_key("jb") and x["jb"] == "e" and (not x["fn"] in bfpfe)]
-            pltlbsn = [1.25 for x in fFlows if x.has_key("lb") and x["lb"] == "s" and (not x["fn"] in lfpfs)]
-            pltlben = [1.25 for x in fFlows if x.has_key("lb") and x["lb"] == "e" and (not x["fn"] in lfpfe)]
-            pltrbsn = [1.2 for x in fFlows if x.has_key("rb") and x["rb"] == "s" and (not x["fn"] in rfpfs)]
-            pltrben = [1.2 for x in fFlows if x.has_key("rb") and x["rb"] == "e" and (not x["fn"] in rfpfe)]
+            # pltjbsxn = [x["fn"] for x in fFlows if  x.has_key("jb") and x["jb"] == "s" and (not x["fn"] in bfpfs)]
+            # pltjbexn = [x["fn"] for x in fFlows if  x.has_key("jb") and x["jb"] == "e" and (not x["fn"] in bfpfe)]
+            # pltlbsxn = [x["fn"] for x in fFlows if x.has_key("lb") and x["lb"] == "s" and (not x["fn"] in lfpfs)]
+            # pltlbexn = [x["fn"] for x in fFlows if x.has_key("lb") and x["lb"] == "e" and (not x["fn"] in lfpfe)]
+            # pltrbsxn = [x["fn"] for x in fFlows if x.has_key("rb") and x["rb"] == "s" and (not x["fn"] in rfpfs)]
+            # pltrbexn = [x["fn"] for x in fFlows if x.has_key("rb") and x["rb"] == "e" and (not x["fn"] in rfpfe)]
+            # pltjbsn = [1.3 for x in fFlows if x.has_key("jb") and x["jb"] == "s" and (not x["fn"] in bfpfs)]
+            # pltjben = [1.3 for x in fFlows if x.has_key("jb") and x["jb"] == "e" and (not x["fn"] in bfpfe)]
+            # pltlbsn = [1.25 for x in fFlows if x.has_key("lb") and x["lb"] == "s" and (not x["fn"] in lfpfs)]
+            # pltlben = [1.25 for x in fFlows if x.has_key("lb") and x["lb"] == "e" and (not x["fn"] in lfpfe)]
+            # pltrbsn = [1.2 for x in fFlows if x.has_key("rb") and x["rb"] == "s" and (not x["fn"] in rfpfs)]
+            # pltrben = [1.2 for x in fFlows if x.has_key("rb") and x["rb"] == "e" and (not x["fn"] in rfpfe)]
+            # annots
             pltasx = [x["fn"] for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
             pltaex = [x["fn"] for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
-            pltas = [1.4 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
-            pltae = [1.4 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
+            pltas = [2.4 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
+            pltae = [2.4 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
 
             pltlx, pltrx = [x["fn"] for x in tracking["upperLowerL"]], [x["fn"] for x in tracking["upperLowerR"]]
-            pltl, pltr = [x["l"] for x in tracking["upperLowerL"]], [x["r"] for x in tracking["upperLowerR"]]
+            pltl, pltr = [abs(x["l"]) for x in tracking["upperLowerL"]], [abs(x["r"]) for x in tracking["upperLowerR"]]
 
             plt.figure(1)
             plt.plot(
@@ -345,9 +362,11 @@ class Farne:
                 pltlbsx, pltlbs, 'ro', pltlbex, pltlbe, 'r^', # start & end of lBlinks not fp
                 pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^', # start & end of rBlinks not fp
                 pltjbsx, pltjbs, 'yo', pltjbex, pltjbe, 'y^', # start & end of jBlinks not fp
-                pltlbsxn, pltlbsn, 'ro', pltlbexn, pltlben, 'r^', # start & end of lBlinks fp
-                pltrbsxn, pltrbsn, 'bo', pltrbexn, pltrben, 'b^', # start & end of rBlinks fp
-                pltjbsxn, pltjbsn, 'yo', pltjbexn, pltjben, 'y^', # start & end of jBlinks fp
+                pltasxlm, pltaslm, 'ro', pltaexlm, pltaelm, 'r^', # left missed
+                pltasxrm, pltasrm, 'bo', pltaexrm, pltaerm, 'b^', # right missed
+                #pltlbsxn, pltlbsn, 'ro', pltlbexn, pltlben, 'r^', # start & end of lBlinks fp
+                #pltrbsxn, pltrbsn, 'bo', pltrbexn, pltrben, 'b^', # start & end of rBlinks fp
+                #pltjbsxn, pltjbsn, 'yo', pltjbexn, pltjben, 'y^', # start & end of jBlinks fp
             )
             plt.tight_layout()
         if "postProcessTracking" in options and isEnd == True:
@@ -362,11 +381,12 @@ class Farne:
             #return
             #print  [x for x in fFlows if x.has_key("rb") and x["rb"] == "e"]
             #return
-            pltx = [x["fn"] for x in tracking["pupilDisplacement"]]
+            # annots
             pltasx = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "s"]
             pltaex = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e"]
             pltas = [70 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
             pltae = [70 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
+            # missed
             pltasxlm = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in lm]
             pltaexlm = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in lm]
             pltaslm = [67 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in lm]
@@ -375,8 +395,6 @@ class Farne:
             pltaexrm = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in rm]
             pltasrm = [65 for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in rm]
             pltaerm = [65 for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in rm]
-            lDiff, rDiff = [x["lDiff"] for x in tracking["pupilDisplacement"]], [x["rDiff"] for x in tracking["pupilDisplacement"]]
-
             #fps
             pltjbsx = [x["fn"] for x in fFlows if  x.has_key("jb") and x["jb"] == "s" and x["fn"] in bfpfs]
             pltjbex = [x["fn"] for x in fFlows if  x.has_key("jb") and x["jb"] == "e" and x["fn"] in bfpfe]
@@ -390,6 +408,9 @@ class Farne:
             pltlbe = [30 for x in fFlows if x.has_key("lb") and x["lb"] == "e" and x["fn"] in lfpfe]
             pltrbs = [28 for x in fFlows if x.has_key("rb") and x["rb"] == "s" and x["fn"] in rfpfs]
             pltrbe = [28 for x in fFlows if x.has_key("rb") and x["rb"] == "e" and x["fn"] in rfpfe]
+
+            pltx = [x["fn"] for x in tracking["pupilDisplacement"]]
+            lDiff, rDiff = [x["lDiff"] for x in tracking["pupilDisplacement"]], [x["rDiff"] for x in tracking["pupilDisplacement"]]
 
 
             plt.figure(2)

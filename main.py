@@ -96,7 +96,7 @@ def prepareVideosList(cfg):
         ("", vidPrefix+"sk/eyeblink8/11/27122013_154548_cam.avi"),
     ]
     eyeblink8HandInTheFirstFrames = [
-        ("", vidPrefix+"sk/eyeblink8/2/26122013_224532_cam.avi"),
+        ("tudi punca od dalec", vidPrefix+"sk/eyeblink8/2/26122013_224532_cam.avi"),
         ("", vidPrefix+"sk/eyeblink8/4/26122013_230654_cam.avi"),
     ]
     nightOfResearchers30 = [
@@ -229,13 +229,13 @@ def prepareVideosList(cfg):
         # no annot
         ("look away", vidPrefix+"o4_102.mp4"),
     ]
-    videos = eyeblink8HandInTheFirstFrames+eyeblink8+basler5+others+zju+nightOfResearchers15+nightOfResearchers30
+    videos = eyeblink8HandInTheFirstFrames+eyeblink8+others+basler5+zju+nightOfResearchers15+nightOfResearchers30
     #videos = myAnnots
     #videos = basler5
     videoRange = range(len(videos))
     #videoRange = videoRange[-1:]
-    videoRange = [0]
-    #videoRange = videoRange[:10]
+    #videoRange = [0]
+    #videoRange = videoRange[:9]
     return videos, videoRange
 
 def getConfigs():
@@ -260,7 +260,8 @@ def getConfigs():
             #"outputsPref":"/vidProcOutputs/ver4"+method, # jBlink
             #"outputsPref":"/vidProcOutputs/ver5"+method, # full blink measure
             #"outputsPref":"/vidProcOutputs/ver6"+method, # templ increased window size
-            "outputsPref":"/vidProcOutputs/ver15"+method, # templ increased window size
+            #"outputsPref":"/vidProcOutputs/ver15"+method,
+            "outputsPref":"/vidProcOutputs/ver151"+method,
         }
     }
 
