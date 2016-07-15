@@ -231,7 +231,7 @@ def prepareVideosList(cfg):
     ]
     videos = eyeblink8HandInTheFirstFrames+eyeblink8+basler5+others+zju+nightOfResearchers15+nightOfResearchers30
     #videos = myAnnots
-    #videos = others
+    #videos = basler5
     videoRange = range(len(videos))
     #videoRange = videoRange[-1:]
     #videoRange = [2]

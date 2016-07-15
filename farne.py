@@ -199,14 +199,14 @@ class Farne:
                                         (fnLDiff, lMissed, dc["lMissed"]), (fnRDiff, rMissed, dc["rMissed"]), ]:
             for checkRef in checkRefs:
                 bs, be = annotsD[checkRef]["bs"], annotsD[checkRef]["be"]
-                s = sum(diff[c] for c in xrange(bs, be+1) if diff.has_key(c))/float(be-bs)
+                s = sum(diff[c] for c in xrange(bs, be+1) if diff.has_key(c))/(float(be-bs) if (be-bs) > 0 else 1)
                 resList.append((checkRef, s, (bs, be)))
 
         fpByOnlyL, fpByOnlyR = [], []
         for diff, resList, checkRefs in [(fnLDiff, fpByOnlyL, dc["fpByOnlyL"]), (fnRDiff, fpByOnlyR, dc["fpByOnlyR"]), ]:
             for checkRef in checkRefs:
                 bs, be = checkRef[1]["fs"], checkRef[1]["fe"]
-                s = sum(diff[c] for c in xrange(bs, be+1) if diff.has_key(c))/float(be-bs)
+                s = sum(diff[c] for c in xrange(bs, be+1) if diff.has_key(c))/(float(be-bs) if (be-bs) > 0 else 1)
                 resList.append((checkRef, s, (bs, be)))
 
         fpByBothEyesLR = []
@@ -216,8 +216,8 @@ class Farne:
                 l, r = checkRef[0], checkRef[1]
                 lbs, lbe, rbs, rbe = l[1]["fs"], l[1]["fe"], r[1]["fs"], r[1]["fe"]
 
-                ls = sum(fnLDiff[c] for c in xrange(lbs, lbe+1) if fnLDiff.has_key(c))/float(lbe-lbs)
-                rs = sum(fnRDiff[c] for c in xrange(rbs, rbe+1) if fnRDiff.has_key(c))/float(rbe-rbs)
+                ls = sum(fnLDiff[c] for c in xrange(lbs, lbe+1) if fnLDiff.has_key(c))/(float(lbe-lbs) if (lbe-lbs) > 0 else 1)
+                rs = sum(fnRDiff[c] for c in xrange(rbs, rbe+1) if fnRDiff.has_key(c))/(float(rbe-rbs) if (rbe-rbs) > 0 else 1)
                 resList.append((checkRef, ls, rs, (lbs, lbe), (rbs, rbe)))
 
         lMissedByDisplacement = sorted([x[0] for x in lMissed if x[1] > 13])
@@ -233,8 +233,9 @@ class Farne:
 
         lOutliers = [(x["fn"], x["lDiff"]) for x in tracking["pupilDisplacement"] if x["lDiff"] > 12]
         rOutliers = [(x["fn"], x["rDiff"]) for x in tracking["pupilDisplacement"] if x["rDiff"] > 12]
-        lPercent = len(lOutliers)/float(len(tracking["pupilDisplacement"]))*100
-        rPercent = len(rOutliers)/float(len(tracking["pupilDisplacement"]))*100
+
+        lPercent = (len(lOutliers)/float(len(tracking["pupilDisplacement"]))*100) if len(tracking["pupilDisplacement"]) >0 else -1
+        rPercent = (len(rOutliers)/float(len(tracking["pupilDisplacement"]))*100) if len(tracking["pupilDisplacement"]) >0 else -1
 
         return {
             "lMissed":lMissed, "rMissed":rMissed,

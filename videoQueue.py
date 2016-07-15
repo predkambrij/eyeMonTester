@@ -96,6 +96,8 @@ class VideoQueue:
         "tpboth",
         "tploro",
         #"many",
+        "manyd",
+        "manyr",
         #"mboth",
         "mbothd",
         "mbothr",
@@ -140,6 +142,10 @@ class VideoQueue:
         title += "M:"
         if "many" in VideoQueue.rep:
             title += "A\t"
+        if "manyd" in VideoQueue.rep:
+            title += "Ad\t"
+        if "manyr" in VideoQueue.rep:
+            title += "Ar\t"
         if "mboth" in VideoQueue.rep:
             title += "B\t"
         if "mbothd" in VideoQueue.rep:
@@ -226,6 +232,10 @@ class VideoQueue:
         # miss a, b, lo, ro
         if "many" in VideoQueue.rep:
             line += "%i\t" % len(dc["aMissed"])
+        if "manyd" in VideoQueue.rep:
+            line += "%i\t" % len(ppd["aMissedByDisplacement"])
+        if "manyr" in VideoQueue.rep:
+            line += "%i\t" % len([x for x in dc["aMissed"] if not x in ppd["aMissedByDisplacement"]])
         if "mboth" in VideoQueue.rep:
             line += "%i\t" % len(dc["bMissed"])
         if "mbothd" in VideoQueue.rep:
@@ -346,7 +356,7 @@ class VideoQueue:
                 print traceback.format_exc()
                 break
             if "postProcessUpperLower" in actions or "postProcessLogLine" in actions or "displayDetectionCoverage" in actions or "writeOverallReport" in actions or "displayPupilDisplacement" in actions or "postProcessTracking" in actions:
-                if cfg["method"] == "farneback":
+                #if cfg["method"] == "farneback":
                     annotFilename = os.path.splitext(videoName)[0]+".tag"
                     annotFilename1 = os.path.splitext(videoName)[0]+".v1"
                     if os.path.isfile(annotFilename):
