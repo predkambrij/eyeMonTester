@@ -27,7 +27,7 @@ class Common:
     @staticmethod
     def parseAnnotationsMy(f, fndict, method):
         di2 = {'track': [[('start', 0), ('end', 0)]]}
-        di3 = {'challenging': False, 'glasses': True}
+        di3 = {'challenging': False, 'glasses': None}
         annotsl = []
         lines = f.read().strip().split("\n")
         blinks = [(xi, [int(y) for y in x.split(",") if y != "p"]) for xi, x in zip(range(1, len(lines)+1), lines)]

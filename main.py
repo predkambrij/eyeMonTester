@@ -234,8 +234,8 @@ def prepareVideosList(cfg):
     #videos = basler5
     videoRange = range(len(videos))
     #videoRange = videoRange[-1:]
-    #videoRange = [0]
-    #videoRange = videoRange[:9]
+    #videoRange = [8]
+    videoRange = videoRange[:12]
     return videos, videoRange
 
 def getConfigs():
