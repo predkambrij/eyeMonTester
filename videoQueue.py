@@ -120,7 +120,7 @@ class VideoQueue:
     #rep = []
     @staticmethod
     def initOverallReport(cfg):
-        fileName = cfg["othr"]["codeDirectory"] + cfg["othr"]["outputsPref"] + "/overall.tsv"
+        fileName = cfg["othr"]["codeDirectory"] + cfg["othr"]["outputsPref"] + ("/overall_%s.tsv" % cfg["method"])
         # truncate the file or create it, if it doesn't exist yet
         title = "I\tC\tG\tL\tDesc\tFile path\t" # TODO total frames last time
         #title += "Ann\t"
@@ -303,6 +303,260 @@ class VideoQueue:
         file(fileName, "ab").write(line)
         return
 
+
+
+    repNum = 1
+    @staticmethod
+    def initOverallReportTable1(cfg):
+        if VideoQueue.repNum == 1:
+                VideoQueue.rept1 = [
+            "Gla",
+            "Len",
+            "fileNam",
+            "tannot",
+            "tpboth",
+            "tploro",
+            "many",
+            "manyd",
+            #"mlorod",
+            "tprboth",
+            "titleTP/",
+            "titleM",
+            "fpboth",
+            "fprboth",
+        ]
+        if VideoQueue.repNum == 2:
+                VideoQueue.rept1 = [
+            "fileNam",
+            "tannot",
+            "fpboth",
+            #"fploro",
+            "fprboth",
+            #"titleTP/",
+            #"titleS",
+            #"sb",
+        ]
+
+        fileName = cfg["othr"]["codeDirectory"] + cfg["othr"]["outputsPref"] + ("/overall_%s.tex" % cfg["method"])
+
+        space = " & "
+
+        title = ""
+        if "Gla" in VideoQueue.rept1:
+            title += "O"+space+""
+        if "Len" in VideoQueue.rept1:
+            title += "D"+space+""
+        if "fileNam" in VideoQueue.rept1:
+            title += "Datoteka"+space+""
+
+        if "titleI" in VideoQueue.rept1:
+            title += "I:"
+        if "lprp" in VideoQueue.rept1:
+            title += "L%"+space+"R%"+space+""
+
+        if "titleT" in VideoQueue.rept1:
+            title += "T:"
+        if "tannot" in VideoQueue.rept1:
+            title += "A"+space+""
+        if "tlr" in VideoQueue.rept1:
+            title += "L"+space+"R"+space+""
+
+
+        if "titleTP" in VideoQueue.rept1:
+            title += "TP:"
+        if "tpany" in VideoQueue.rept1:
+            title += "A"+space+""
+        if "tpboth" in VideoQueue.rept1:
+            title += "O"+space+""
+        if "tploro" in VideoQueue.rept1:
+            title += "L"+space+"D"+space+""
+
+        if "titleM" in VideoQueue.rept1:
+            if "many" in VideoQueue.rept1:
+                title += "Z"+space+""
+            if "manyd" in VideoQueue.rept1:
+                title += "Zd"+space+""
+        if "manyr" in VideoQueue.rept1:
+            title += "Ar"+space+""
+        if "mboth" in VideoQueue.rept1:
+            title += "B"+space+""
+        if "mbothd" in VideoQueue.rept1:
+            title += "Bd"+space+""
+        if "mbothr" in VideoQueue.rept1:
+            title += "Br"+space+""
+        if "mloro" in VideoQueue.rept1:
+            title += "LO"+space+"RO"+space+""
+        if "mlorod" in VideoQueue.rept1:
+            title += "Ld"+space+"Rd"+space+""
+        if "mloror" in VideoQueue.rept1:
+            title += "Lr"+space+"Rr"+space+""
+
+        if "titleTP/" in VideoQueue.rept1:
+            title += "PZ \\%"+space+""
+        if "tprany" in VideoQueue.rept1:
+            title += "A"+space+""
+        if "tprlr" in VideoQueue.rept1:
+            title += "L"+space+"R"+space+""
+
+        if "titleFP" in VideoQueue.rept1:
+            title += "FP:"
+        if "fpany" in VideoQueue.rept1:
+            title += "A"+space+""
+        if "fpboth" in VideoQueue.rept1:
+            title += "NZ"+space+""
+        if "fploro" in VideoQueue.rept1:
+            title += "LO"+space+"RO"+space+""
+
+        if "titleFP/" in VideoQueue.rept1:
+            title += "FP/:"
+        if "fprany" in VideoQueue.rept1:
+            title += "A"+space+""
+        if "fprboth" in VideoQueue.rept1:
+            title += "NZ \\%"+space+""
+        if "fprloro" in VideoQueue.rept1:
+            title += "LO"+space+"RO"+space+""
+        #title += "M:L"+space+"R"+space+"B"+space+"FL"+space+"FR"+space+"FB"+space+""
+        if "sa" in VideoQueue.rept1:
+            title += "A"+space+""
+        if "sb" in VideoQueue.rept1:
+            title += "S \\%"+space+""
+
+        title = title.rstrip(space)
+
+        title += " \\\\ \\hline\n"
+
+        file(fileName, "wb").write(title)
+        return fileName
+
+    @staticmethod
+    def writeOverallReportTable1(fileName, videoDescription, videoName, vi, annotsl, annots, varsDict, ppd):
+        dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
+
+        # tp ratio a, b, l, r
+        aTPRatio = 0 if len(annotsl) == 0 else len(dc["aCaught"])/float(len(annotsl))*100
+        bTPRatio = 0 if len(annotsl) == 0 else len(dc["bCaught"])/float(len(annotsl))*100
+        lTPRatio = 0 if len(annotsl) == 0 else len(dc["lCaught"])/float(len(annotsl))*100
+        rTPRatio = 0 if len(annotsl) == 0 else len(dc["rCaught"])/float(len(annotsl))*100
+
+        space = " & "
+        nl = " \\\\\n"
+
+        isChallenging = "?"
+        hasGlasses = "?"
+
+        if annots[3]["challenging"] == True:
+            isChallenging = "D"
+        elif annots[3]["challenging"] == False:
+            isChallenging = "N"
+        if annots[3]["glasses"] == True:
+            hasGlasses = "D"
+        elif annots[3]["glasses"] == False:
+            hasGlasses = "N"
+        if isChallenging == "Y":
+            pass
+            #return
+        if hasGlasses == "Y":
+            pass
+            #return
+        if (annots[3].has_key("length")):
+            m, s = annots[3]["length"]/60, annots[3]["length"]%60
+            #vLen = "%.0f %d:%2d" % (annots[3]["length"], m, s)
+            vLen = "%d:%02d" % (m, s)
+        else:
+            vLen = ""
+
+        line = ""
+        if "Gla" in VideoQueue.rept1:
+            line += ("%s"+space) % hasGlasses
+        if "Len" in VideoQueue.rept1:
+            line += ("%s"+space) % vLen
+        if "fileNam" in VideoQueue.rept1:
+            fn = videoName.split("/posnetki/")[1].split("/")[-1]
+            fn = os.path.splitext(fn)[0]
+            fn = fn.replace("_x263", "")
+            fn = fn.replace("_", "\\_")
+            line += ("%s"+space) % fn
+
+
+        if "lprp" in VideoQueue.rept1:
+            line += ("%.2f"+space+"%.2f"+space+"") % (ppd["lPercent"], ppd["rPercent"])
+
+        # total annot, left, right
+        if "tannot" in VideoQueue.rept1:
+            line += ("%i"+space+"") % len(annotsl)
+        if "tlr" in VideoQueue.rept1:
+            line += ("%i"+space+"%i"+space+"") % (len(varsDict["lBlinks"]), len(varsDict["rBlinks"]))
+
+        # tp a, b, lo, ro
+        if "tpany" in VideoQueue.rept1:
+            line += ("%i"+space+"") % len(dc["aCaught"])
+        if "tpboth" in VideoQueue.rept1:
+            line += ("%i"+space+"") % len(dc["bCaught"])
+        if "tploro" in VideoQueue.rept1:
+            line += ("%i"+space+"%i"+space+"") % (len(dc["loCaught"]), len(dc["roCaught"]))
+        # miss a, b, lo, ro
+        if "many" in VideoQueue.rept1:
+            line += ("%i"+space+"") % len(dc["aMissed"])
+        if "manyd" in VideoQueue.rept1:
+            line += ("%i"+space+"") % len(ppd["aMissedByDisplacement"])
+        if "manyr" in VideoQueue.rept1:
+            line += ("%i"+space+"") % len([x for x in dc["aMissed"] if not x in ppd["aMissedByDisplacement"]])
+        if "mboth" in VideoQueue.rept1:
+            line += ("%i"+space+"") % len(dc["bMissed"])
+        if "mbothd" in VideoQueue.rept1:
+            line += ("%i"+space+"") % len(ppd["bMissedByDisplacement"])
+        if "mbothr" in VideoQueue.rept1:
+            line += ("%i"+space+"") % len([x for x in dc["bMissed"] if not x in ppd["bMissedByDisplacement"]])
+        if "mloro" in VideoQueue.rept1:
+            line += ("%i"+space+"%i"+space+"") % (len(dc["loMissed"]), len(dc["roMissed"]))
+        if "mlorod" in VideoQueue.rept1:
+            line += ("%i"+space+"%i"+space+"") % (len(ppd["loMissedByDisplacement"]), len(ppd["roMissedByDisplacement"]))
+        if "mloror" in VideoQueue.rept1:
+            line += ("%i"+space+"%i"+space+"") % (len([x for x in dc["loMissed"] if not x in ppd["loMissedByDisplacement"]]),
+                                  len([x for x in dc["roMissed"] if not x in ppd["roMissedByDisplacement"]]))
+
+        # tp ratio a, b, l, r
+        if "tprany" in VideoQueue.rept1:
+            line += ("%.1f"+space+"") % aTPRatio
+        if "tprboth" in VideoQueue.rept1:
+            line += ("%.1f"+space+"") % bTPRatio
+        if "tprlr" in VideoQueue.rept1:
+            line += ("%.1f"+space+"%.1f"+space+"") % (lTPRatio, rTPRatio)
+
+        # fp (a, b, lo, ro)
+        anyFp = len(dc["fpByOnlyL"])+len(dc["fpByOnlyR"])+len(dc["fpByBothEyes"])
+        if "fpany" in VideoQueue.rept1:
+            line += ("%i"+space+"") % anyFp
+        if "fpboth" in VideoQueue.rept1:
+            line += ("%i"+space+"") % len(dc["fpByBothEyes"])
+        if "fploro" in VideoQueue.rept1:
+            line += ("%i"+space+"%i"+space+"") % (len(dc["fpByOnlyL"]), len(dc["fpByOnlyR"]))
+
+
+        # fp ratio a, b, l, r
+        aFPRatio = anyFp if len(annotsl) == 0 else anyFp/float(len(annotsl))*100
+        bFPRatio = len(dc["fpByBothEyes"]) if len(annotsl) == 0 else len(dc["fpByBothEyes"])/float(len(annotsl))*100
+        loFPRatio = len(dc["fpByOnlyL"]) if len(annotsl) == 0 else len(dc["fpByOnlyL"])/float(len(annotsl))*100
+        roFPRatio = len(dc["fpByOnlyR"]) if len(annotsl) == 0 else len(dc["fpByOnlyR"])/float(len(annotsl))*100
+        if "fprany" in VideoQueue.rept1:
+            line += ("%.2f"+space+"") % aFPRatio
+        if "fprboth" in VideoQueue.rept1:
+            line += ("%.2f"+space+"") % bFPRatio
+        if "fprloro" in VideoQueue.rept1:
+            line += ("%.2f"+space+"%.2f"+space+"") % (loFPRatio, roFPRatio)
+
+        if "sa" in VideoQueue.rept1:
+            line += ("%.2f"+space+"") % (100-(100-aTPRatio)-aFPRatio)
+        if "sb" in VideoQueue.rept1:
+            line += ("%.2f"+space+"") % (100-(100-bTPRatio)-bFPRatio)
+
+        line = line.rstrip(space)
+        line += (""+nl+"")
+
+        file(fileName, "ab").write(line)
+        return
+
+
     # @staticmethod
     # def calculateTrackingCoverage(methodTracks, annotTracks):
     #     trackableFrames = 0
@@ -355,6 +609,7 @@ class VideoQueue:
 
         if "writeOverallReport" in actions:
             reportFileName = VideoQueue.initOverallReport(cfg)
+            reportFileNameT1 = VideoQueue.initOverallReportTable1(cfg)
 
         for vi in videoRange:
             videoDescription, videoName = videos[vi]
@@ -381,6 +636,16 @@ class VideoQueue:
                             annots[-1]["length"] = -1
                     elif os.path.isfile(annotFilename1):
                         annotsl, annots = Cmn.parseAnnotationsMy(file(annotFilename1), None, "farne")
+                        if "poli1person10" in annotFilename1:
+                            annots[-1]["glasses"] = True
+                        else:
+                            annots[-1]["glasses"] = False
+                        if os.path.isfile(annotFilenameL):
+                            videoLenS = float(file(annotFilenameL, "rb").read().strip().split("\n")[0].split(" ")[1])
+                            videoLenE = float(file(annotFilenameL, "rb").read().strip().split("\n")[-1].split(" ")[1])
+                            annots[-1]["length"] = (videoLenE-videoLenS)
+                        else:
+                            annots[-1]["length"] = -1
             if "displayDetectionCoverage" in actions:
                 if cfg["method"] == "farneback":
                     dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
@@ -405,6 +670,7 @@ class VideoQueue:
                 dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
                 ppd = Farne.processPupilDisplacement(varsDict["tracking"], dc, annotsl, annots)
                 VideoQueue.writeOverallReport(reportFileName, videoDescription, videoName, vi, annotsl, annots, varsDict, ppd)
+                VideoQueue.writeOverallReportTable1(reportFileNameT1, videoDescription, videoName, vi, annotsl, annots, varsDict, ppd)
             if "postProcessLogLine" in actions:
                 if cfg["method"] == "farneback":
                     dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
