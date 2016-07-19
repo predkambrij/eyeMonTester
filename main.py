@@ -230,18 +230,18 @@ def prepareVideosList(cfg):
         ("look away", vidPrefix+"o4_102.mp4"),
     ]
     videos = eyeblink8HandInTheFirstFrames+eyeblink8+others+basler5+zju+nightOfResearchers15+nightOfResearchers30
-    #videos = myAnnots
-    #videos = basler5
+    #videos = zju
+    #videos = zju
     videoRange = range(len(videos))
     #videoRange = videoRange[-1:]
-    #videoRange = [8]
-    videoRange = videoRange[:12]
+    videoRange = [7]
+    #videoRange = videoRange[10:]
     return videos, videoRange
 
 def getConfigs():
     #method = "blackpixels"
-    #method = "templ"
-    method = "farneback"
+    method = "templ"
+    #method = "farneback"
     return {
         "excel_export": False,
         "coverage":     False,

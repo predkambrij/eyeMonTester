@@ -96,9 +96,9 @@ class VideoQueue:
         #"tpany",
         "tpboth",
         "tploro",
-        #"many",
-        "manyd",
-        "manyr",
+        "many",
+        #"manyd", #unapplicable for templ
+        #"manyr",
         #"mboth",
         "mbothd",
         "mbothr",
@@ -109,7 +109,7 @@ class VideoQueue:
         "fpboth",
         "fploro",
         # #"tprany",
-        # "tprboth",
+        "tprboth",
         # "tprloro",
         # #"fprany",
         # "fprboth",
@@ -317,7 +317,7 @@ class VideoQueue:
             "tpboth",
             "tploro",
             "many",
-            "manyd",
+            #"manyd",  #unapplicable for templ
             #"mlorod",
             "tprboth",
             "titleTP/",
@@ -375,7 +375,7 @@ class VideoQueue:
             if "many" in VideoQueue.rept1:
                 title += "Z"+space+""
             if "manyd" in VideoQueue.rept1:
-                title += "Zd"+space+""
+                title += "Zr"+space+""
         if "manyr" in VideoQueue.rept1:
             title += "Ar"+space+""
         if "mboth" in VideoQueue.rept1:
@@ -428,6 +428,13 @@ class VideoQueue:
         file(fileName, "wb").write(title)
         return fileName
 
+    annotSum = 0
+    bothSum  = 0
+    loSum    = 0
+    roSum    = 0
+    mSum     = 0
+    mdSum    = 0
+    fpSum    = 0
     @staticmethod
     def writeOverallReportTable1(fileName, videoDescription, videoName, vi, annotsl, annots, varsDict, ppd):
         dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
@@ -484,6 +491,7 @@ class VideoQueue:
         # total annot, left, right
         if "tannot" in VideoQueue.rept1:
             line += ("%i"+space+"") % len(annotsl)
+            VideoQueue.annotSum += len(annotsl)
         if "tlr" in VideoQueue.rept1:
             line += ("%i"+space+"%i"+space+"") % (len(varsDict["lBlinks"]), len(varsDict["rBlinks"]))
 
@@ -492,13 +500,18 @@ class VideoQueue:
             line += ("%i"+space+"") % len(dc["aCaught"])
         if "tpboth" in VideoQueue.rept1:
             line += ("%i"+space+"") % len(dc["bCaught"])
+            VideoQueue.bothSum += len(dc["bCaught"])
         if "tploro" in VideoQueue.rept1:
             line += ("%i"+space+"%i"+space+"") % (len(dc["loCaught"]), len(dc["roCaught"]))
+            VideoQueue.loSum += len(dc["loCaught"])
+            VideoQueue.roSum += len(dc["roCaught"])
         # miss a, b, lo, ro
         if "many" in VideoQueue.rept1:
             line += ("%i"+space+"") % len(dc["aMissed"])
+            VideoQueue.mSum += len(dc["aMissed"])
         if "manyd" in VideoQueue.rept1:
             line += ("%i"+space+"") % len(ppd["aMissedByDisplacement"])
+            VideoQueue.mdSum += len(ppd["aMissedByDisplacement"])
         if "manyr" in VideoQueue.rept1:
             line += ("%i"+space+"") % len([x for x in dc["aMissed"] if not x in ppd["aMissedByDisplacement"]])
         if "mboth" in VideoQueue.rept1:
@@ -529,6 +542,7 @@ class VideoQueue:
             line += ("%i"+space+"") % anyFp
         if "fpboth" in VideoQueue.rept1:
             line += ("%i"+space+"") % len(dc["fpByBothEyes"])
+            VideoQueue.fpSum += len(dc["fpByBothEyes"])
         if "fploro" in VideoQueue.rept1:
             line += ("%i"+space+"%i"+space+"") % (len(dc["fpByOnlyL"]), len(dc["fpByOnlyR"]))
 
@@ -555,6 +569,32 @@ class VideoQueue:
 
         file(fileName, "ab").write(line)
         return
+
+    annotSum = 0
+    bothSum  = 0
+    loSum    = 0
+    roSum    = 0
+    mSum     = 0
+    mdSum    = 0
+    fpSum    = 0
+    @staticmethod
+    def writeOverallReportTable1Summary(fileName):
+        space = " & "
+        tPRatio = -1 if (VideoQueue.annotSum) == 0 else (VideoQueue.bothSum)/float(VideoQueue.annotSum)*100
+        fPRatio = (VideoQueue.fpSum) if (VideoQueue.annotSum) == 0 else (VideoQueue.fpSum)/float(VideoQueue.annotSum)*100
+        line = ("\hline"+space+""+space+""+space)
+        line += ("%d"+space) % VideoQueue.annotSum
+        line += ("%d"+space) % VideoQueue.bothSum
+        line += ("%d"+space) % VideoQueue.loSum
+        line += ("%d"+space) % VideoQueue.roSum
+        line += ("%d"+space) % VideoQueue.mSum
+        #line += ("%d"+space) % VideoQueue.mdSum
+        line += ("%.1f"+space) % tPRatio
+        line += ("%d"+space) % VideoQueue.fpSum
+        line += ("%.2f"+space) % fPRatio
+        line = line.rstrip(space)
+        line += " \\\\\n"
+        file(fileName, "ab").write(line)
 
 
     # @staticmethod
@@ -684,5 +724,8 @@ class VideoQueue:
                     dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
                     ppd = Farne.processPupilDisplacement(varsDict["tracking"], dc, annotsl, annots)
                     Farne.displayPupilDisplacement(ppd)
+        if "writeOverallReport" in actions:
+            VideoQueue.writeOverallReportTable1Summary(reportFileNameT1)
+
         return
 

@@ -48,7 +48,7 @@ class Templ:
             if annots[1].has_key(fn):
                 tCors[-1].update(annots[1][fn])
                 tCors[-1]["annotEvent"] = "e"
-            #Templ.postProcessLogLine(tCors, lBlinks, rBlinks, jBlinks, False)
+            Templ.postProcessLogLine(tCors, lBlinks, rBlinks, jBlinks, False)
         elif output.startswith("debug_blinks_d4:"):
             blinkInfo = output.split(" ")
             if blinkInfo[1] == "adding_lBlinkChunks":
@@ -101,7 +101,7 @@ class Templ:
     @staticmethod
     def postProcessLogLine(tCors, lBlinks, rBlinks, jBlinks, isEnd):
         if not isEnd:
-            window = 300
+            window = 600
         else:
             window = 0
 
@@ -137,8 +137,10 @@ class Templ:
         plsd1, prsd1 = [x["pl1sd"] for x in tCors[-window:]], [x["pr1sd"] for x in tCors[-window:]]
         mlsd1, mrsd1 = [x["ml1sd"] for x in tCors[-window:]], [x["mr1sd"] for x in tCors[-window:]]
         lsd2, rsd2 = [1-x["l2sd"] for x in tCors[-window:]], [1-x["r2sd"] for x in tCors[-window:]]
+        plsd2, mlsd2 = [x["l2sd"] for x in tCors[-window:]], [0-x["l2sd"] for x in tCors[-window:]]
+        prsd2, mrsd2 = [x["r2sd"] for x in tCors[-window:]], [0-x["r2sd"] for x in tCors[-window:]]
 
-        figs = [4]
+        figs = [4, 3]
         if 4 in figs:
             plt.figure(4)
             #plt.subplot(211)
@@ -150,7 +152,7 @@ class Templ:
                 pltlxbs, pltlbs, 'ro', pltlxbe, pltlbe, 'r^', # start & end of blinks
                 pltrxbs, pltrbs, 'bo', pltrxbe, pltrbe, 'b^', # start & end of blinks
                 pltjxbs, pltjbs, 'yo', pltjxbe, pltjbe, 'y^', # start & end of blinks
-                pltx, lsd2, 'gs-',
+                pltx, lsd2, 'rs-',
                 pltx, rsd2, 'bs-',
                 )
             plt.tight_layout()
@@ -191,6 +193,8 @@ class Templ:
                 pltx, rDiff, 'b--',
                 pltx, prsd1, 'y^-',
                 pltx, mrsd1, 'y^-',
+                pltx, prsd2, 'g^-',
+                pltx, mrsd2, 'g^-',
                 )
             plt.tight_layout()
 
