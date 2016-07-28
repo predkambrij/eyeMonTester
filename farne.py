@@ -1,4 +1,17 @@
 from multiprocessing import Process
+
+import matplotlib
+font = {
+    #'family' : 'normal',
+    #'weight' : 'bold',
+    'size'   : 26,
+}
+matplotlib.rc('font', **font)
+#matplotlib.rcParams['xtick.major.pad']='80'
+#matplotlib.rcParams['ytick.major.pad']='80'
+#print matplotlib.rcParams.keys()
+#matplotlib.rcParams['savefig.pad_inches']='800'
+#matplotlib.rcParams['ytick.major.pad']='80'
 import matplotlib.pyplot as plt
 
 from common import Common as Cmn
@@ -119,7 +132,7 @@ class Farne:
             if annots[1].has_key(fn):
                 fFlows[-1].update(annots[1][fn])
                 fFlows[-1]["annotEvent"] = "e"
-            #Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, jBlinks, False)
+            Farne.postProcessLogLine(fFlows, lBlinks, rBlinks, jBlinks, False)
         elif output.startswith("debug_fb_log_pupil_coverage:"):
             flowsInfo = [x for x in output.split(" ") if x != ""]
             fn   = int(flowsInfo[flowsInfo.index("F")+1])
@@ -281,9 +294,18 @@ class Farne:
         return
 
     @staticmethod
-    def postProcessLogLine(fFlows, lBlinks, rBlinks, jBlinks, isEnd, dc=None, tracking=None):
+    def postProcessLogLine(fFlows, lBlinks, rBlinks, jBlinks, isEnd, dc=None, tracking=None, videoName=None, figparms=None):
+        #print videoName
+        #print repr(figparms)
+        #figsize = (5.314961, 5.314961)
+        cm13_5 = 5.314961
+        figsizeW = cm13_5*4
+        figsizeH = figsizeW/2.
+        imgDpi = 150
+        tightLayoutPad = 0.2
+        figsize = (figsizeW, figsizeH)
         if not isEnd:
-            window = 300
+            window = 1000
         else:
             window = 0
 
@@ -293,11 +315,14 @@ class Farne:
         if isEnd:
             window = 0
 
-        options = [
-            "postProcessUpperLower",
-            "postProcessTracking",
-            "postProcessLogLine",
-        ]
+        if figparms != None and figparms.has_key('graphs') == True:
+            options = figparms['graphs']
+        else:
+            options = [
+                "postProcessUpperLower",
+                #"postProcessTracking",
+                #"postProcessLogLine",
+            ]
         if "postProcessUpperLower" in options and isEnd == True:
             # missed
             lm, rm = dc["lMissed"], dc["rMissed"]
@@ -353,7 +378,7 @@ class Farne:
             pltlx, pltrx = [x["fn"] for x in tracking["upperLowerL"]], [x["fn"] for x in tracking["upperLowerR"]]
             pltl, pltr = [abs(x["l"]) for x in tracking["upperLowerL"]], [abs(x["r"]) for x in tracking["upperLowerR"]]
 
-            plt.figure(1)
+            fig = plt.figure(1, figsize=figsize)
             plt.plot(
                 pltlx, pltl, 'ro-', pltrx, pltr, 'bo-',
 
@@ -368,7 +393,20 @@ class Farne:
                 #pltrbsxn, pltrbsn, 'bo', pltrbexn, pltrben, 'b^', # start & end of rBlinks fp
                 #pltjbsxn, pltjbsn, 'yo', pltjbexn, pltjben, 'y^', # start & end of jBlinks fp
             )
-            plt.tight_layout()
+
+            if figparms != None and figparms.has_key('axis') == True:
+                plt.axis(
+                    xmin=figparms['axis']['xmin'], xmax=figparms['axis']['xmax'],
+                    ymin=figparms['axis']['ymin'], ymax=figparms['axis']['ymax']
+                )
+
+            plt.legend(['levo oko', 'desno oko'])
+            plt.xlabel(u'sli\u010dice', fontsize=30)
+            plt.ylabel(u'razlika med zg. in sp. delom obmo\u010dja o\u010di', fontsize=30)
+            plt.tight_layout(pad=tightLayoutPad)
+            if figparms != None and figparms.has_key('figName') == True:
+                plt.savefig('/home/developer/other/notes/m/%s.png' % figparms['figName'], dpi=imgDpi, pad_inches=1)
+
         if "postProcessTracking" in options and isEnd == True:
             #print [x[1] for x in dc["fpByBothEyes"]]
             #return
@@ -413,7 +451,7 @@ class Farne:
             lDiff, rDiff = [x["lDiff"] for x in tracking["pupilDisplacement"]], [x["rDiff"] for x in tracking["pupilDisplacement"]]
 
 
-            plt.figure(2)
+            plt.figure(2, figsize=figsize)
             plt.plot(
                 pltx, lDiff, 'ro-', pltx, rDiff, 'bo-',
                 pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
@@ -423,7 +461,20 @@ class Farne:
                 pltlbsx, pltlbs, 'ro', pltlbex, pltlbe, 'r^', # left fp
                 pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^', # right fp
             )
-            plt.tight_layout()
+
+            if figparms != None and figparms.has_key('axis') == True:
+                plt.axis(
+                    xmin=figparms['axis']['xmin'], xmax=figparms['axis']['xmax'],
+                    ymin=figparms['axis']['ymin'], ymax=figparms['axis']['ymax']
+                )
+
+            plt.xlabel(u'sli\u010dice', fontsize=30)
+            plt.ylabel(u'razlika lokacije zenice od dejanske', fontsize=30)
+            plt.legend(['levo oko', 'desno oko'])
+            plt.tight_layout(pad=tightLayoutPad)
+
+            if figparms != None and figparms.has_key('figName') == True:
+                plt.savefig('/home/developer/other/notes/m/%s.png' % figparms['figName'], dpi=imgDpi, pad_inches=1)
 
         if "postProcessLogLine" in options:
             if dc != None:
@@ -488,10 +539,13 @@ class Farne:
                 pltrbe = [1.1 for x in fFlows[-window:]  if x.has_key("rb") and x["rb"] == "e"]
             #plt.subplot(211)
             #plt.plot(pltx, pltlXdiff, 'ro-', pltx, pltrXdiff, 'bo-')
-            fig = [3]
+            if figparms != None and figparms.has_key('figNums') == True:
+                fig = figparms['figNums']
+            else:
+                fig = [3]
             #plt.subplot(212)
             if 3 in fig:
-                plt.figure(10)
+                plt.figure(10, figsize=figsize)
                 if dc == None:
                     plt.plot(
                         pltlx, lDiff, 'ro-', pltrx, rDiff, 'bo-',
@@ -505,7 +559,9 @@ class Farne:
                         pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^', # start & end of rBlinks
                         pltjbsx, pltjbs, 'yo', pltjbex, pltjbe, 'y^', # start & end of jBlinks
                     )
-                    plt.tight_layout()
+                    plt.tight_layout(pad=tightLayoutPad)
+                    plt.xlabel('xlabel', fontsize=30)
+                    plt.ylabel('ylabel', fontsize=30)
                 else:
                     plt.plot(
                         pltlx, lDiff, 'ro-', pltrx, rDiff, 'bo-',
@@ -523,9 +579,20 @@ class Farne:
                         pltrbsxn, pltrbsn, 'bo', pltrbexn, pltrben, 'b^', # start & end of rBlinks
                         pltjbsxn, pltjbsn, 'yo', pltjbexn, pltjben, 'y^', # start & end of jBlinks
                     )
-                    plt.tight_layout()
+                    if figparms != None and figparms.has_key('axis') == True:
+                        plt.axis(
+                            xmin=figparms['axis']['xmin'], xmax=figparms['axis']['xmax'],
+                            ymin=figparms['axis']['ymin'], ymax=figparms['axis']['ymax']
+                        )
+                    plt.xlabel(u'sli\u010dice', fontsize=30)
+                    plt.ylabel(u'razlika vsote premikov na obmo\u010dju o\u010di', fontsize=30)
+                    plt.tight_layout(pad=tightLayoutPad)
+                    plt.legend(['levo oko', 'desno oko'])
+
+                    if figparms != None and figparms.has_key('figName') == True:
+                        plt.savefig('/home/developer/other/notes/m/%s.png' % figparms['figName'], dpi=imgDpi, pad_inches=1)
             if 1 in fig:
-                plt.figure(11)
+                plt.figure(11, figsize=figsize)
                 plt.plot(pltlx, lDiff, 'ro-',
                     pltax, [0 for x in xrange(len(pltax))], 'g--', # zero
                     pltlx, la, 'r--', # average
@@ -535,9 +602,11 @@ class Farne:
                     pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
                     pltlbsx, pltlbs, 'ro', pltlbex, pltlbe, 'r^', # start & end of blinks
                 )
-                plt.tight_layout()
+                plt.tight_layout(pad=tightLayoutPad)
+                plt.xlabel('xlabel', fontsize=30)
+                plt.ylabel('ylabel', fontsize=30)
             if 2 in fig:
-                plt.figure(12)
+                plt.figure(12, figsize=figsize)
                 plt.plot(pltrx, rDiff, 'bo-',
                     pltax, [0 for x in xrange(len(pltax))], 'g--', # zero
                     pltrx, ra, 'b--', # average
@@ -547,8 +616,13 @@ class Farne:
                     pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
                     pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^' # start & end of blinks
                 )
-                plt.tight_layout()
+                plt.tight_layout(pad=tightLayoutPad)
+                plt.xlabel('xlabel', fontsize=30)
+                plt.ylabel('ylabel', fontsize=30)
 
-        plt.show()
+        if figparms != None and figparms.has_key('show') == True and figparms['show'] == False:
+            pass
+        else:
+            plt.show()
         return
 

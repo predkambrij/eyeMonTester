@@ -219,6 +219,8 @@ def prepareVideosList(cfg):
     ]
     others = [
         ("talking", vidPrefix+"talking.avi"),
+        ("full partial", vidPrefix+"sk/NightOfResearchers15/test/14/26092014_211047_cam.avi"),
+        ("punca od dalec", vidPrefix+"sk/eyeblink8/1/26122013_223310_cam.avi"),
     ]
     myAnnots = [
         ("domaIv", vidPrefix+"o4_44.mp4"),
@@ -230,18 +232,19 @@ def prepareVideosList(cfg):
         ("look away", vidPrefix+"o4_102.mp4"),
     ]
     videos = eyeblink8HandInTheFirstFrames+eyeblink8+others+basler5+zju+nightOfResearchers15+nightOfResearchers30
-    #videos = zju
-    #videos = zju
+    videos = myAnnots
+    #videos = others
     videoRange = range(len(videos))
     #videoRange = videoRange[-1:]
-    videoRange = [7]
+    #videoRange = [7]
+    videoRange = [3]
     #videoRange = videoRange[10:]
     return videos, videoRange
 
 def getConfigs():
     #method = "blackpixels"
-    method = "templ"
-    #method = "farneback"
+    #method = "templ"
+    method = "farneback"
     return {
         "excel_export": False,
         "coverage":     False,
@@ -262,6 +265,8 @@ def getConfigs():
             #"outputsPref":"/vidProcOutputs/ver6"+method, # templ increased window size
             #"outputsPref":"/vidProcOutputs/ver15"+method,
             "outputsPref":"/vidProcOutputs/ver151"+method,
+            #"outputsPref":"/vidProcOutputs/verTest"+method,
+            #"outputsPref":"/vidProcOutputs/ver1511"+method, #black pixels
         }
     }
 

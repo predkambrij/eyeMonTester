@@ -24,22 +24,22 @@ class Templ:
                 or corsInfo[3:5] == ['updated', 'maxFramesShortList']
                 ):
                 return False
-            fn   = int(corsInfo[corsInfo.index("lastF")+1])
-            ts   = float(corsInfo[corsInfo.index("T")+1])
-            lcor = float(corsInfo[corsInfo.index("La")+1])
-            rcor = float(corsInfo[corsInfo.index("Ra")+1])
-            la = float(corsInfo[corsInfo.index("La")+2])
-            ra = float(corsInfo[corsInfo.index("Ra")+2])
+            fn    = int(corsInfo[corsInfo.index("lastF")+1])
+            ts    = float(corsInfo[corsInfo.index("T")+1])
+            lcor  = float(corsInfo[corsInfo.index("La")+1])
+            rcor  = float(corsInfo[corsInfo.index("Ra")+1])
+            la    = float(corsInfo[corsInfo.index("La")+2])
+            ra    = float(corsInfo[corsInfo.index("Ra")+2])
             lDiff = float(corsInfo[corsInfo.index("La")+3])
             rDiff = float(corsInfo[corsInfo.index("Ra")+3])
-            lsd = float(corsInfo[corsInfo.index("lSDft")+1])
+            lsd   = float(corsInfo[corsInfo.index("lSDft")+1])
             pl1sd = float(corsInfo[corsInfo.index("lSDft")+2])
             ml1sd = float(corsInfo[corsInfo.index("lSDft")+3])
-            l2sd = float(corsInfo[corsInfo.index("lSDft")+4])
-            rsd = float(corsInfo[corsInfo.index("rSDft")+1])
+            l2sd  = float(corsInfo[corsInfo.index("lSDft")+4])
+            rsd   = float(corsInfo[corsInfo.index("rSDft")+1])
             pr1sd = float(corsInfo[corsInfo.index("rSDft")+2])
             mr1sd = float(corsInfo[corsInfo.index("rSDft")+3])
-            r2sd = float(corsInfo[corsInfo.index("rSDft")+4])
+            r2sd  = float(corsInfo[corsInfo.index("rSDft")+4])
             tCors.append({"fn":fn, "ts":ts, "lcor":lcor, "rcor":rcor, "lDiff":lDiff, "rDiff":rDiff, "la":la, "ra":ra, "lsd":lsd, "pl1sd":pl1sd, "ml1sd":ml1sd, "l2sd":l2sd, "rsd":rsd, "pr1sd":pr1sd, "mr1sd":mr1sd, "r2sd":r2sd})
             tCorsI[fn] = len(tCors)-1
             if annots[0].has_key(fn):
@@ -99,7 +99,11 @@ class Templ:
         return False
 
     @staticmethod
-    def postProcessLogLine(tCors, lBlinks, rBlinks, jBlinks, isEnd):
+    def postProcessLogLine(tCors, lBlinks, rBlinks, jBlinks, isEnd, videoName=None, figparms=None):
+        cm13_5 = 5.314961
+        imgDpi = 150
+        tightLayoutPad = 0.2
+        figsize = (cm13_5*4, cm13_5*2)
         if not isEnd:
             window = 600
         else:
@@ -140,14 +144,22 @@ class Templ:
         plsd2, mlsd2 = [x["l2sd"] for x in tCors[-window:]], [0-x["l2sd"] for x in tCors[-window:]]
         prsd2, mrsd2 = [x["r2sd"] for x in tCors[-window:]], [0-x["r2sd"] for x in tCors[-window:]]
 
-        figs = [4, 3]
+        print "pltasx", repr(pltasx)
+        print "pltas", repr(pltas)
+        print "pltaex", repr(pltaex)
+        print "pltae", repr(pltae)
+        if figparms != None and figparms.has_key('figNums') == True:
+            figs = figparms['figNums']
+        else:
+            figs = [4, 3]
+
         if 4 in figs:
-            plt.figure(4)
+            plt.figure(4, figsize=figsize)
             #plt.subplot(211)
             plt.plot(
-                pltx, [1 for x in xrange(len(pltx))], 'g--', # ones
                 pltx, lcor, 'ro-',
                 pltx, rcor, 'bo-',
+                pltx, [1 for x in xrange(len(pltx))], 'g--', # ones
                 pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
                 pltlxbs, pltlbs, 'ro', pltlxbe, pltlbe, 'r^', # start & end of blinks
                 pltrxbs, pltrbs, 'bo', pltrxbe, pltrbe, 'b^', # start & end of blinks
@@ -155,9 +167,20 @@ class Templ:
                 pltx, lsd2, 'rs-',
                 pltx, rsd2, 'bs-',
                 )
-            plt.tight_layout()
+            if figparms != None and figparms.has_key('axis') == True:
+                plt.axis(
+                    xmin=figparms['axis']['xmin'], xmax=figparms['axis']['xmax'],
+                    ymin=figparms['axis']['ymin'], ymax=figparms['axis']['ymax']
+                )
+
+            plt.legend(['levo oko', 'desno oko'])
+            plt.xlabel(u'sli\u010dice', fontsize=30)
+            plt.ylabel(u'korelacija ujemanja predloge', fontsize=30)
+            plt.tight_layout(pad=tightLayoutPad)
+            if figparms != None and figparms.has_key('figName') == True:
+                plt.savefig('/home/developer/other/notes/m/%s.png' % figparms['figName'], dpi=imgDpi, pad_inches=1)
         if 1 in figs:
-            plt.figure(1)
+            plt.figure(1, figsize=figsize)
             #plt.subplot(211)
             plt.plot(
                 pltx, [1 for x in xrange(len(pltx))], 'g--', # ones
@@ -172,7 +195,7 @@ class Templ:
             plt.tight_layout()
 
         if 2 in figs:
-            plt.figure(2)
+            plt.figure(2, figsize=figsize)
             plt.plot(
                 pltx, [1 for x in xrange(len(pltx))], 'g--', # ones
                 pltx, rcor, 'bo-',
@@ -185,22 +208,47 @@ class Templ:
                 )
             plt.tight_layout()
         if 3 in figs:
-            plt.figure(3)
+            plt.figure(3, figsize=figsize)
             plt.plot(
                 pltx, lDiff, 'r--',
-                pltx, plsd1, 'y^-',
-                pltx, mlsd1, 'y^-',
                 pltx, rDiff, 'b--',
-                pltx, prsd1, 'y^-',
-                pltx, mrsd1, 'y^-',
-                pltx, prsd2, 'g^-',
-                pltx, mrsd2, 'g^-',
+                pltx, plsd1, 'r^-',
+                pltx, plsd2, 'ro-',
+                pltx, prsd1, 'b^-',
+                pltx, prsd2, 'bo-',
+                pltx, mlsd1, 'r^-',
+                pltx, mrsd1, 'b^-',
+                pltx, mlsd2, 'ro-',
+                pltx, mrsd2, 'bo-',
                 )
-            plt.tight_layout()
+            if figparms != None and figparms.has_key('axis') == True:
+                plt.axis(
+                    xmin=figparms['axis']['xmin'], xmax=figparms['axis']['xmax'],
+                    ymin=figparms['axis']['ymin'], ymax=figparms['axis']['ymax']
+                )
+
+            plt.legend([
+                'levo oko',
+                'desno oko',
+                '1. st. odk.',
+                #'1. st. odk.',
+                '2. st. odk.',
+                #'2. st. odk.',
+            ])
+            plt.xlabel(u'sli\u010dice', fontsize=30)
+            #plt.ylabel(u'razlika vsote med zgornjim in spodnjim delom obmo\u010dja o\u010di', fontsize=30)
+            plt.ylabel(u'odvod signala', fontsize=30)
+            plt.tight_layout(pad=tightLayoutPad)
+            if figparms != None and figparms.has_key('figName') == True:
+                plt.savefig('/home/developer/other/notes/m/%s.png' % figparms['figName'], dpi=imgDpi, pad_inches=1)
+
 
         #plt.subplot(212)
         #plt.plot(pltx, pltlYdiff, 'ro-', pltx, pltrYdiff, 'bo-')
-        plt.show()
+        if figparms != None and figparms.has_key('show') == True and figparms['show'] == False:
+            pass
+        else:
+            plt.show()
         return
 
 

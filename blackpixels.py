@@ -27,7 +27,11 @@ class Blackpixels:
         return False
 
     @staticmethod
-    def postProcessLogLine(bPixes, lBlinks, rBlinks, jBlinks, isEnd):
+    def postProcessLogLine(bPixes, lBlinks, rBlinks, jBlinks, isEnd, videoName=None, figparms=None):
+        cm13_5 = 5.314961
+        imgDpi = 150
+        tightLayoutPad = 0.3
+        figsize = (cm13_5*4, cm13_5*2)
         if not isEnd:
             window = 600
         else:
@@ -41,13 +45,41 @@ class Blackpixels:
         pltx = [x["fn"] for x in bPixes[-window:]]
         lNum, rNum = [x["lNum"] for x in bPixes[-window:]], [x["rNum"] for x in bPixes[-window:]]
 
-        plt.figure(1)
+        annots = [
+            "talkingFirst600"
+        ]
+        if "talkingFirst600" in annots:
+            pltasx = [168, 225, 274]
+            pltas = [1.004, 1.004, 1.004]
+            pltaex = [176, 232, 280]
+            pltae  = [1.004, 1.004, 1.004]
+
+
+        plt.figure(1, figsize=figsize)
         plt.plot(pltx, lNum, 'ro-')
-        plt.figure(2)
-        #plt.subplot(211)
         plt.plot(pltx, rNum, 'bo-')
+        plt.plot(pltasx, pltas, 'go', pltaex, pltae, 'g^') # annots of blinks
+        #plt.figure(2)
+        #plt.subplot(211)
         #plt.plot(pltx, lNum, 'ro-', pltx, rNum, 'bo-')
-        plt.show()
+        if figparms != None and figparms.has_key('axis') == True:
+            plt.axis(
+                xmin=figparms['axis']['xmin'], xmax=figparms['axis']['xmax'],
+                ymin=figparms['axis']['ymin'], ymax=figparms['axis']['ymax']
+            )
+
+        plt.legend(['levo oko', 'desno oko'])
+        plt.xlabel(u'sli\u010dice', fontsize=30)
+        #plt.ylabel(u'razlika vsote med zgornjim in spodnjim delom obmo\u010dja o\u010di', fontsize=30)
+        plt.ylabel(u'\u0161tevilo \u010drnih to\u010dk', fontsize=30)
+        plt.tight_layout(pad=tightLayoutPad)
+        if figparms != None and figparms.has_key('figName') == True:
+            plt.savefig('/home/developer/other/notes/m/%s.png' % figparms['figName'], dpi=imgDpi, pad_inches=1)
+        if figparms != None and figparms.has_key('show') == True and figparms['show'] == False:
+            pass
+        else:
+            plt.show()
+
         #plt.show(block=False)
 
         # if len(p) == 0:

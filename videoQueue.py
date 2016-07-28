@@ -644,7 +644,7 @@ class VideoQueue:
     #     return
 
     @staticmethod
-    def processOutputs(cfg, videos, videoRange, actions):
+    def processOutputs(cfg, videos, videoRange, actions, settings):
         #videoRange = videoRange[:1]
 
         if "writeOverallReport" in actions:
@@ -714,11 +714,20 @@ class VideoQueue:
             if "postProcessLogLine" in actions:
                 if cfg["method"] == "farneback":
                     dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
-                    Farne.postProcessLogLine(varsDict["fFlows"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True, dc, varsDict["tracking"])
+                    Farne.postProcessLogLine(
+                        varsDict["fFlows"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True, dc, varsDict["tracking"],
+                        videoName, settings['pltSettings']
+                    )
                 elif cfg["method"] == "templ":
-                    Templ.postProcessLogLine(varsDict["tCors"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True)
+                    Templ.postProcessLogLine(
+                        varsDict["tCors"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True,
+                        videoName, settings['pltSettings']
+                    )
                 elif cfg["method"] == "blackpixels":
-                    Blackpixels.postProcessLogLine(varsDict["bPixes"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True)
+                    Blackpixels.postProcessLogLine(
+                        varsDict["bPixes"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True,
+                        videoName, settings['pltSettings']
+                    )
             if "displayPupilDisplacement" in actions:
                 if cfg["method"] == "farneback":
                     dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])

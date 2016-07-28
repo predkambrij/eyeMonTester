@@ -1,8 +1,9 @@
-import sys, os
+import sys, os, time
 
 from common import Common as Cmn
-from farne import Farne
-from videoQueue import VideoQueue
+#from farne import Farne
+#from videoQueue import VideoQueue
+import videoQueue
 import main, processVideo
 
 
@@ -32,10 +33,155 @@ def signalProc():
 
 
 def testMain():
-    #signalProc()
-    #return
+    actions = ["postProcessLogLine",]
+    cfg = main.getConfigs()
+    vidPrefix = cfg["othr"]["vidPrefix"]
+    farneVideos = [
+        (
+            "signalTalking",
+            vidPrefix+"talking.avi",
+            {
+                'graphs':['postProcessLogLine'],
+                'figNums': [3],
+                'axis' : {'xmin':580, 'xmax':1000, 'ymin':-4.5, 'ymax':3.2},
+            }
+        ),
+        (
+            "talkingPupilDisplacement",
+            vidPrefix+"talking.avi",
+            {
+                'graphs':['postProcessTracking'],
+                #'axis' : {'xmin':0, 'xmax':5000, 'ymin':0, 'ymax':140},
+            }
+        ),
+        (
+            "signalIsoNoise",
+            vidPrefix+"o4_101.mp4",
+            {
+                'graphs':['postProcessLogLine'],
+                'figNums': [3],
+                'axis' : {'xmin':0, 'xmax':400, 'ymin':-1.6, 'ymax':1.6},
+            }
+        ),
+        (
+            "signalFarneState", # sometimes doesnt render correctly
+            vidPrefix+"o4_101.mp4",
+            {
+                'graphs':['postProcessLogLine'],
+                'figNums': [3],
+                'axis' : {'xmin':111, 'xmax':134, 'ymin':-1.27, 'ymax':1.44},
+            }
+        ),
+        (
+            "puncaOdDalec1MissedUpperLower",
+            vidPrefix+"sk/eyeblink8/1/26122013_223310_cam.avi",
+            {
+                'graphs':['postProcessUpperLower'],
+                'figNums': [3],
+                'axis' : {'xmin':0, 'xmax':15000, 'ymin':0, 'ymax':3.1},
+            }
+        ),
+        (
+            "puncaOdDalecFpsUpperLower",
+            #vidPrefix+"sk/eyeblink8/2/26122013_224532_cam.avi",
+            vidPrefix+"sk/eyeblink8/1/26122013_223310_cam.avi",
+            {
+                'graphs':['postProcessUpperLower'],
+                'figNums': [3],
+                'axis' : {'xmin':7800, 'xmax':10900, 'ymin':0, 'ymax':3.1},
+            }
+        ),
+    ]
+    templVideos = [
+        (
+            "meHighIsoTempl",
+            vidPrefix+"o4_101.mp4",
+            {
+                'figNums': [4], # 3 odvod
+                'axis' : {'xmin':0, 'xmax':600, 'ymin':0.960, 'ymax':1.01},
+            }
+        ),
+        (
+            "talkingTemplPostureChanges",
+            vidPrefix+"talking.avi",
+            {
+                'figNums': [4], # 3 odvod
+                'axis' : {'xmin':600, 'xmax':1250, 'ymin':0.860, 'ymax':1.036},
+            }
+        ),
+        (
+            "talkingTemplInappropriateTemplate",
+            vidPrefix+"talking.avi",
+            {
+                'figNums': [4], # 3 odvod
+                'axis' : {'xmin':3000, 'xmax':3610, 'ymin':0.920, 'ymax':1.025},
+            }
+        ),
+        (
+            "templSignalSample", # TODO boljsi
+            vidPrefix+"sk/eyeblink8/1/26122013_223310_cam.avi",
+            {
+                'figNums': [4], # 3 odvod
+                'axis' : {'xmin':0, 'xmax':3000, 'ymin':0.861, 'ymax':1.035},
+            }
+        ),
+        (
+            "templSDDeriv", # TODO boljsi
+            vidPrefix+"sk/eyeblink8/1/26122013_223310_cam.avi",
+            {
+                'figNums': [3],
+                'axis' : {'xmin':0, 'xmax':3000, 'ymin':-0.033, 'ymax':0.033},
+            }
+        ),
+        (
+            "talkingTemplSignal1",
+            vidPrefix+"talking.avi",
+            {
+                'figNums': [4], # 3 odvod
+                'axis' : {'xmin':0, 'xmax':600, 'ymin':0.935, 'ymax':1.017},
+            }
+        ),
+    ]
+    bpVideos = [
+        (
+            "talkingBlackPixelsSignal1DilateErodeAnnots",
+            vidPrefix+"talking.avi",
+            {
+                'axis' : {'xmin':0, 'xmax':600, 'ymin':0, 'ymax':135},
+            }
+        ),
+    ]
+    vids = farneVideos
+    #vids = templVideos
+    #vids = bpVideos
+    t0 = vids[0:1]
+    t1 = vids[1:2]
+    t2 = vids[2:3]
+    t3 = vids[3:4]
+    t4 = vids[4:5]
+    t5 = vids[5:6]
+    t = t5
+    #t = vids
+    for video in t: # farneVideos templVideos bpVideos
+        settings = {
+            'pltSettings':{
+                'show':False,
+            },
+        }
+        settings['pltSettings'].update(video[2])
+        settings['pltSettings'].update({'figName':video[0]})
+        videoQueue.VideoQueue.processOutputs(cfg, [(video[0], video[1])], [0], actions, settings)
+        #reload(main)
+        #reload(videoQueue)
+        #reload(processVideo)
+        #os.system('sync')
+        #time.sleep(0.5)
+
+def testMainOld():
     cfg = main.getConfigs()
     videos, videoRange = main.prepareVideosList(cfg)
+    #signalProc()
+    #return
     actions = [
         #"writeOverallReport",
         #"displayDetectionCoverage",
@@ -43,7 +189,7 @@ def testMain():
         #"displayPupilDisplacement",
         #"signalProcessing",
     ]
-    VideoQueue.processOutputs(cfg, videos, videoRange, actions)
+    VideoQueue.processOutputs(cfg, videos, videoRange, actions, settings)
 
 def pyplotGraphFromOutput():
     return
