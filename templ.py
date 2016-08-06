@@ -114,25 +114,29 @@ class Templ:
         #print repr(tCors)
         if isEnd:
             window = 0
+        aVals = 1.007 if not figparms.has_key('aVals') else figparms['aVals']
+        jVals = 1.005 if not figparms.has_key('jVals') else figparms['jVals']
+        lVals = 1.003 if not figparms.has_key('lVals') else figparms['lVals']
+        rVals = 1.001 if not figparms.has_key('rVals') else figparms['rVals']
         pltx = [x["fn"] for x in tCors[-window:]]
         pltld = [(xm1["lcor"]-x["lcor"]) for xm1, x in zip((tCors[1:-1]), (tCors[0:]))]
         pltasx = [x["fn"] for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
         pltaex = [x["fn"] for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
-        pltas = [1.004 for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
-        pltae = [1.004 for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
+        pltas = [aVals for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
+        pltae = [aVals for x in tCors[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
 
         pltlxbs = [x["fn"] for x in tCors[-window:] if  x.has_key("lb") and x["lb"] == "s"]
         pltlxbe = [x["fn"] for x in tCors[-window:] if  x.has_key("lb") and x["lb"] == "e"]
-        pltlbs = [1.002 for x in tCors[-window:]  if x.has_key("lb") and x["lb"] == "s"]
-        pltlbe = [1.002 for x in tCors[-window:]  if x.has_key("lb") and x["lb"] == "e"]
+        pltlbs = [lVals for x in tCors[-window:]  if x.has_key("lb") and x["lb"] == "s"]
+        pltlbe = [lVals for x in tCors[-window:]  if x.has_key("lb") and x["lb"] == "e"]
         pltrxbs = [x["fn"] for x in tCors[-window:] if  x.has_key("rb") and x["rb"] == "s"]
         pltrxbe = [x["fn"] for x in tCors[-window:] if  x.has_key("rb") and x["rb"] == "e"]
-        pltrbs = [1.001 for x in tCors[-window:]  if x.has_key("rb") and x["rb"] == "s"]
-        pltrbe = [1.001 for x in tCors[-window:]  if x.has_key("rb") and x["rb"] == "e"]
+        pltrbs = [rVals for x in tCors[-window:]  if x.has_key("rb") and x["rb"] == "s"]
+        pltrbe = [rVals for x in tCors[-window:]  if x.has_key("rb") and x["rb"] == "e"]
         pltjxbs = [x["fn"] for x in tCors[-window:] if  x.has_key("jb") and x["jb"] == "s"]
         pltjxbe = [x["fn"] for x in tCors[-window:] if  x.has_key("jb") and x["jb"] == "e"]
-        pltjbs = [1.003 for x in tCors[-window:]  if x.has_key("jb") and x["jb"] == "s"]
-        pltjbe = [1.003 for x in tCors[-window:]  if x.has_key("jb") and x["jb"] == "e"]
+        pltjbs = [jVals for x in tCors[-window:]  if x.has_key("jb") and x["jb"] == "s"]
+        pltjbe = [jVals for x in tCors[-window:]  if x.has_key("jb") and x["jb"] == "e"]
         
         lcor, rcor = [x["lcor"] for x in tCors[-window:]], [x["rcor"] for x in tCors[-window:]]
         la, ra = [x["la"] for x in tCors[-window:]], [x["ra"] for x in tCors[-window:]]
@@ -156,26 +160,35 @@ class Templ:
         if 4 in figs:
             plt.figure(4, figsize=figsize)
             #plt.subplot(211)
-            plt.plot(
-                pltx, lcor, 'ro-',
-                pltx, rcor, 'bo-',
-                pltx, [1 for x in xrange(len(pltx))], 'g--', # ones
-                pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
-                pltlxbs, pltlbs, 'ro', pltlxbe, pltlbe, 'r^', # start & end of blinks
-                pltrxbs, pltrbs, 'bo', pltrxbe, pltrbe, 'b^', # start & end of blinks
-                pltjxbs, pltjbs, 'yo', pltjxbe, pltjbe, 'y^', # start & end of blinks
-                pltx, lsd2, 'rs-',
-                pltx, rsd2, 'bs-',
-                )
+            lline = plt.plot(pltx, lcor, 'ro-', label="levo oko")
+            rline = plt.plot(pltx, rcor, 'bo-', label="desno oko")
+            plt.plot(pltx, [1 for x in xrange(len(pltx))], 'g--') # ones
+            anots1 = plt.plot(pltasx, pltas, 'go', markersize=15.0, label="anno")
+            anots2 = plt.plot(pltaex, pltae, 'g^', markersize=15.0) # annots of blinks
+            left1  = plt.plot(pltlxbs, pltlbs, 'ro', markersize=15.0, label="lef") # start & end of blinks
+            left2  = plt.plot(pltlxbe, pltlbe, 'r^', markersize=15.0) # start & end of blinks
+            right1 = plt.plot(pltrxbs, pltrbs, 'bo', markersize=15.0, label="rig") # start & end of blinks
+            right2 = plt.plot(pltrxbe, pltrbe, 'b^', markersize=15.0) # start & end of blinks
+            both1  = plt.plot(pltjxbs, pltjbs, 'yo', markersize=15.0, label="bot") # start & end of blinks
+            both2  = plt.plot(pltjxbe, pltjbe, 'y^', markersize=15.0) # start & end of blinks
+            lsd = plt.plot(pltx, lsd2, 'rs-', markeredgecolor='none')
+            rsd = plt.plot(pltx, rsd2, 'bs-', markeredgecolor='none')
             if figparms != None and figparms.has_key('axis') == True:
                 plt.axis(
                     xmin=figparms['axis']['xmin'], xmax=figparms['axis']['xmax'],
                     ymin=figparms['axis']['ymin'], ymax=figparms['axis']['ymax']
                 )
+            ls = [anots1, both1, left1, right1, anots2, both2, left2, right2]
+            labs = ["", "", "", "",
+                u"anotirani me\u017eiki", u"zaznani: oba o\u010desa", u"zaznani: levo oko", u"zaznani: desno oko"
+            ]
+            first_legend = plt.legend(ls, labs, ncol=2, numpoints=1, loc=figparms['legBpos'])
+            plt.gca().add_artist(first_legend)
 
-            plt.legend(['levo oko', 'desno oko'])
+            plt.legend([lline, rline, lsd, rsd], ['levo oko', 'desno oko', '2. st. odk.', '2. st. odk.'], loc=figparms['legLpos'])
+
             plt.xlabel(u'sli\u010dice', fontsize=30)
-            plt.ylabel(u'korelacija ujemanja predloge', fontsize=30)
+            plt.ylabel(u'korelacija ujemanja s predlogo', fontsize=30)
             plt.tight_layout(pad=tightLayoutPad)
             if figparms != None and figparms.has_key('figName') == True:
                 plt.savefig('/home/developer/other/notes/m/%s.png' % figparms['figName'], dpi=imgDpi, pad_inches=1)
@@ -209,18 +222,17 @@ class Templ:
             plt.tight_layout()
         if 3 in figs:
             plt.figure(3, figsize=figsize)
-            plt.plot(
-                pltx, lDiff, 'r--',
-                pltx, rDiff, 'b--',
-                pltx, plsd1, 'r^-',
-                pltx, plsd2, 'ro-',
-                pltx, prsd1, 'b^-',
-                pltx, prsd2, 'bo-',
-                pltx, mlsd1, 'r^-',
-                pltx, mrsd1, 'b^-',
-                pltx, mlsd2, 'ro-',
-                pltx, mrsd2, 'bo-',
-                )
+            plt.plot(pltx, lDiff, 'r--')
+            plt.plot(pltx, rDiff, 'b--')
+            plt.plot(pltx, plsd1, 'r^-', markeredgecolor='none')
+            plt.plot(pltx, plsd2, 'ro-', markeredgecolor='none')
+            plt.plot(pltx, prsd1, 'b^-', markeredgecolor='none')
+            plt.plot(pltx, prsd2, 'bo-', markeredgecolor='none')
+            plt.plot(pltx, mlsd1, 'r^-', markeredgecolor='none')
+            plt.plot(pltx, mrsd1, 'b^-', markeredgecolor='none')
+            plt.plot(pltx, mlsd2, 'ro-', markeredgecolor='none')
+            plt.plot(pltx, mrsd2, 'bo-', markeredgecolor='none')
+
             if figparms != None and figparms.has_key('axis') == True:
                 plt.axis(
                     xmin=figparms['axis']['xmin'], xmax=figparms['axis']['xmax'],

@@ -332,12 +332,12 @@ class Farne:
 
             pltasxlm = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in lm]
             pltaexlm = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in lm]
-            pltaslm = [1.9 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in lm]
-            pltaelm = [1.9 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in lm]
+            pltaslm = [1.88 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in lm]
+            pltaelm = [1.88 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in lm]
             pltasxrm = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in rm]
             pltaexrm = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in rm]
-            pltasrm = [1.85 for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in rm]
-            pltaerm = [1.85 for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in rm]
+            pltasrm = [1.8 for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in rm]
+            pltaerm = [1.8 for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in rm]
 
             #fps
             lfpfs, lfpfe = [x[1]["fs"] for x in dc["lFp"]], [x[1]["fe"] for x in dc["lFp"]]
@@ -350,12 +350,12 @@ class Farne:
             pltlbex = [x["fn"] for x in fFlows if x.has_key("lb") and x["lb"] == "e" and x["fn"] in lfpfe]
             pltrbsx = [x["fn"] for x in fFlows if x.has_key("rb") and x["rb"] == "s" and x["fn"] in rfpfs]
             pltrbex = [x["fn"] for x in fFlows if x.has_key("rb") and x["rb"] == "e" and x["fn"] in rfpfe]
-            pltjbs = [2.15 for x in fFlows if x.has_key("jb") and x["jb"] == "s" and x["fn"] in bfpfs]
-            pltjbe = [2.15 for x in fFlows if x.has_key("jb") and x["jb"] == "e" and x["fn"] in bfpfe]
-            pltlbs = [2.10 for x in fFlows if x.has_key("lb") and x["lb"] == "s" and x["fn"] in lfpfs]
-            pltlbe = [2.10 for x in fFlows if x.has_key("lb") and x["lb"] == "e" and x["fn"] in lfpfe]
-            pltrbs = [2.05 for x in fFlows if x.has_key("rb") and x["rb"] == "s" and x["fn"] in rfpfs]
-            pltrbe = [2.05 for x in fFlows if x.has_key("rb") and x["rb"] == "e" and x["fn"] in rfpfe]
+            pltjbs = [2.3 for x in fFlows if x.has_key("jb") and x["jb"] == "s" and x["fn"] in bfpfs]
+            pltjbe = [2.3 for x in fFlows if x.has_key("jb") and x["jb"] == "e" and x["fn"] in bfpfe]
+            pltlbs = [2.22 for x in fFlows if x.has_key("lb") and x["lb"] == "s" and x["fn"] in lfpfs]
+            pltlbe = [2.22 for x in fFlows if x.has_key("lb") and x["lb"] == "e" and x["fn"] in lfpfe]
+            pltrbs = [2.14 for x in fFlows if x.has_key("rb") and x["rb"] == "s" and x["fn"] in rfpfs]
+            pltrbe = [2.14 for x in fFlows if x.has_key("rb") and x["rb"] == "e" and x["fn"] in rfpfe]
             # not fps
             # pltjbsxn = [x["fn"] for x in fFlows if  x.has_key("jb") and x["jb"] == "s" and (not x["fn"] in bfpfs)]
             # pltjbexn = [x["fn"] for x in fFlows if  x.has_key("jb") and x["jb"] == "e" and (not x["fn"] in bfpfe)]
@@ -379,20 +379,25 @@ class Farne:
             pltl, pltr = [abs(x["l"]) for x in tracking["upperLowerL"]], [abs(x["r"]) for x in tracking["upperLowerR"]]
 
             fig = plt.figure(1, figsize=figsize)
-            plt.plot(
-                pltlx, pltl, 'ro-', pltrx, pltr, 'bo-',
+            plt.plot(pltlx, pltl, 'ro-', pltrx, pltr, 'bo-')
 
-                pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
+            anots1 = plt.plot(pltasx, pltas, 'go', markersize=15.0)
+            anots2 = plt.plot(pltaex, pltae, 'g^', markersize=15.0) # annots of blinks
 
-                pltlbsx, pltlbs, 'ro', pltlbex, pltlbe, 'r^', # start & end of lBlinks not fp
-                pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^', # start & end of rBlinks not fp
-                pltjbsx, pltjbs, 'yo', pltjbex, pltjbe, 'y^', # start & end of jBlinks not fp
-                pltasxlm, pltaslm, 'ro', pltaexlm, pltaelm, 'r^', # left missed
-                pltasxrm, pltasrm, 'bo', pltaexrm, pltaerm, 'b^', # right missed
+            left1   = plt.plot(pltlbsx, pltlbs, 'ro', markersize=15.0)
+            left2   = plt.plot(pltlbex, pltlbe, 'r^', markersize=15.0) # start & end of lBlinks not fp
+            right1  = plt.plot(pltrbsx, pltrbs, 'bo', markersize=15.0)
+            right2  = plt.plot(pltrbex, pltrbe, 'b^', markersize=15.0) # start & end of rBlinks not fp
+            both1   = plt.plot(pltjbsx, pltjbs, 'yo', markersize=15.0)
+            both2   = plt.plot(pltjbex, pltjbe, 'y^', markersize=15.0) # start & end of jBlinks not fp
+            mleft1  = plt.plot(pltasxlm, pltaslm, 'ro', markersize=15.0)
+            mleft2  = plt.plot(pltaexlm, pltaelm, 'r^', markersize=15.0) # left missed
+            mright1 = plt.plot(pltasxrm, pltasrm, 'bo', markersize=15.0)
+            mright2 = plt.plot(pltaexrm, pltaerm, 'b^', markersize=15.0) # right missed
                 #pltlbsxn, pltlbsn, 'ro', pltlbexn, pltlben, 'r^', # start & end of lBlinks fp
                 #pltrbsxn, pltrbsn, 'bo', pltrbexn, pltrben, 'b^', # start & end of rBlinks fp
                 #pltjbsxn, pltjbsn, 'yo', pltjbexn, pltjben, 'y^', # start & end of jBlinks fp
-            )
+
 
             if figparms != None and figparms.has_key('axis') == True:
                 plt.axis(
@@ -400,7 +405,18 @@ class Farne:
                     ymin=figparms['axis']['ymin'], ymax=figparms['axis']['ymax']
                 )
 
-            plt.legend(['levo oko', 'desno oko'])
+            ls = [anots1, both1, left1, right1, anots2, both2, left2, right2]
+            labs = ["", "", "", "",
+                u"anotirani me\u017eiki",
+                u"oba o\u010desa: napa\u010dno zaznani (nad 2)",
+                u"levo oko:    napa\u010dno zaznani (nad 2) / zgre\u0161eni (pod 2)",
+                u"desno oko: napa\u010dno zaznani (nad 2) / zgre\u0161eni (pod 2)",
+            ]
+            first_legend = plt.legend(ls, labs, ncol=2, numpoints=1, loc=figparms['legBpos'])
+            plt.gca().add_artist(first_legend)
+
+            plt.legend(['levo oko', 'desno oko'], loc=figparms['legLpos'])
+
             plt.xlabel(u'sli\u010dice', fontsize=30)
             plt.ylabel(u'razlika med zg. in sp. delom obmo\u010dja o\u010di', fontsize=30)
             plt.tight_layout(pad=tightLayoutPad)
@@ -422,17 +438,17 @@ class Farne:
             # annots
             pltasx = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "s"]
             pltaex = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e"]
-            pltas = [70 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
-            pltae = [70 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
+            pltas = [74 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
+            pltae = [74 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
             # missed
             pltasxlm = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in lm]
             pltaexlm = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in lm]
-            pltaslm = [67 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in lm]
-            pltaelm = [67 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in lm]
+            pltaslm = [70 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in lm]
+            pltaelm = [70 for x in fFlows  if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in lm]
             pltasxrm = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in rm]
             pltaexrm = [x["fn"] for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in rm]
-            pltasrm = [65 for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in rm]
-            pltaerm = [65 for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in rm]
+            pltasrm = [66 for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "s" and x["bi"] in rm]
+            pltaerm = [66 for x in fFlows if x.has_key("annotEvent") and x["annotEvent"] == "e" and x["bi"] in rm]
             #fps
             pltjbsx = [x["fn"] for x in fFlows if  x.has_key("jb") and x["jb"] == "s" and x["fn"] in bfpfs]
             pltjbex = [x["fn"] for x in fFlows if  x.has_key("jb") and x["jb"] == "e" and x["fn"] in bfpfe]
@@ -440,27 +456,31 @@ class Farne:
             pltlbex = [x["fn"] for x in fFlows if x.has_key("lb") and x["lb"] == "e" and x["fn"] in lfpfe]
             pltrbsx = [x["fn"] for x in fFlows if x.has_key("rb") and x["rb"] == "s" and x["fn"] in rfpfs]
             pltrbex = [x["fn"] for x in fFlows if x.has_key("rb") and x["rb"] == "e" and x["fn"] in rfpfe]
-            pltjbs = [32 for x in fFlows if x.has_key("jb") and x["jb"] == "s" and x["fn"] in bfpfs]
-            pltjbe = [32 for x in fFlows if x.has_key("jb") and x["jb"] == "e" and x["fn"] in bfpfe]
+            pltjbs = [34 for x in fFlows if x.has_key("jb") and x["jb"] == "s" and x["fn"] in bfpfs]
+            pltjbe = [34 for x in fFlows if x.has_key("jb") and x["jb"] == "e" and x["fn"] in bfpfe]
             pltlbs = [30 for x in fFlows if x.has_key("lb") and x["lb"] == "s" and x["fn"] in lfpfs]
             pltlbe = [30 for x in fFlows if x.has_key("lb") and x["lb"] == "e" and x["fn"] in lfpfe]
-            pltrbs = [28 for x in fFlows if x.has_key("rb") and x["rb"] == "s" and x["fn"] in rfpfs]
-            pltrbe = [28 for x in fFlows if x.has_key("rb") and x["rb"] == "e" and x["fn"] in rfpfe]
+            pltrbs = [26 for x in fFlows if x.has_key("rb") and x["rb"] == "s" and x["fn"] in rfpfs]
+            pltrbe = [26 for x in fFlows if x.has_key("rb") and x["rb"] == "e" and x["fn"] in rfpfe]
 
             pltx = [x["fn"] for x in tracking["pupilDisplacement"]]
             lDiff, rDiff = [x["lDiff"] for x in tracking["pupilDisplacement"]], [x["rDiff"] for x in tracking["pupilDisplacement"]]
 
 
             plt.figure(2, figsize=figsize)
-            plt.plot(
-                pltx, lDiff, 'ro-', pltx, rDiff, 'bo-',
-                pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
-                pltasxlm, pltaslm, 'ro', pltaexlm, pltaelm, 'r^', # left missed
-                pltasxrm, pltasrm, 'bo', pltaexrm, pltaerm, 'b^', # right missed
-                pltjbsx, pltjbs, 'yo', pltjbex, pltjbe, 'y^', # both fp
-                pltlbsx, pltlbs, 'ro', pltlbex, pltlbe, 'r^', # left fp
-                pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^', # right fp
-            )
+            plt.plot(pltx, lDiff, 'ro-', pltx, rDiff, 'bo-')
+            anots1 = plt.plot(pltasx, pltas, 'go', markersize=15.0) # annots of blinks
+            anots2 = plt.plot(pltaex, pltae, 'g^', markersize=15.0) # annots of blinks
+            mleft1 = plt.plot(pltasxlm, pltaslm, 'ro', markersize=15.0) # left missed
+            mleft2 = plt.plot(pltaexlm, pltaelm, 'r^', markersize=15.0) # left missed
+            mright1 = plt.plot(pltasxrm, pltasrm, 'bo', markersize=15.0) # right missed
+            mright2 = plt.plot(pltaexrm, pltaerm, 'b^', markersize=15.0) # right missed
+            fboth1 = plt.plot(pltjbsx, pltjbs, 'yo', markersize=15.0) # both fp
+            fboth2 = plt.plot(pltjbex, pltjbe, 'y^', markersize=15.0) # both fp
+            fleft1 = plt.plot(pltlbsx, pltlbs, 'ro', markersize=15.0) # left fp
+            fleft2 = plt.plot(pltlbex, pltlbe, 'r^', markersize=15.0) # left fp
+            fright1 = plt.plot(pltrbsx, pltrbs, 'bo', markersize=15.0) # right fp
+            fright2 = plt.plot(pltrbex, pltrbe, 'b^', markersize=15.0) # right fp
 
             if figparms != None and figparms.has_key('axis') == True:
                 plt.axis(
@@ -470,13 +490,28 @@ class Farne:
 
             plt.xlabel(u'sli\u010dice', fontsize=30)
             plt.ylabel(u'razlika lokacije zenice od dejanske', fontsize=30)
-            plt.legend(['levo oko', 'desno oko'])
+            ls = [anots1, mleft1, mright1, fboth1, anots2, mleft2, mright2, fboth2]
+            labs = ["", "", "", "",
+                u"anotirani me\u017eiki",
+                u"levo oko:    napa\u010dno zaznani (okrog 30) / zgre\u0161eni (okrog 70)",
+                u"desno oko: napa\u010dno zaznani (okrog 30) / zgre\u0161eni (okrog 70)",
+                u"oba o\u010desa: napa\u010dno zaznani (okrog 30)"
+            ]
+            first_legend = plt.legend(ls, labs, ncol=2, numpoints=1, loc=figparms['legBpos'])
+            plt.gca().add_artist(first_legend)
+
+            plt.legend(['levo oko', 'desno oko'], loc=figparms['legLpos'])
+
             plt.tight_layout(pad=tightLayoutPad)
 
             if figparms != None and figparms.has_key('figName') == True:
                 plt.savefig('/home/developer/other/notes/m/%s.png' % figparms['figName'], dpi=imgDpi, pad_inches=1)
 
         if "postProcessLogLine" in options:
+            aVals = 1.4 if not figparms.has_key('aVals') else figparms['aVals']
+            jVals = 1.3 if not figparms.has_key('jVals') else figparms['jVals']
+            lVals = 1.25 if not figparms.has_key('lVals') else figparms['lVals']
+            rVals = 1.2 if not figparms.has_key('rVals') else figparms['rVals']
             if dc != None:
                 lfpfs, lfpfe = [x[1]["fs"] for x in dc["lFp"]], [x[1]["fe"] for x in dc["lFp"]]
                 rfpfs, rfpfe = [x[1]["fs"] for x in dc["rFp"]], [x[1]["fe"] for x in dc["rFp"]]
@@ -501,12 +536,12 @@ class Farne:
                 pltlbexn = [x["fn"] for x in fFlows if x.has_key("lb") and x["lb"] == "e" and (not x["fn"] in lfpfe)]
                 pltrbsxn = [x["fn"] for x in fFlows if x.has_key("rb") and x["rb"] == "s" and (not x["fn"] in rfpfs)]
                 pltrbexn = [x["fn"] for x in fFlows if x.has_key("rb") and x["rb"] == "e" and (not x["fn"] in rfpfe)]
-                pltjbsn = [1.3 for x in fFlows if x.has_key("jb") and x["jb"] == "s" and (not x["fn"] in bfpfs)]
-                pltjben = [1.3 for x in fFlows if x.has_key("jb") and x["jb"] == "e" and (not x["fn"] in bfpfe)]
-                pltlbsn = [1.25 for x in fFlows if x.has_key("lb") and x["lb"] == "s" and (not x["fn"] in lfpfs)]
-                pltlben = [1.25 for x in fFlows if x.has_key("lb") and x["lb"] == "e" and (not x["fn"] in lfpfe)]
-                pltrbsn = [1.2 for x in fFlows if x.has_key("rb") and x["rb"] == "s" and (not x["fn"] in rfpfs)]
-                pltrben = [1.2 for x in fFlows if x.has_key("rb") and x["rb"] == "e" and (not x["fn"] in rfpfe)]
+                pltjbsn = [jVals for x in fFlows if x.has_key("jb") and x["jb"] == "s" and (not x["fn"] in bfpfs)]
+                pltjben = [jVals for x in fFlows if x.has_key("jb") and x["jb"] == "e" and (not x["fn"] in bfpfe)]
+                pltlbsn = [lVals for x in fFlows if x.has_key("lb") and x["lb"] == "s" and (not x["fn"] in lfpfs)]
+                pltlben = [lVals for x in fFlows if x.has_key("lb") and x["lb"] == "e" and (not x["fn"] in lfpfe)]
+                pltrbsn = [rVals for x in fFlows if x.has_key("rb") and x["rb"] == "s" and (not x["fn"] in rfpfs)]
+                pltrben = [rVals for x in fFlows if x.has_key("rb") and x["rb"] == "e" and (not x["fn"] in rfpfe)]
 
             pltax = [x["fn"] for x in fFlows[-window:]]
             pltlx = [x["fn"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "l"]
@@ -521,8 +556,8 @@ class Farne:
             prsdt, mrsdt = [x["prsdt"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"], [x["mrsdt"] for x in fFlows[-window:] if x["type"] == "b" or x["type"] == "r"]
             pltasx = [x["fn"] for x in fFlows[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
             pltaex = [x["fn"] for x in fFlows[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
-            pltas = [1.4 for x in fFlows[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
-            pltae = [1.4 for x in fFlows[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
+            pltas = [aVals for x in fFlows[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "s"]
+            pltae = [aVals for x in fFlows[-window:]  if x.has_key("annotEvent") and x["annotEvent"] == "e"]
 
             if dc == None:
                 pltjbsx = [x["fn"] for x in fFlows[-window:] if  x.has_key("jb") and x["jb"] == "s"]
@@ -547,38 +582,51 @@ class Farne:
             if 3 in fig:
                 plt.figure(10, figsize=figsize)
                 if dc == None:
-                    plt.plot(
-                        pltlx, lDiff, 'ro-', pltrx, rDiff, 'bo-',
-                        pltax, [0 for x in xrange(len(pltax))], 'g--', # zero
+                    plt.plot(pltlx, lDiff, 'ro-', pltrx, rDiff, 'bo-')
+                    plt.plot(pltax, [0 for x in xrange(len(pltax))], 'g--') # zero
                         #pltlx, la, 'r--', pltrx, ra, 'b--', # average
                         #pltlx, plsd1, 'r^-', pltlx, mlsd1, 'r^-', pltrx, prsd1, 'b^-', pltrx, mrsd1, 'b^-',
                         #pltlx, plsd2, 'r^-', pltlx, mlsd2, 'r^-', pltrx, prsd2, 'b^-', pltrx, mrsd2, 'b^-',
-                        pltlx, plsdt, 'ro-', pltlx, mlsdt, 'ro-', pltrx, prsdt, 'bo-', pltrx, mrsdt, 'bo-', # t SD
-                        pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
-                        pltlbsx, pltlbs, 'ro', pltlbex, pltlbe, 'r^', # start & end of lBlinks
-                        pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^', # start & end of rBlinks
-                        pltjbsx, pltjbs, 'yo', pltjbex, pltjbe, 'y^', # start & end of jBlinks
-                    )
+                    plt.plot(pltlx, plsdt, 'ro-', pltlx, mlsdt, 'ro-', pltrx, prsdt, 'bo-', pltrx, mrsdt, 'bo-') # t SD
+                    plt.plot(pltasx, pltas, 'go', pltaex, pltae, 'g^', markersize=15.0) # annots of blinks
+                    plt.plot(pltlbsx, pltlbs, 'ro', pltlbex, pltlbe, 'r^', markersize=15.0) # start & end of lBlinks
+                    plt.plot(pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^', markersize=15.0) # start & end of rBlinks
+                    plt.plot(pltjbsx, pltjbs, 'yo', pltjbex, pltjbe, 'y^', markersize=15.0) # start & end of jBlinks
+
                     plt.tight_layout(pad=tightLayoutPad)
                     plt.xlabel('xlabel', fontsize=30)
                     plt.ylabel('ylabel', fontsize=30)
                 else:
-                    plt.plot(
-                        pltlx, lDiff, 'ro-', pltrx, rDiff, 'bo-',
-                        pltax, [0 for x in xrange(len(pltax))], 'g--', # zero
+                    lline = plt.plot(pltlx, lDiff, 'ro-')
+                    rline = plt.plot(pltrx, rDiff, 'bo-')
+                    plt.plot(pltax, [0 for x in xrange(len(pltax))], 'g--') # zero
                         #pltlx, la, 'r--', pltrx, ra, 'b--', # average
                         #pltlx, plsd1, 'r^-', pltlx, mlsd1, 'r^-', pltrx, prsd1, 'b^-', pltrx, mrsd1, 'b^-',
                         #pltlx, plsd2, 'r^-', pltlx, mlsd2, 'r^-', pltrx, prsd2, 'b^-', pltrx, mrsd2, 'b^-',
-                        pltlx, plsdt, 'ro-', pltlx, mlsdt, 'ro-', pltrx, prsdt, 'bo-', pltrx, mrsdt, 'bo-', # t SD
-                        pltasx, pltas, 'go', pltaex, pltae, 'g^', # annots of blinks
+                    lsd = plt.plot(pltlx, plsdt, 'ro-', markeredgecolor='none') # t SD
+                    plt.plot(pltlx, mlsdt, 'ro-', markeredgecolor='none') # t SD
+                    rsd = plt.plot(pltrx, prsdt, 'bo-', markeredgecolor='none') # t SD
+                    plt.plot(pltrx, mrsdt, 'bo-', markeredgecolor='none') # t SD
 
-                        pltlbsx, pltlbs, 'ro', pltlbex, pltlbe, 'r^', # start & end of lBlinks
-                        pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^', # start & end of rBlinks
-                        pltjbsx, pltjbs, 'yo', pltjbex, pltjbe, 'y^', # start & end of jBlinks
-                        pltlbsxn, pltlbsn, 'ro', pltlbexn, pltlben, 'r^', # start & end of lBlinks
-                        pltrbsxn, pltrbsn, 'bo', pltrbexn, pltrben, 'b^', # start & end of rBlinks
-                        pltjbsxn, pltjbsn, 'yo', pltjbexn, pltjben, 'y^', # start & end of jBlinks
-                    )
+                    anots1 = plt.plot(pltasx, pltas, 'go', markersize=15.0) # annots of blinks
+                    anots2 = plt.plot(pltaex, pltae, 'g^', markersize=15.0) # annots of blinks
+
+                    # fps
+                    fleft1  = plt.plot(pltlbsx, pltlbs, 'ro', markersize=15.0) # start & end of lBlinks
+                    fleft2  = plt.plot(pltlbex, pltlbe, 'r^', markersize=15.0) # start & end of lBlinks
+                    fright1 = plt.plot(pltrbsx, pltrbs, 'bo', markersize=15.0) # start & end of rBlinks
+                    fright2 = plt.plot(pltrbex, pltrbe, 'b^', markersize=15.0) # start & end of rBlinks
+                    fboth1  = plt.plot(pltjbsx, pltjbs, 'yo', markersize=15.0) # start & end of jBlinks
+                    fboth2  = plt.plot(pltjbex, pltjbe, 'y^', markersize=15.0) # start & end of jBlinks
+
+                    # not fps
+                    left1  = plt.plot(pltlbsxn, pltlbsn, 'ro', markersize=15.0) # start & end of lBlinks
+                    left2  = plt.plot(pltlbexn, pltlben, 'r^', markersize=15.0) # start & end of lBlinks
+                    right1  = plt.plot(pltrbsxn, pltrbsn, 'bo', markersize=15.0) # start & end of lBlinks
+                    right2  = plt.plot(pltrbexn, pltrben, 'b^', markersize=15.0) # start & end of rBlinks
+                    both1  = plt.plot(pltjbsxn, pltjbsn, 'yo', markersize=15.0) # start & end of lBlinks
+                    both2  = plt.plot(pltjbexn, pltjben, 'y^', markersize=15.0) # start & end of jBlinks
+
                     if figparms != None and figparms.has_key('axis') == True:
                         plt.axis(
                             xmin=figparms['axis']['xmin'], xmax=figparms['axis']['xmax'],
@@ -587,7 +635,15 @@ class Farne:
                     plt.xlabel(u'sli\u010dice', fontsize=30)
                     plt.ylabel(u'razlika vsote premikov na obmo\u010dju o\u010di', fontsize=30)
                     plt.tight_layout(pad=tightLayoutPad)
-                    plt.legend(['levo oko', 'desno oko'])
+
+                    ls = [anots1, both1, left1, right1, anots2, both2, left2, right2]
+                    labs = ["", "", "", "",
+                        u"anotirani me\u017eiki", u"zaznani: oba o\u010desa", u"zaznani: levo oko", u"zaznani: desno oko"
+                    ]
+                    first_legend = plt.legend(ls, labs, ncol=2, numpoints=1, loc=figparms['legBpos'])
+                    plt.gca().add_artist(first_legend)
+
+                    plt.legend([lline, rline, lsd, rsd], ['levo oko', 'desno oko', 'st. odk.', 'st. odk.'], loc=figparms['legLpos'])
 
                     if figparms != None and figparms.has_key('figName') == True:
                         plt.savefig('/home/developer/other/notes/m/%s.png' % figparms['figName'], dpi=imgDpi, pad_inches=1)

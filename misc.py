@@ -38,12 +38,33 @@ def testMain():
     vidPrefix = cfg["othr"]["vidPrefix"]
     farneVideos = [
         (
+            "farnePresentation",
+            vidPrefix+"talking.avi",
+            {
+                'graphs':['postProcessLogLine'],
+                'figNums': [3],
+                'axis' : {'xmin':600, 'xmax':1250, 'ymin':-6.0, 'ymax':6},
+                'legBpos':2,
+                'legLpos':1,
+                'aVals': 2.9,
+                'jVals': 2.65,
+                'lVals': 2.4,
+                'rVals': 2.15,
+            }
+        ),
+        (
             "signalTalking",
             vidPrefix+"talking.avi",
             {
                 'graphs':['postProcessLogLine'],
                 'figNums': [3],
-                'axis' : {'xmin':580, 'xmax':1000, 'ymin':-4.5, 'ymax':3.2},
+                'axis' : {'xmin':580, 'xmax':1000, 'ymin':-4.8, 'ymax':4.8},
+                'legBpos':1,
+                'legLpos':4,
+                'aVals': 2.40,
+                'jVals': 2.15,
+                'lVals': 1.9,
+                'rVals': 1.65,
             }
         ),
         (
@@ -52,6 +73,8 @@ def testMain():
             {
                 'graphs':['postProcessTracking'],
                 #'axis' : {'xmin':0, 'xmax':5000, 'ymin':0, 'ymax':140},
+                'legBpos':0,
+                'legLpos':1,
             }
         ),
         (
@@ -60,7 +83,13 @@ def testMain():
             {
                 'graphs':['postProcessLogLine'],
                 'figNums': [3],
-                'axis' : {'xmin':0, 'xmax':400, 'ymin':-1.6, 'ymax':1.6},
+                'axis' : {'xmin':0, 'xmax':400, 'ymin':-2.11, 'ymax':2.11},
+                'legBpos':4,
+                'legLpos':3,
+                'aVals': 1.40,
+                'jVals': 1.3,
+                'lVals': 1.2,
+                'rVals': 1.1,
             }
         ),
         (
@@ -69,7 +98,13 @@ def testMain():
             {
                 'graphs':['postProcessLogLine'],
                 'figNums': [3],
-                'axis' : {'xmin':111, 'xmax':134, 'ymin':-1.27, 'ymax':1.44},
+                'axis' : {'xmin':111, 'xmax':134, 'ymin':-1.44, 'ymax':1.44},
+                'legBpos':4,
+                'legLpos':3,
+                'aVals': 1.30,
+                'jVals': 1.2,
+                'lVals': 1.1,
+                'rVals': 1.0,
             }
         ),
         (
@@ -78,7 +113,9 @@ def testMain():
             {
                 'graphs':['postProcessUpperLower'],
                 'figNums': [3],
-                'axis' : {'xmin':0, 'xmax':15000, 'ymin':0, 'ymax':3.1},
+                'axis' : {'xmin':0, 'xmax':15000, 'ymin':0, 'ymax':3.3},
+                'legBpos':2,
+                'legLpos':1,
             }
         ),
         (
@@ -88,7 +125,9 @@ def testMain():
             {
                 'graphs':['postProcessUpperLower'],
                 'figNums': [3],
-                'axis' : {'xmin':7800, 'xmax':10900, 'ymin':0, 'ymax':3.1},
+                'axis' : {'xmin':7800, 'xmax':10900, 'ymin':0, 'ymax':3.3},
+                'legBpos':2,
+                'legLpos':1,
             }
         ),
     ]
@@ -98,7 +137,13 @@ def testMain():
             vidPrefix+"o4_101.mp4",
             {
                 'figNums': [4], # 3 odvod
-                'axis' : {'xmin':0, 'xmax':600, 'ymin':0.960, 'ymax':1.01},
+                'axis' : {'xmin':0, 'xmax':600, 'ymin':0.960, 'ymax':1.008},
+                'legBpos':1,
+                'legLpos':4,
+                'aVals': 1.007,
+                'jVals': 1.005,
+                'lVals': 1.003,
+                'rVals': 1.001,
             }
         ),
         (
@@ -106,7 +151,13 @@ def testMain():
             vidPrefix+"talking.avi",
             {
                 'figNums': [4], # 3 odvod
-                'axis' : {'xmin':600, 'xmax':1250, 'ymin':0.860, 'ymax':1.036},
+                'axis' : {'xmin':600, 'xmax':1250, 'ymin':0.860, 'ymax':1.018},
+                'legBpos':3,
+                'legLpos':4,
+                'aVals': 1.015,
+                'jVals': 1.011,
+                'lVals': 1.007,
+                'rVals': 1.003,
             }
         ),
         (
@@ -114,7 +165,13 @@ def testMain():
             vidPrefix+"talking.avi",
             {
                 'figNums': [4], # 3 odvod
-                'axis' : {'xmin':3000, 'xmax':3610, 'ymin':0.920, 'ymax':1.025},
+                'axis' : {'xmin':3000, 'xmax':3610, 'ymin':0.890, 'ymax':1.018},
+                'legBpos':4,
+                'legLpos':3,
+                'aVals': 1.015,
+                'jVals': 1.011,
+                'lVals': 1.007,
+                'rVals': 1.003,
             }
         ),
         (
@@ -122,7 +179,13 @@ def testMain():
             vidPrefix+"sk/eyeblink8/1/26122013_223310_cam.avi",
             {
                 'figNums': [4], # 3 odvod
-                'axis' : {'xmin':0, 'xmax':3000, 'ymin':0.861, 'ymax':1.035},
+                'axis' : {'xmin':0, 'xmax':3000, 'ymin':0.861, 'ymax':1.018},
+                'legBpos':3,
+                'legLpos':4,
+                'aVals': 1.015,
+                'jVals': 1.011,
+                'lVals': 1.007,
+                'rVals': 1.003,
             }
         ),
         (
@@ -138,11 +201,25 @@ def testMain():
             vidPrefix+"talking.avi",
             {
                 'figNums': [4], # 3 odvod
-                'axis' : {'xmin':0, 'xmax':600, 'ymin':0.935, 'ymax':1.017},
+                'axis' : {'xmin':0, 'xmax':600, 'ymin':0.932, 'ymax':1.009},
+                'legBpos':3,
+                'legLpos':4,
+                'aVals': 1.007,
+                'jVals': 1.005,
+                'lVals': 1.003,
+                'rVals': 1.001,
             }
         ),
     ]
     bpVideos = [
+        (
+            "bpPresentation",
+            vidPrefix+"talking.avi",
+            {
+                'graphs':['postProcessLogLine'],
+                'axis' : {'xmin':600, 'xmax':1250, 'ymin':0, 'ymax':120},
+            }
+        ),
         (
             "talkingBlackPixelsSignal1DilateErodeAnnots",
             vidPrefix+"talking.avi",
@@ -151,8 +228,8 @@ def testMain():
             }
         ),
     ]
-    vids = farneVideos
-    #vids = templVideos
+    #vids = farneVideos
+    vids = templVideos
     #vids = bpVideos
     t0 = vids[0:1]
     t1 = vids[1:2]
@@ -160,7 +237,8 @@ def testMain():
     t3 = vids[3:4]
     t4 = vids[4:5]
     t5 = vids[5:6]
-    t = t5
+    t6 = vids[6:7]
+    t = t6
     #t = vids
     for video in t: # farneVideos templVideos bpVideos
         settings = {

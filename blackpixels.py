@@ -49,16 +49,17 @@ class Blackpixels:
             "talkingFirst600"
         ]
         if "talkingFirst600" in annots:
+            aVal = 2
             pltasx = [168, 225, 274]
-            pltas = [1.004, 1.004, 1.004]
+            pltas = [aVal]*3
             pltaex = [176, 232, 280]
-            pltae  = [1.004, 1.004, 1.004]
+            pltae  = [aVal]*3
 
 
         plt.figure(1, figsize=figsize)
         plt.plot(pltx, lNum, 'ro-')
         plt.plot(pltx, rNum, 'bo-')
-        plt.plot(pltasx, pltas, 'go', pltaex, pltae, 'g^') # annots of blinks
+        plt.plot(pltasx, pltas, 'go', pltaex, pltae, 'g^', markersize=15.0) # annots of blinks
         #plt.figure(2)
         #plt.subplot(211)
         #plt.plot(pltx, lNum, 'ro-', pltx, rNum, 'bo-')
