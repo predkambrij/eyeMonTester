@@ -379,7 +379,7 @@ class Farne:
             pltl, pltr = [abs(x["l"]) for x in tracking["upperLowerL"]], [abs(x["r"]) for x in tracking["upperLowerR"]]
 
             fig = plt.figure(1, figsize=figsize)
-            plt.plot(pltlx, pltl, 'ro-', pltrx, pltr, 'bo-')
+            plt.plot(pltlx, pltl, 'ro-', pltrx, pltr, 'bo-', markeredgecolor='none')
 
             anots1 = plt.plot(pltasx, pltas, 'go', markersize=15.0)
             anots2 = plt.plot(pltaex, pltae, 'g^', markersize=15.0) # annots of blinks
@@ -408,7 +408,7 @@ class Farne:
             ls = [anots1, both1, left1, right1, anots2, both2, left2, right2]
             labs = ["", "", "", "",
                 u"anotirani me\u017eiki",
-                u"oba o\u010desa: napa\u010dno zaznani (nad 2)",
+                u"obe o\u010desi: napa\u010dno zaznani (nad 2)",
                 u"levo oko:    napa\u010dno zaznani (nad 2) / zgre\u0161eni (pod 2)",
                 u"desno oko: napa\u010dno zaznani (nad 2) / zgre\u0161eni (pod 2)",
             ]
@@ -468,7 +468,7 @@ class Farne:
 
 
             plt.figure(2, figsize=figsize)
-            plt.plot(pltx, lDiff, 'ro-', pltx, rDiff, 'bo-')
+            plt.plot(pltx, lDiff, 'ro-', pltx, rDiff, 'bo-', markeredgecolor='none')
             anots1 = plt.plot(pltasx, pltas, 'go', markersize=15.0) # annots of blinks
             anots2 = plt.plot(pltaex, pltae, 'g^', markersize=15.0) # annots of blinks
             mleft1 = plt.plot(pltasxlm, pltaslm, 'ro', markersize=15.0) # left missed
@@ -495,7 +495,7 @@ class Farne:
                 u"anotirani me\u017eiki",
                 u"levo oko:    napa\u010dno zaznani (okrog 30) / zgre\u0161eni (okrog 70)",
                 u"desno oko: napa\u010dno zaznani (okrog 30) / zgre\u0161eni (okrog 70)",
-                u"oba o\u010desa: napa\u010dno zaznani (okrog 30)"
+                u"obe o\u010desi: napa\u010dno zaznani (okrog 30)"
             ]
             first_legend = plt.legend(ls, labs, ncol=2, numpoints=1, loc=figparms['legBpos'])
             plt.gca().add_artist(first_legend)
@@ -587,7 +587,7 @@ class Farne:
                         #pltlx, la, 'r--', pltrx, ra, 'b--', # average
                         #pltlx, plsd1, 'r^-', pltlx, mlsd1, 'r^-', pltrx, prsd1, 'b^-', pltrx, mrsd1, 'b^-',
                         #pltlx, plsd2, 'r^-', pltlx, mlsd2, 'r^-', pltrx, prsd2, 'b^-', pltrx, mrsd2, 'b^-',
-                    plt.plot(pltlx, plsdt, 'ro-', pltlx, mlsdt, 'ro-', pltrx, prsdt, 'bo-', pltrx, mrsdt, 'bo-') # t SD
+                    plt.plot(pltlx, plsdt, 'ro-', pltlx, mlsdt, 'ro-', pltrx, prsdt, 'bo-', pltrx, mrsdt, 'bo-', markeredgecolor='none') # t SD
                     plt.plot(pltasx, pltas, 'go', pltaex, pltae, 'g^', markersize=15.0) # annots of blinks
                     plt.plot(pltlbsx, pltlbs, 'ro', pltlbex, pltlbe, 'r^', markersize=15.0) # start & end of lBlinks
                     plt.plot(pltrbsx, pltrbs, 'bo', pltrbex, pltrbe, 'b^', markersize=15.0) # start & end of rBlinks
@@ -597,8 +597,8 @@ class Farne:
                     plt.xlabel('xlabel', fontsize=30)
                     plt.ylabel('ylabel', fontsize=30)
                 else:
-                    lline = plt.plot(pltlx, lDiff, 'ro-')
-                    rline = plt.plot(pltrx, rDiff, 'bo-')
+                    lline = plt.plot(pltlx, lDiff, 'ro-', markeredgecolor='none')
+                    rline = plt.plot(pltrx, rDiff, 'bo-', markeredgecolor='none')
                     plt.plot(pltax, [0 for x in xrange(len(pltax))], 'g--') # zero
                         #pltlx, la, 'r--', pltrx, ra, 'b--', # average
                         #pltlx, plsd1, 'r^-', pltlx, mlsd1, 'r^-', pltrx, prsd1, 'b^-', pltrx, mrsd1, 'b^-',
@@ -638,7 +638,7 @@ class Farne:
 
                     ls = [anots1, both1, left1, right1, anots2, both2, left2, right2]
                     labs = ["", "", "", "",
-                        u"anotirani me\u017eiki", u"zaznani: oba o\u010desa", u"zaznani: levo oko", u"zaznani: desno oko"
+                        u"anotirani me\u017eiki", u"zaznani: obe o\u010desi", u"zaznani: levo oko", u"zaznani: desno oko"
                     ]
                     first_legend = plt.legend(ls, labs, ncol=2, numpoints=1, loc=figparms['legBpos'])
                     plt.gca().add_artist(first_legend)

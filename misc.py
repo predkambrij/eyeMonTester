@@ -193,7 +193,8 @@ def testMain():
             vidPrefix+"sk/eyeblink8/1/26122013_223310_cam.avi",
             {
                 'figNums': [3],
-                'axis' : {'xmin':0, 'xmax':3000, 'ymin':-0.033, 'ymax':0.033},
+                'axis' : {'xmin':0, 'xmax':3000, 'ymin':-0.043, 'ymax':0.043},
+                'legBpos':2,
             }
         ),
         (
@@ -228,8 +229,8 @@ def testMain():
             }
         ),
     ]
-    #vids = farneVideos
-    vids = templVideos
+    vids = farneVideos
+    #vids = templVideos
     #vids = bpVideos
     t0 = vids[0:1]
     t1 = vids[1:2]
@@ -238,7 +239,7 @@ def testMain():
     t4 = vids[4:5]
     t5 = vids[5:6]
     t6 = vids[6:7]
-    t = t6
+    t = t0
     #t = vids
     for video in t: # farneVideos templVideos bpVideos
         settings = {

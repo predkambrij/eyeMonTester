@@ -160,8 +160,8 @@ class Templ:
         if 4 in figs:
             plt.figure(4, figsize=figsize)
             #plt.subplot(211)
-            lline = plt.plot(pltx, lcor, 'ro-', label="levo oko")
-            rline = plt.plot(pltx, rcor, 'bo-', label="desno oko")
+            lline = plt.plot(pltx, lcor, 'ro-', label="levo oko", markeredgecolor='none')
+            rline = plt.plot(pltx, rcor, 'bo-', label="desno oko", markeredgecolor='none')
             plt.plot(pltx, [1 for x in xrange(len(pltx))], 'g--') # ones
             anots1 = plt.plot(pltasx, pltas, 'go', markersize=15.0, label="anno")
             anots2 = plt.plot(pltaex, pltae, 'g^', markersize=15.0) # annots of blinks
@@ -180,7 +180,7 @@ class Templ:
                 )
             ls = [anots1, both1, left1, right1, anots2, both2, left2, right2]
             labs = ["", "", "", "",
-                u"anotirani me\u017eiki", u"zaznani: oba o\u010desa", u"zaznani: levo oko", u"zaznani: desno oko"
+                u"anotirani me\u017eiki", u"zaznani: obe o\u010desi", u"zaznani: levo oko", u"zaznani: desno oko"
             ]
             first_legend = plt.legend(ls, labs, ncol=2, numpoints=1, loc=figparms['legBpos'])
             plt.gca().add_artist(first_legend)
@@ -222,16 +222,16 @@ class Templ:
             plt.tight_layout()
         if 3 in figs:
             plt.figure(3, figsize=figsize)
-            plt.plot(pltx, lDiff, 'r--')
-            plt.plot(pltx, rDiff, 'b--')
-            plt.plot(pltx, plsd1, 'r^-', markeredgecolor='none')
-            plt.plot(pltx, plsd2, 'ro-', markeredgecolor='none')
-            plt.plot(pltx, prsd1, 'b^-', markeredgecolor='none')
-            plt.plot(pltx, prsd2, 'bo-', markeredgecolor='none')
+            l = plt.plot(pltx, lDiff, 'r--')
+            r = plt.plot(pltx, rDiff, 'b--')
+            left1 = plt.plot(pltx, plsd1, 'r^-', markeredgecolor='none')
+            right1 = plt.plot(pltx, prsd1, 'b^-', markeredgecolor='none')
+            left2 = plt.plot(pltx, plsd2, 'yo-', markeredgecolor='none')
+            right2 = plt.plot(pltx, prsd2, 'go-', markeredgecolor='none')
             plt.plot(pltx, mlsd1, 'r^-', markeredgecolor='none')
             plt.plot(pltx, mrsd1, 'b^-', markeredgecolor='none')
-            plt.plot(pltx, mlsd2, 'ro-', markeredgecolor='none')
-            plt.plot(pltx, mrsd2, 'bo-', markeredgecolor='none')
+            plt.plot(pltx, mlsd2, 'yo-', markeredgecolor='none')
+            plt.plot(pltx, mrsd2, 'go-', markeredgecolor='none')
 
             if figparms != None and figparms.has_key('axis') == True:
                 plt.axis(
@@ -239,14 +239,18 @@ class Templ:
                     ymin=figparms['axis']['ymin'], ymax=figparms['axis']['ymax']
                 )
 
-            plt.legend([
+            ls = [l,r, left1, right1, left2, right2]
+            labs = [
                 'levo oko',
                 'desno oko',
-                '1. st. odk.',
+                'levo:    1. st. odk.',
+                'desno: 1. st. odk.',
+                'levo:    2. st. odk.',
+                'desno: 2. st. odk.',
                 #'1. st. odk.',
-                '2. st. odk.',
                 #'2. st. odk.',
-            ])
+            ]
+            plt.legend(ls, labs, loc=figparms['legBpos'])
             plt.xlabel(u'sli\u010dice', fontsize=30)
             #plt.ylabel(u'razlika vsote med zgornjim in spodnjim delom obmo\u010dja o\u010di', fontsize=30)
             plt.ylabel(u'odvod signala', fontsize=30)
