@@ -1,6 +1,7 @@
 vidProcOutputs/
 outputs/*
 outputs_1/*
+logfiles/*
 .~lock.libreoffice.ods#
 *.pyc
 

@@ -1,4 +1,4 @@
-import sys, os, time
+import sys, os, time, argparse
 
 from common import Common as Cmn
 #from farne import Farne
@@ -266,15 +266,26 @@ def testMain():
     }
     cfg = main.getConfigs()
     videos, videoRange = main.prepareVideosList(cfg)
-    #signalProc()
-    #return
-    actions = [
-        #"writeOverallReport",
-        #"displayDetectionCoverage",
-        "postProcessLogLine",
-        #"displayPupilDisplacement",
-        #"signalProcessing",
-    ]
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-r', '--report', action='store_true', required=False, help="Generate overall CSV report")
+    parser.add_argument('-g', '--graphs', action='store_true', required=False, help="Show debugging graphs")
+    parser.add_argument('-c', '--detection-coverage', action='store_true', required=False, help="Show detection coverage")
+    parser.add_argument('-d', '--pupil-displacement', action='store_true', required=False, help="Show pupil displacement graph")
+    parser.add_argument('-s', '--signal-processing', action='store_true', required=False, help="Signal processing")
+    args = parser.parse_args()
+    actions = []
+    if args.report:
+        actions.append("writeOverallReport")
+    if args.graphs:
+        actions.append("postProcessLogLine")
+    if args.detection_coverage:
+        actions.append("displayDetectionCoverage")
+    if args.pupil_displacement:
+        actions.append("displayPupilDisplacement")
+    if args.signal_processing:
+        actions.append("signalProcessing")
+
     VideoQueue.processOutputs(cfg, videos, videoRange, actions, settings)
 
 def pyplotGraphFromOutput():

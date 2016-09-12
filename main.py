@@ -237,7 +237,7 @@ def prepareVideosList(cfg):
     videoRange = range(len(videos))
     #videoRange = videoRange[-1:]
     #videoRange = [7]
-    videoRange = [0]
+    videoRange = [0, 1]
     #videoRange = videoRange[10:]
     return videos, videoRange
 

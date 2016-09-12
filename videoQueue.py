@@ -94,7 +94,7 @@ class VideoQueue:
     rep = [
         "lprp",
         "tannot",
-        "tlr",
+        #"tlr",
         #"tpany",
         "tpboth",
         "tploro",
@@ -114,15 +114,14 @@ class VideoQueue:
         "tprboth",
         # "tprloro",
         # #"fprany",
-        # "fprboth",
+        "fprboth",
         # "fprloro",
         #"sa",
         "sb",
     ]
     #rep = []
     @staticmethod
-    def initOverallReport(cfg):
-        fileName = cfg["othr"]["codeDirectory"] + cfg["othr"]["outputsPref"] + ("/overall_%s.tsv" % cfg["method"])
+    def initOverallReport(cfg, fileName):
         # truncate the file or create it, if it doesn't exist yet
         title = "I\tC\tG\tL\tDesc\tFile path\t" # TODO total frames last time
         #title += "Ann\t"
@@ -650,7 +649,8 @@ class VideoQueue:
         #videoRange = videoRange[:1]
 
         if "writeOverallReport" in actions:
-            reportFileName = VideoQueue.initOverallReport(cfg)
+            reportLoc = cfg["othr"]["outputsPref"][1:] + ("/overall_%s.tsv" % cfg["method"])
+            reportFileName = VideoQueue.initOverallReport(cfg, cfg["othr"]["codeDirectory"] + "/"+ reportLoc)
             reportFileNameT1 = VideoQueue.initOverallReportTable1(cfg)
 
         for vi in videoRange:
@@ -666,9 +666,10 @@ class VideoQueue:
                 break
             if "postProcessLogLine" in actions or "displayDetectionCoverage" in actions or "writeOverallReport" in actions or "displayPupilDisplacement" in actions or "postProcessTracking" in actions:
                 #if cfg["method"] == "farneback":
-                    annotFilename = os.path.splitext(videoName)[0]+".tag"
-                    annotFilenameL = os.path.splitext(videoName)[0]+".txt"
-                    annotFilename1 = os.path.splitext(videoName)[0]+".v1"
+                    annotFilename = "%s.tag" % os.path.splitext(videoName)[0].replace("/eyeMon", "")
+                    annotFilenameL = "%s.txt" % os.path.splitext(videoName)[0].replace("/eyeMon", "")
+                    annotFilename1 = "%s.v1" % os.path.splitext(videoName)[0].replace("/eyeMon", "")
+
                     if os.path.isfile(annotFilename):
                         annotsl, annots = Cmn.parseAnnotations(file(annotFilename), None, "farne")
                         if os.path.isfile(annotFilenameL):
@@ -737,6 +738,7 @@ class VideoQueue:
                     Farne.displayPupilDisplacement(ppd)
         if "writeOverallReport" in actions:
             VideoQueue.writeOverallReportTable1Summary(reportFileNameT1)
+            print "See the report at %s" % reportLoc
 
         return
 

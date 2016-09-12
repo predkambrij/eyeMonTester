@@ -8,12 +8,12 @@ from blackpixels import Blackpixels
 stopListenLog        = False
 
 # parsing logs
-def initListenLog(isWebcam):
+def initListenLog(cfg, isWebcam):
     global proc
     if not isWebcam:
-        tailfCmd = ['tail', '-n0', '-f', '/tmp/eyemonpy.log']
+        tailfCmd = ['tail', '-n0', '-f', cfg["othr"]["codeDirectory"]+'/logfiles/eyemonpy.log']
     else:
-        tailfCmd = ['tail', '-n0', '-f', '/tmp/testlog.txt']
+        tailfCmd = ['tail', '-n0', '-f', cfg["othr"]["codeDirectory"]+'/logfiles/testlog.txt']
 
     proc = subprocess.Popen(
         tailfCmd,
@@ -81,7 +81,7 @@ def processVideo(cfg, isWebcam, annotFilename):
     fFlows, fFlowsI, tracking = [], {}, {"detecting":[], "pupilDisplacement":[], "upperLowerL":[], "upperLowerR":[]}
     tCors, tCorsI, bPixes   = [], {}, []
 
-    initListenLog(isWebcam)
+    initListenLog(cfg, isWebcam)
     time.sleep(0.5)
     initRunVideo(isWebcam)
 
