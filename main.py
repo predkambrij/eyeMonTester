@@ -232,28 +232,30 @@ def prepareVideosList(cfg):
         ("look away", vidPrefix+"o4_102.mp4"),
     ]
     videos = eyeblink8HandInTheFirstFrames+eyeblink8+others+basler5+zju+nightOfResearchers15+nightOfResearchers30
-    videos = myAnnots
-    #videos = others
+    #videos = myAnnots
+    videos = others
     videoRange = range(len(videos))
     #videoRange = videoRange[-1:]
     #videoRange = [7]
-    videoRange = [3]
+    videoRange = [0]
     #videoRange = videoRange[10:]
     return videos, videoRange
 
 def getConfigs():
     #method = "blackpixels"
-    #method = "templ"
-    method = "farneback"
+    method = "templ"
+    #method = "farneback"
     return {
         "excel_export": False,
         "coverage":     False,
         "end_hook":     False,
         "method": method,
         "othr" : {
-            "vidPrefix":"/home/developer/other/posnetki/",
-            "sourceCodePrefix":"/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/optical-flow",
-            "codeDirectory":"/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/test_runner",
+            "vidPrefix":"/eyeMon/posnetki/",
+            #"sourceCodePrefix":"/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/optical-flow",
+            "sourceCodePrefix":"/eyeMon",
+            #"codeDirectory":"/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/test_runner",
+            "codeDirectory":"/eyeMonTester",
 
             #"outputsPref":"/vidProcOutputs",
             #"outputsPref":"/vidProcOutputs/ver1",
@@ -264,7 +266,8 @@ def getConfigs():
             #"outputsPref":"/vidProcOutputs/ver5"+method, # full blink measure
             #"outputsPref":"/vidProcOutputs/ver6"+method, # templ increased window size
             #"outputsPref":"/vidProcOutputs/ver15"+method,
-            "outputsPref":"/vidProcOutputs/ver151"+method,
+            #"outputsPref":"/vidProcOutputs/ver151"+method,
+            "outputsPref":"/vidProcOutputs/ver20"+method,
             #"outputsPref":"/vidProcOutputs/verTest"+method,
             #"outputsPref":"/vidProcOutputs/ver1511"+method, #black pixels
         }

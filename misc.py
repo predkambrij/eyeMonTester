@@ -2,7 +2,7 @@ import sys, os, time
 
 from common import Common as Cmn
 #from farne import Farne
-#from videoQueue import VideoQueue
+from videoQueue import VideoQueue
 import videoQueue
 import main, processVideo
 
@@ -32,7 +32,7 @@ def signalProc():
     plt.show()
 
 
-def testMain():
+def testMain__():
     actions = ["postProcessLogLine",]
     cfg = main.getConfigs()
     vidPrefix = cfg["othr"]["vidPrefix"]
@@ -256,7 +256,14 @@ def testMain():
         #os.system('sync')
         #time.sleep(0.5)
 
-def testMainOld():
+def testMain():
+    settings = {
+        'pltSettings':{
+            'show':True,
+                'legBpos':3,
+                'legLpos':4,
+        },
+    }
     cfg = main.getConfigs()
     videos, videoRange = main.prepareVideosList(cfg)
     #signalProc()

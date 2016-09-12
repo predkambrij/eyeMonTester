@@ -43,9 +43,11 @@ class VideoQueue:
             print vi, videoDescription, videoName
 
             # sed videoname in c++ source code
-            settingsFile = cfg["othr"]["sourceCodePrefix"]+"/jni/main_settings_testpy.cpp"
-            sedCmd = "sed -i 's|\(^char\ fileName\[200\]\ =\ \"\)\(.*\)\(\";$\)|\\1%s\\3|' %s " % (videoName, settingsFile)
+            settingsFile = "/tmp/main_settings_testpy.cpp"
+            sedCmd = "sed 's|\(^char\ fileName\[200\]\ =\ \"\)\(.*\)\(\";$\)|\\1%s\\3|' %s > /tmp/tmpcfg " % (videoName, settingsFile)
+            sedRename = "cat /tmp/tmpcfg > %s" % settingsFile
             os.system(sedCmd)
+            os.system(sedRename)
 
             annotFilename = os.path.splitext(videoName)[0]+".tag"
             annotFilename1 = os.path.splitext(videoName)[0]+".v1"

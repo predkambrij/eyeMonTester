@@ -59,16 +59,17 @@ def terminateListenLog():
 def initRunVideo(isWebcam):
     global vid
     if not isWebcam:
-        cmd = ['make', 'dtp']
+        cmd = ['./runEyemon.sh', 'make dtp']
     else:
-        cmd = ['make', 'd']
+        cmd = ['./runEyemon.sh', 'make d']
     vid = subprocess.Popen(
         cmd,
-        cwd     = '/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/optical-flow',
+        cwd     = '/eyeMonTester',
         stdin   = subprocess.PIPE,
         stdout  = subprocess.PIPE,
         bufsize = 0,
     )
+    outs, errs = vid.communicate()
 def terminateRunVideo():
     vid.terminate()
 ###
@@ -106,7 +107,7 @@ def processVideo(cfg, isWebcam, annotFilename):
     if cfg["excel_export"]:
         if cfg["method"] == "templ":
             fnl = Templ.generateTCSV(vidPrefix, videoAnnot, tCors, lBlinks, rBlinks)[1]
-            Templ.writeTCSV("/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/test_runner/", fnl)
+            #Templ.writeTCSV("/home/developer/other/android_deps/OpenCV-2.4.10-android-sdk/samples/test_runner/", fnl)
 
     if cfg["coverage"]:
         if cfg["method"] == "farneback":

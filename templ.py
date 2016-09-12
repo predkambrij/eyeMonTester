@@ -48,7 +48,7 @@ class Templ:
             if annots[1].has_key(fn):
                 tCors[-1].update(annots[1][fn])
                 tCors[-1]["annotEvent"] = "e"
-            Templ.postProcessLogLine(tCors, lBlinks, rBlinks, jBlinks, False)
+            #Templ.postProcessLogLine(tCors, lBlinks, rBlinks, jBlinks, False)
         elif output.startswith("debug_blinks_d4:"):
             blinkInfo = output.split(" ")
             if blinkInfo[1] == "adding_lBlinkChunks":
