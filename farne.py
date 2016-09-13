@@ -150,6 +150,23 @@ class Farne:
             if flowsInfo.count("R") == 1:
                 r = float(flowsInfo[flowsInfo.index("R")+1])
                 tracking["upperLowerR"].append({"fn":fn, "ts":ts, "r":r})
+        elif output.startswith("debug_notifications_n1_log1:"):
+            # debug_notifications_n1_log1: min ratio:%.2f curRatio %.2f
+            #print output
+            words = output.split(" ")
+            if len(words) < 4 or words[3] != "minRatio":
+                return False
+            fn       = int(words[words.index("fn")+1])
+            curRatio = float(words[words.index("curRatio")+1])
+            bLen = float(words[words.index("bLen")+1])
+            try:
+                fFlows[fFlowsI[fn-1]]["cr"] = curRatio
+            except:
+                print "not graphing curRatio %d" % fn
+            try:
+                fFlows[fFlowsI[fn-1]]["bLen"] = bLen
+            except:
+                print "not graphing bLen %d" % fn
         elif output.startswith("debug_blinks_d4:"):
             blinkInfo = output.split(" ")
             if blinkInfo[1] == "adding_lBlinkChunksf":
@@ -319,11 +336,24 @@ class Farne:
             options = figparms['graphs']
         else:
             options = [
-                "postProcessUpperLower",
+                "postProcessBlinkRate",
+                #"postProcessUpperLower",
                 #"postProcessTracking",
                 #"postProcessLogLine",
             ]
-        if "postProcessUpperLower" in options and isEnd == True:
+        if "postProcessBlinkRate" in options and isEnd == True:
+            blinkRatioX = [x["fn"] for x in fFlows[-window:] if x.has_key("cr")]
+            blinkRatio = [x["cr"] for x in fFlows[-window:] if x.has_key("cr")]
+            bLen = [x["bLen"] for x in fFlows[-window:] if x.has_key("bLen")]
+
+            plt.figure(22, figsize=figsize)
+            plt.plot(blinkRatioX, blinkRatio, 'ro-', label=u"Frekvenca me\u017eikanja", markeredgecolor='none')
+            plt.tight_layout(pad=tightLayoutPad)
+            plt.figure(23, figsize=figsize)
+            plt.plot(blinkRatioX, bLen, 'ro-', label=u"Dol\u017eina me\u017eikov", markeredgecolor='none')
+            plt.tight_layout(pad=tightLayoutPad)
+
+        elif "postProcessUpperLower" in options and isEnd == True:
             # missed
             lm, rm = dc["lMissed"], dc["rMissed"]
             lfpfs, lfpfe = [x[1]["fs"] for x in dc["lFp"]], [x[1]["fe"] for x in dc["lFp"]]

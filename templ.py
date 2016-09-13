@@ -49,6 +49,23 @@ class Templ:
                 tCors[-1].update(annots[1][fn])
                 tCors[-1]["annotEvent"] = "e"
             #Templ.postProcessLogLine(tCors, lBlinks, rBlinks, jBlinks, False)
+        elif output.startswith("debug_notifications_n1_log1:"):
+            # debug_notifications_n1_log1: min ratio:%.2f curRatio %.2f
+            words = output.split(" ")
+            if len(words) < 4 or words[3] != "minRatio":
+                return False
+            fn       = int(words[words.index("fn")+1])
+            curRatio = float(words[words.index("curRatio")+1])
+            bLen = float(words[words.index("bLen")+1])
+            try:
+                tCors[tCorsI[fn]]["cr"] = curRatio
+            except:
+                print "not graphing curRatio %d" % fn
+            try:
+                tCors[tCorsI[fn]]["bLen"] = bLen
+            except:
+                print "not graphing bLen %d" % fn
+
         elif output.startswith("debug_blinks_d4:"):
             blinkInfo = output.split(" ")
             if blinkInfo[1] == "adding_lBlinkChunks":
@@ -137,7 +154,11 @@ class Templ:
         pltjxbe = [x["fn"] for x in tCors[-window:] if  x.has_key("jb") and x["jb"] == "e"]
         pltjbs = [jVals for x in tCors[-window:]  if x.has_key("jb") and x["jb"] == "s"]
         pltjbe = [jVals for x in tCors[-window:]  if x.has_key("jb") and x["jb"] == "e"]
-        
+
+        blinkRatioX = [x["fn"] for x in tCors[-window:] if x.has_key("cr")]
+        blinkRatio = [x["cr"] for x in tCors[-window:] if x.has_key("cr")]
+        bLen = [x["bLen"] for x in tCors[-window:] if x.has_key("bLen")]
+
         lcor, rcor = [x["lcor"] for x in tCors[-window:]], [x["rcor"] for x in tCors[-window:]]
         la, ra = [x["la"] for x in tCors[-window:]], [x["ra"] for x in tCors[-window:]]
         lDiff, rDiff = [x["lDiff"] for x in tCors[-window:]], [x["rDiff"] for x in tCors[-window:]]
@@ -156,7 +177,15 @@ class Templ:
             figs = figparms['figNums']
         else:
             figs = [4, 3]
+            figs = [5]
 
+        if 5 in figs:
+            plt.figure(5, figsize=figsize)
+            plt.plot(blinkRatioX, blinkRatio, 'ro-', label="levo oko", markeredgecolor='none')
+            plt.tight_layout(pad=tightLayoutPad)
+            plt.figure(6, figsize=figsize)
+            plt.plot(blinkRatioX, bLen, 'ro-', label="levo oko", markeredgecolor='none')
+            plt.tight_layout(pad=tightLayoutPad)
         if 4 in figs:
             plt.figure(4, figsize=figsize)
             #plt.subplot(211)

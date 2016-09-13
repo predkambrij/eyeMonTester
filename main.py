@@ -231,20 +231,24 @@ def prepareVideosList(cfg):
         # no annot
         ("look away", vidPrefix+"o4_102.mp4"),
     ]
+    myOthers = [
+        ("8m45s", vidPrefix+"o4_96.mp4"),
+        ("3h12m lib premori", vidPrefix+"o4_104.mp4"),
+        ("2h24m movie neprekinjeno", vidPrefix+"o4_105.mp4"),
+    ]
     videos = eyeblink8HandInTheFirstFrames+eyeblink8+others+basler5+zju+nightOfResearchers15+nightOfResearchers30
-    #videos = myAnnots
-    videos = others
+    videos = myOthers
     videoRange = range(len(videos))
     #videoRange = videoRange[-1:]
     #videoRange = [7]
-    videoRange = [0, 1]
+    videoRange = [2,]
     #videoRange = videoRange[10:]
     return videos, videoRange
 
 def getConfigs():
     #method = "blackpixels"
-    method = "templ"
-    #method = "farneback"
+    #method = "templ"
+    method = "farneback"
     return {
         "excel_export": False,
         "coverage":     False,

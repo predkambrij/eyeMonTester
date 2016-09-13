@@ -716,7 +716,10 @@ class VideoQueue:
                 VideoQueue.writeOverallReportTable1(reportFileNameT1, videoDescription, videoName, vi, annotsl, annots, varsDict, ppd)
             if "postProcessLogLine" in actions:
                 if cfg["method"] == "farneback":
-                    dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
+                    if 'annotsl' in locals():
+                        dc = Cmn.detectionCoverageF(annotsl, varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"])
+                    else:
+                        dc = None
                     Farne.postProcessLogLine(
                         varsDict["fFlows"], varsDict["lBlinks"], varsDict["rBlinks"], varsDict["jBlinks"], True, dc, varsDict["tracking"],
                         videoName, settings['pltSettings']
