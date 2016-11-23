@@ -44,10 +44,24 @@ class VideoQueue:
 
             # sed videoname in c++ source code
             settingsFile = "/tmp/main_settings_testpy.cpp"
-            sedCmd = "sed 's|\(^char\ fileName\[200\]\ =\ \"\)\(.*\)\(\";$\)|\\1%s\\3|' %s > /tmp/tmpcfg " % (videoName, settingsFile)
+            settingsFile2 = "/tmp/common_settings_testpy.cpp"
+            # videoname
+            sedVideo = "sed 's|\(^char\ fileName\[200\]\ =\ \"\)\(.*\)\(\";$\)|\\1%s\\3|' %s > /tmp/tmpcfg" % (videoName, settingsFile)
+            print sedVideo
+            # method
+            methodMap = {
+                "farneback"  :"METHOD_FARNEBACK",
+                "templ"      :"METHOD_TEMPLATE_BASED",
+                "blackpixels":"METHOD_BLACKPIXELS",
+            }
+            sedMethod = "sed 's|\(^int\ method\ =\ \)\(.*\)\(;$\)|\\1%s\\3|' %s > /tmp/tmpcfg2 " % (methodMap[cfg["method"]], settingsFile2)
+            print sedMethod
             sedRename = "cat /tmp/tmpcfg > %s" % settingsFile
-            os.system(sedCmd)
+            sedRename2 = "cat /tmp/tmpcfg2 > %s" % settingsFile2
+            os.system(sedMethod)
+            os.system(sedVideo)
             os.system(sedRename)
+            os.system(sedRename2)
 
             annotFilename = os.path.splitext(videoName)[0]+".tag"
             annotFilename1 = os.path.splitext(videoName)[0]+".v1"

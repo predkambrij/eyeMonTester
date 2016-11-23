@@ -237,12 +237,10 @@ def prepareVideosList(cfg):
         ("2h24m movie neprekinjeno", vidPrefix+"o4_105.mp4"),
     ]
     videos = eyeblink8HandInTheFirstFrames+eyeblink8+others+basler5+zju+nightOfResearchers15+nightOfResearchers30
-    videos = myOthers
+    videos = eyeblink8HandInTheFirstFrames+eyeblink8
     videoRange = range(len(videos))
-    #videoRange = videoRange[-1:]
-    #videoRange = [7]
-    videoRange = [2,]
-    #videoRange = videoRange[10:]
+    #videos = myOthers
+    videoRange = videoRange[:1]
     return videos, videoRange
 
 def getConfigs():

@@ -10,6 +10,7 @@ stopListenLog        = False
 # parsing logs
 def initListenLog(cfg, isWebcam):
     global proc
+    time.sleep(3)
     if not isWebcam:
         tailfCmd = ['tail', '-n0', '-f', cfg["othr"]["codeDirectory"]+'/logfiles/eyemonpy.log']
     else:
