@@ -9,7 +9,7 @@ EyeMonTester can generate overall report (in CSV format) and draw debugging grap
 ##Prepare Docker images:
 - build eyeMon Docker image (see the instructions in its [README.md](https://github.com/predkambrij/eyeMon)
 - ```git clone git@github.com:predkambrij/eyeMonTester.git```
-- ```docker build --build-arg ARG_UID=$(id -u) --build-arg ARG_GID=$(id -g) ARG_DOCKERGID=$(cat /etc/group | grep docker | awk -F\: '{print $3}') -t predkambrij/eyemontester eyeMonTester/```
+- ```docker build --build-arg ARG_UID=$(id -u) --build-arg ARG_GID=$(id -g)--build-arg   ARG_DOCKERGID=$(cat /etc/group | grep docker | awk -F\: '{print $3}') -t predkambrij/eyemontester eyeMonTester/```
 
 ##Prepare testing videos:
 - Add videos (optionally with annotations) in this directory [https://github.com/predkambrij/eyeMon/tree/master/posnetki](https://github.com/predkambrij/eyeMon/tree/master/posnetki)
