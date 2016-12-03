@@ -24,7 +24,7 @@ EyeMonTester can generate overall report (in CSV format) and draw debugging grap
     - ```videoRange = range(len(videos))``` # videos you would like to process (you can select subset of available videos)
 
 ##Start the container:
-- ```docker run -it --rm -e DIRPREF=$(pwd) -v $(pwd)/eyeMon/_1OpenCVopticalflow/src/main/jni/main_settings_testpy.cpp:/tmp/main_settings_testpy.cpp -v $(pwd)/eyeMon/posnetki:/posnetki -v $(pwd)/eyeMonTester:/eyeMonTester -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY -v /var/run/docker.sock:/var/run/docker.sock predkambrij/eyemontester bash```
+- ```docker run -it --rm -e DIRPREF=$(pwd) -v $(pwd)/eyeMon/_1OpenCVopticalflow/src/main/jni/main_settings_testpy.cpp:/tmp/main_settings_testpy.cpp -v $(pwd)/eyeMon/_1OpenCVopticalflow/src/main/jni/common_settings_testpy.cpp:/tmp/common_settings_testpy.cpp -v $(pwd)/eyeMon/posnetki:/posnetki -v $(pwd)/eyeMonTester:/eyeMonTester -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY -v /var/run/docker.sock:/var/run/docker.sock predkambrij/eyemontester bash```
 
 Generating intermediate results:
 - ```cd /eyeMonTester```
