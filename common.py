@@ -126,8 +126,11 @@ class Common:
             curBlinkEnd = line[0]
 
         # finish tracking slices
-        curTrack.append(("end", lastFn))
-        tracking["track"].append(curTrack)
+        if curTrack != None:
+            curTrack.append(("end", lastFn))
+            tracking["track"].append(curTrack)
+        else:
+            print "Warning: annotations are not in proper format!"
 
         # finish last blink if applicable
         if curBlinkId != "":

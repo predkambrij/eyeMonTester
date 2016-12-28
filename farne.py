@@ -332,6 +332,9 @@ class Farne:
         if isEnd:
             window = 0
 
+        showLegend = True
+        if figparms != None and figparms.has_key('disableLegend') == True and figparms['disableLegend'] == True:
+            showLegend = False
         if figparms != None and figparms.has_key('graphs') == True:
             options = figparms['graphs']
         else:
@@ -442,10 +445,10 @@ class Farne:
                 u"levo oko:    napa\u010dno zaznani (nad 2) / zgre\u0161eni (pod 2)",
                 u"desno oko: napa\u010dno zaznani (nad 2) / zgre\u0161eni (pod 2)",
             ]
-            first_legend = plt.legend(ls, labs, ncol=2, numpoints=1, loc=figparms['legBpos'])
-            plt.gca().add_artist(first_legend)
-
-            plt.legend(['levo oko', 'desno oko'], loc=figparms['legLpos'])
+            if showLegend == True:
+                first_legend = plt.legend(ls, labs, ncol=2, numpoints=1, loc=figparms['legBpos'])
+                plt.gca().add_artist(first_legend)
+                plt.legend(['levo oko', 'desno oko'], loc=figparms['legLpos'])
 
             plt.xlabel(u'sli\u010dice', fontsize=30)
             plt.ylabel(u'razlika med zg. in sp. delom obmo\u010dja o\u010di', fontsize=30)
@@ -527,10 +530,10 @@ class Farne:
                 u"desno oko: napa\u010dno zaznani (okrog 30) / zgre\u0161eni (okrog 70)",
                 u"obe o\u010desi: napa\u010dno zaznani (okrog 30)"
             ]
-            first_legend = plt.legend(ls, labs, ncol=2, numpoints=1, loc=figparms['legBpos'])
-            plt.gca().add_artist(first_legend)
-
-            plt.legend(['levo oko', 'desno oko'], loc=figparms['legLpos'])
+            if showLegend == True:
+                first_legend = plt.legend(ls, labs, ncol=2, numpoints=1, loc=figparms['legBpos'])
+                plt.gca().add_artist(first_legend)
+                plt.legend(['levo oko', 'desno oko'], loc=figparms['legLpos'])
 
             plt.tight_layout(pad=tightLayoutPad)
 
@@ -670,10 +673,10 @@ class Farne:
                     labs = ["", "", "", "",
                         u"anotirani me\u017eiki", u"zaznani: obe o\u010desi", u"zaznani: levo oko", u"zaznani: desno oko"
                     ]
-                    first_legend = plt.legend(ls, labs, ncol=2, numpoints=1, loc=figparms['legBpos'])
-                    plt.gca().add_artist(first_legend)
-
-                    plt.legend([lline, rline, lsd, rsd], ['levo oko', 'desno oko', 'st. odk.', 'st. odk.'], loc=figparms['legLpos'])
+                    if showLegend == True:
+                        first_legend = plt.legend(ls, labs, ncol=2, numpoints=1, loc=figparms['legBpos'])
+                        plt.gca().add_artist(first_legend)
+                        plt.legend([lline, rline, lsd, rsd], ['levo oko', 'desno oko', 'st. odk.', 'st. odk.'], loc=figparms['legLpos'])
 
                     if figparms != None and figparms.has_key('figName') == True:
                         plt.savefig('/home/developer/other/notes/m/%s.png' % figparms['figName'], dpi=imgDpi, pad_inches=1)

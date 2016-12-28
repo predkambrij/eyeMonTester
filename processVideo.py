@@ -12,9 +12,12 @@ def initListenLog(cfg, isWebcam):
     global proc
     time.sleep(3)
     if not isWebcam:
-        tailfCmd = ['tail', '-n0', '-f', cfg["othr"]["codeDirectory"]+'/logfiles/eyemonpy.log']
+        logfile = cfg["othr"]["codeDirectory"]+'/logfiles/eyemonpy.log'
     else:
-        tailfCmd = ['tail', '-n0', '-f', cfg["othr"]["codeDirectory"]+'/logfiles/testlog.txt']
+        logfile = cfg["othr"]["codeDirectory"]+'/logfiles/testlog.txt'
+    tailfCmd = ['tail', '-n0', '-f', logfile]
+    if not os.path.isfile(logfile):
+        file(logfile,"wb").write("")
 
     proc = subprocess.Popen(
         tailfCmd,

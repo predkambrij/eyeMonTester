@@ -262,6 +262,12 @@ def testMain():
             'show':True,
                 'legBpos':3,
                 'legLpos':4,
+            'figNums': [3],
+            'graphs':[
+                    'postProcessLogLine',
+                    #'postProcessTracking',
+                ],
+            'disableLegend':True,
         },
     }
     cfg = main.getConfigs()
